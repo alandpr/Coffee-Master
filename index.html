@@ -2,28 +2,26 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coffee Master Cloud v5.0</title>
+    <title>Coffee Master v5.1 Cloud</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <style>
-        body{background:#0a0a0a;color:#d1d1d1;font-family:sans-serif;padding-bottom:50px}
-        .card{background:#161616;border-radius:16px;padding:18px;margin-bottom:14px;border:1px solid #262626}
-        input,select,textarea{background:#222;border:1px solid #333;color:#fff;padding:12px;border-radius:10px;width:100%;margin-bottom:12px;font-size:14px;font-family:inherit;-webkit-appearance:none}
-        ::placeholder { color: #888 !important; }
-        select.is-placeholder { color: #888 !important; }
-        button{background:#f59e0b;color:#000;font-weight:800;padding:14px;border-radius:12px;width:100%;text-transform:uppercase}
-        .tab-btn{background:#1a1a1a;color:#666;margin:2px;flex:1;padding:12px 5px;border-radius:10px;font-size:10px;font-weight:bold}
-        .active-tab{background:#f59e0b;color:#000}
-        .step-card{background:#1f1f1f;border:2px solid transparent;padding:10px;border-radius:8px;text-align:center;transition:all 0.4s ease-in-out}
-        .active-step{transform:scale(1.15);border-color:#f59e0b;background:#262626;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,0.6)}
-        .step-info-bold{color:#ffffff !important;font-weight:900 !important;text-transform:uppercase;font-size:11px;line-height:1.2;margin-top:4px}
+        body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding-bottom:100px;zoom:1.1}
+        .card{background:#161616;border-radius:20px;padding:20px;margin-bottom:15px;border:1px solid #262626}
+        input,select,textarea{background:#222;border:1px solid #333;color:#fff;padding:15px;border-radius:12px;width:100%;margin-bottom:15px;font-size:16px;font-weight:bold;-webkit-appearance:none}
+        ::placeholder { color: #666; font-weight: normal; }
+        .btn-gold{background:#f59e0b;color:#000;font-weight:900;padding:18px;border-radius:15px;width:100%;text-transform:uppercase;font-size:14px;letter-spacing:1px}
+        .tab-btn{background:#1a1a1a;color:#555;flex:1;padding:15px 5px;border-radius:12px;font-size:11px;font-weight:900;margin:2px;border:1px solid #222}
+        .active-tab{background:#f59e0b;color:#000;border-color:#fbbf24}
+        .step-card{background:#1f1f1f;border:2px solid transparent;padding:15px;border-radius:12px;text-align:center}
+        .active-step{transform:scale(1.05);border-color:#f59e0b;background:#262626;box-shadow:0 10px 30px rgba(0,0,0,0.5)}
     </style>
 </head>
 <body class="p-4 max-w-lg mx-auto">
-    <h1 class="text-2xl font-black text-amber-500 mb-6 text-center italic">COFFEE MASTER <span class="text-white font-light text-sm">v5.0 CLOUD</span></h1>
+    <h1 class="text-3xl font-black text-amber-500 mb-6 text-center italic tracking-tighter">COFFEE MASTER <span class="text-white font-light text-xs block">CLOUD v5.1</span></h1>
     
-    <div class="flex flex-wrap mb-6 bg-black p-1 rounded-2xl sticky top-0 z-50 border border-zinc-800">
+    <div class="flex mb-8 bg-black p-1 rounded-2xl sticky top-2 z-50 border border-zinc-800 shadow-2xl">
         <button id="btn-cafes" class="tab-btn active-tab" onclick="showTab('cafes')">GRÃOS</button>
         <button id="btn-receitas" class="tab-btn" onclick="showTab('receitas')">RECEITAS</button>
         <button id="btn-preparo" class="tab-btn" onclick="showTab('preparo')">PREPARAR</button>
@@ -31,33 +29,57 @@
     </div>
 
     <div id="tab-cafes">
-        <div class="card">
-            <input type="text" id="g-prod" placeholder="Produtor">
-            <input type="text" id="g-nome" placeholder="Identificação do Grão">
-            <select id="g-torra" class="is-placeholder" onchange="this.classList.remove('is-placeholder')">
-                <option value="" disabled selected>Torra</option>
-                <option>Média</option><option>Clara</option><option>Média-Clara</option>
+        <div class="card shadow-lg">
+            <h2 class="text-amber-500 font-black mb-4 uppercase text-xs tracking-widest text-center">Novo Cadastro</h2>
+            <input type="text" id="g-prod" placeholder="Produtor (Ex: Unique)">
+            <input type="text" id="g-nome" placeholder="Nome do Grão">
+            <select id="g-torra">
+                <option value="" disabled selected>Tipo de Torra</option>
+                <option>Clara</option><option>Média-Clara</option><option>Média</option><option>Escura</option>
             </select>
             <input type="date" id="g-data">
-            <button onclick="saveG()">SALVAR NA NUVEM</button>
+            <button class="btn-gold" onclick="saveG()">Salvar no Google</button>
         </div>
-        <div id="list-g"></div>
+        <div id="list-g" class="space-y-3"></div>
     </div>
 
     <div id="tab-receitas" class="hidden">
+        <div class="card">
+            <h2 class="text-amber-500 font-black mb-4 uppercase text-xs text-center">Nova Receita</h2>
+            <input type="text" id="r-nome" placeholder="Nome (Ex: V60 Padrão)">
+            <input type="number" id="r-ratio" placeholder="Ratio (Ex: 15)">
+            <textarea id="r-desc" placeholder="Passos do preparo..." rows="3"></textarea>
+            <button class="btn-gold" onclick="saveR()">Guardar Receita</button>
+        </div>
         <div id="list-r"></div>
     </div>
 
-    <div id="tab-preparo" class="hidden text-center">
-        <div class="card border-2 border-amber-600">
+    <div id="tab-preparo" class="hidden">
+        <div class="card border-2 border-amber-600 text-center">
+            <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">Selecione o Grão</label>
             <select id="p-g" onchange="upCalc()"></select>
-            <div id="res" class="text-amber-500 font-black text-xl my-4">--- ML</div>
-            <div id="wf" class="grid grid-cols-2 gap-3"></div>
+            
+            <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">Receita</label>
+            <select id="p-r" onchange="upCalc()"></select>
+            
+            <label class="text-[10px] font-bold text-zinc-500 uppercase block mb-2">Qtd de Pó (g)</label>
+            <input type="number" id="p-po" value="20" oninput="upCalc()" class="text-center text-2xl text-amber-500 font-black">
+            
+            <div class="bg-zinc-900 rounded-xl p-6 mt-4">
+                <div class="text-[10px] font-bold text-zinc-400 mb-1">TOTAL DE ÁGUA</div>
+                <div id="res" class="text-5xl font-black text-white italic">---</div>
+                <div class="text-amber-500 font-bold mt-2">ML</div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tab-log" class="hidden">
+        <div class="card bg-zinc-900 border-dashed border-zinc-700 text-center py-12">
+            <p class="text-zinc-500 font-bold">Módulo de Diário Sensorial<br>em desenvolvimento...</p>
         </div>
     </div>
 
     <script>
-        // Configuração do teu Firebase
         const firebaseConfig = {
             apiKey: "AIzaSyCbIsrGjuu6KN-A0xpZUC6ID9aOHBEIJSE",
             authDomain: "coffee-master-e1f5c.firebaseapp.com",
@@ -67,40 +89,81 @@
             appId: "1:171441357303:web:c85dc841ee73f6f29e2ef2"
         };
         firebase.initializeApp(firebaseConfig);
-        const firestore = firebase.firestore();
+        const db = firebase.firestore();
 
-        // Lógica de Abas
         function showTab(t){
             ['cafes','receitas','preparo','log'].forEach(i=>{
                 document.getElementById('tab-'+i)?.classList.toggle('hidden', i!==t);
                 document.getElementById('btn-'+i)?.classList.toggle('active-tab', i===t);
             });
             if(t==='cafes') loadG();
+            if(t==='receitas') loadR();
+            if(t==='preparo') loadPrep();
         }
 
-        // Guardar Grãos no Firestore
         async function saveG() {
-            const grao = {
-                produtor: document.getElementById('g-prod').value,
+            const btn = event.target; btn.innerText = "Enviando...";
+            await db.collection('cafes').add({
+                prod: document.getElementById('g-prod').value,
                 nome: document.getElementById('g-nome').value,
                 torra: document.getElementById('g-torra').value,
                 data: document.getElementById('g-data').value,
-                timestamp: firebase.firestore.FieldValue.serverTimestamp()
-            };
-            await firestore.collection('cafes').add(grao);
-            alert('Grão guardado no Google!');
-            loadG();
+                ts: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            btn.innerText = "Salvar no Google"; loadG();
         }
 
-        // Carregar Grãos da Nuvem
         async function loadG() {
-            const snap = await firestore.collection('cafes').orderBy('timestamp', 'desc').get();
+            const snap = await db.collection('cafes').orderBy('ts', 'desc').get();
             let h = '';
-            snap.forEach(doc => {
-                const i = doc.data();
-                h += `<div class="card"><b>${i.nome}</b><br><small>${i.produtor} | ${i.torra}</small></div>`;
+            snap.forEach(d => {
+                const i = d.data();
+                h += `<div class="card border-l-4 border-l-amber-500">
+                        <div class="text-xs text-zinc-500 font-bold uppercase">${i.prod}</div>
+                        <div class="text-xl font-black text-white italic">${i.nome}</div>
+                        <div class="text-[10px] mt-2 bg-zinc-800 inline-block px-2 py-1 rounded text-amber-500 font-bold uppercase">${i.torra}</div>
+                      </div>`;
             });
             document.getElementById('list-g').innerHTML = h;
+        }
+
+        async function saveR() {
+            await db.collection('receitas').add({
+                nome: document.getElementById('r-nome').value,
+                ratio: parseFloat(document.getElementById('r-ratio').value),
+                desc: document.getElementById('r-desc').value,
+                ts: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            loadR();
+        }
+
+        async function loadR() {
+            const snap = await db.collection('receitas').orderBy('ts', 'desc').get();
+            let h = '';
+            snap.forEach(d => {
+                const i = d.data();
+                h += `<div class="card border-l-4 border-l-zinc-500">
+                        <div class="text-xl font-black text-amber-500">${i.nome}</div>
+                        <div class="text-xs font-bold text-zinc-400 mt-1">RATIO 1:${i.ratio}</div>
+                      </div>`;
+            });
+            document.getElementById('list-r').innerHTML = h;
+        }
+
+        async function loadPrep() {
+            const [gc, rc] = await Promise.all([db.collection('cafes').get(), db.collection('receitas').get()]);
+            let gh = '', rh = '';
+            gc.forEach(d => gh += `<option value="${d.id}">${d.data().nome}</option>`);
+            rc.forEach(d => rh += `<option value="${d.data().ratio}">${d.data().nome} (1:${d.data().ratio})</option>`);
+            document.getElementById('p-g').innerHTML = gh;
+            document.getElementById('p-r').innerHTML = rh;
+            upCalc();
+        }
+
+        function upCalc() {
+            const po = parseFloat(document.getElementById('p-po').value) || 0;
+            const ratio = parseFloat(document.getElementById('p-r').value) || 0;
+            document.getElementById('res').innerText = po * ratio;
         }
 
         loadG();
