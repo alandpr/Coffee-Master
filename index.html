@@ -2,23 +2,25 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coffee Master v5.3 Show Cloud</title>
+    <title>Coffee Master v5.5 Master Cloud</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <style>
         body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding-bottom:100px;zoom:1.15}
         .card{background:#161616;border-radius:24px;padding:22px;margin-bottom:18px;border:1px solid #262626;box-shadow:0 10px 40px rgba(0,0,0,0.6)}
-        input,select,textarea{background:#222;border:2px solid #333;color:#fff;padding:18px;border-radius:15px;width:100%;margin-bottom:15px;font-size:16px;font-weight:900;font-style:italic;-webkit-appearance:none}
-        ::placeholder { color: #555; font-weight: 800; text-transform: uppercase; font-size: 11px; font-style: normal; }
-        .btn-gold{background:#f59e0b;color:#000;font-weight:900;padding:20px;border-radius:18px;width:100%;text-transform:uppercase;font-size:15px;letter-spacing:1px}
-        .tab-btn{background:#111;color:#444;flex:1;padding:16px 5px;border-radius:14px;font-size:11px;font-weight:900;margin:3px;border:1px solid #222}
+        .label-gold{color:#f59e0b;font-size:10px;font-weight:900;text-transform:uppercase;margin-bottom:6px;margin-left:6px;letter-spacing:1px;display:block}
+        input,select,textarea{background:#222;border:2px solid #333;color:#fff;padding:16px;border-radius:15px;width:100%;margin-bottom:15px;font-size:16px;font-weight:900;font-style:italic;-webkit-appearance:none}
+        ::placeholder { color: #444; font-weight: 800; text-transform: uppercase; font-size: 11px; font-style: normal; }
+        .btn-gold{background:#f59e0b;color:#000;font-weight:900;padding:18px;border-radius:18px;width:100%;text-transform:uppercase;font-size:15px;letter-spacing:1px}
+        .tab-btn{background:#111;color:#444;flex:1;padding:16px 5px;border-radius:14px;font-size:10px;font-weight:900;margin:3px;border:1px solid #222}
         .active-tab{background:#f59e0b;color:#000;border-color:#fbbf24}
-        .magic-box{background:#1a1a1a;border:2px dashed #f59e0b;color:#f59e0b;padding:15px;border-radius:15px;margin-bottom:20px;font-size:13px;font-weight:900;text-align:center;text-transform:uppercase}
+        .step-box{background:#1f1f1f;padding:15px;border-radius:15px;text-align:center;border:2px solid #333}
+        .step-active{border-color:#f59e0b;background:#262626}
     </style>
 </head>
 <body class="p-4 max-w-lg mx-auto">
-    <h1 class="text-4xl font-black text-amber-500 mb-8 text-center italic tracking-tighter">COFFEE MASTER <span class="text-white font-light text-xs block tracking-widest mt-1">SHOW CLOUD v5.3</span></h1>
+    <h1 class="text-4xl font-black text-amber-500 mb-8 text-center italic tracking-tighter uppercase">COFFEE MASTER <span class="text-white font-light text-xs block tracking-widest mt-1">CLOUD v5.5</span></h1>
     
     <div class="flex mb-8 bg-black p-1 rounded-2xl sticky top-2 z-50 border border-zinc-800 shadow-2xl">
         <button id="btn-cafes" class="tab-btn active-tab" onclick="showTab('cafes')">GRÃOS</button>
@@ -29,63 +31,105 @@
 
     <div id="tab-cafes">
         <div class="card">
-            <div class="magic-box italic">✨ COLE O TEXTO DA UNIQUE AQUI</div>
-            <textarea id="g-magic" placeholder="COLE A DESCRIÇÃO PARA PREENCHIMENTO AUTOMÁTICO..." rows="2" oninput="magicParse()"></textarea>
+            <span class="label-gold">Carga Mágica de Grãos</span>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="g-magic" placeholder="Cole o código..." class="mb-0">
+                <button class="bg-zinc-800 px-4 rounded-xl font-black text-[10px] text-amber-500 border border-zinc-700" onclick="magicG()">MÁGICA</button>
+            </div>
             
-            <hr class="border-zinc-800 mb-6">
+            <div class="flex gap-2">
+                <div style="width:30%"><span class="label-gold">Nº</span><input type="text" id="g-n" placeholder="00"></div>
+                <div style="flex:1"><span class="label-gold">Produtor</span><input type="text" id="g-prod" placeholder="EX: UNIQUE"></div>
+            </div>
             
-            <label class="text-[10px] font-black text-zinc-500 uppercase block mb-1 ml-2 tracking-widest">Produtor</label>
-            <input type="text" id="g-prod" placeholder="EX: UNIQUE CAFÉS">
-            
-            <label class="text-[10px] font-black text-zinc-500 uppercase block mb-1 ml-2 tracking-widest">Nome do Grão</label>
+            <span class="label-gold">Identificação do Grão</span>
             <input type="text" id="g-nome" placeholder="NOME DO CAFÉ">
             
-            <label class="text-[10px] font-black text-zinc-500 uppercase block mb-1 ml-2 tracking-widest">Torra</label>
+            <span class="label-gold">Torra</span>
             <select id="g-torra">
-                <option value="" disabled selected>SELECIONE A TORRA</option>
+                <option value="" disabled selected>SELECIONE</option>
                 <option>CLARA</option><option>MÉDIA-CLARA</option><option>MÉDIA</option><option>ESCURA</option>
             </select>
             
-            <label class="text-[10px] font-black text-zinc-500 uppercase block mb-1 ml-2 tracking-widest">Data da Torra</label>
+            <span class="label-gold">Data da Torra</span>
             <input type="date" id="g-data">
             
-            <button class="btn-gold" onclick="saveG()">Salvar no Google</button>
+            <span class="label-gold">Notas Sensoriais</span>
+            <textarea id="g-notas" placeholder="EX: CHOCOLATE, MEL..." rows="2"></textarea>
+            
+            <button class="btn-gold mt-4" onclick="saveG()">Salvar no Estoque</button>
         </div>
         <div id="list-g" class="space-y-4"></div>
     </div>
 
     <div id="tab-receitas" class="hidden">
         <div class="card">
-            <input type="text" id="r-nome" placeholder="NOME DA RECEITA (EX: V60)">
-            <input type="number" id="r-ratio" placeholder="RATIO (EX: 15)">
-            <textarea id="r-desc" placeholder="PASSOS DO PREPARO..." rows="3"></textarea>
-            <button class="btn-gold" onclick="saveR()">Guardar Receita</button>
+            <span class="label-gold">Carga Mágica de Receita</span>
+            <div class="flex gap-2 mb-4">
+                <input type="text" id="r-magic" placeholder="Cole a receita..." class="mb-0">
+                <button class="bg-zinc-800 px-4 rounded-xl font-black text-[10px] text-amber-500 border border-zinc-700">MÁGICA</button>
+            </div>
+            <span class="label-gold">Nome da Receita</span>
+            <input type="text" id="r-nome" placeholder="EX: V60 PADRÃO">
+            
+            <span class="label-gold">Método</span>
+            <select id="r-metodo">
+                <option>V60</option><option>AEROPRESS</option><option>KOAR</option><option>PRENSA</option>
+            </select>
+            
+            <div class="flex gap-2">
+                <div><span class="label-gold">Café (g)</span><input type="number" id="r-po" placeholder="15"></div>
+                <div><span class="label-gold">Ratio (1:x)</span><input type="number" id="r-ratio" placeholder="15"></div>
+            </div>
+            <button class="btn-gold mt-4" onclick="saveR()">Salvar Receita</button>
         </div>
         <div id="list-r" class="space-y-3"></div>
     </div>
 
     <div id="tab-preparo" class="hidden">
-        <div class="card border-2 border-amber-600 text-center bg-black">
-            <label class="text-[10px] font-black text-zinc-500 uppercase block mb-2 tracking-widest">Grão</label>
+        <div class="card border-2 border-amber-600 bg-black">
+            <span class="label-gold text-center">Grão Selecionado</span>
             <select id="p-g" onchange="upCalc()"></select>
             
-            <label class="text-[10px] font-black text-zinc-500 uppercase block mb-2 tracking-widest">Receita</label>
+            <span class="label-gold text-center">Método / Receita</span>
             <select id="p-r" onchange="upCalc()"></select>
             
-            <label class="text-[10px] font-black text-zinc-500 uppercase block mb-2 tracking-widest">Quantidade de Pó (g)</label>
-            <input type="number" id="p-po" value="20" oninput="upCalc()" class="text-center text-5xl text-amber-500 font-black italic bg-transparent border-none">
-            
-            <div class="bg-zinc-900 rounded-3xl p-8 mt-4 border border-zinc-800">
-                <div class="text-[11px] font-black text-zinc-400 mb-2 tracking-widest uppercase">Água Total</div>
-                <div id="res" class="text-7xl font-black text-white italic">---</div>
-                <div class="text-amber-500 font-black mt-2 text-2xl italic">ML</div>
+            <div class="flex gap-4 mt-4">
+                <div class="flex-1 text-center">
+                    <span class="label-gold">Pó (g)</span>
+                    <input type="number" id="p-po-val" value="15" oninput="upCalc()" class="text-center text-3xl text-amber-500 font-black italic">
+                </div>
+                <div class="flex-1 text-center">
+                    <span class="label-gold">Ratio</span>
+                    <input type="number" id="p-ratio-val" value="15" oninput="upCalc()" class="text-center text-3xl text-white font-black italic">
+                </div>
             </div>
-        </div>
-    </div>
 
-    <div id="tab-log" class="hidden">
-        <div class="card bg-zinc-900 border-dashed border-zinc-700 text-center py-20">
-            <p class="text-zinc-600 font-black italic uppercase">Em desenvolvimento...</p>
+            <div class="bg-zinc-900 rounded-3xl p-8 mt-4 border border-zinc-800 text-center">
+                <div class="text-[10px] font-black text-zinc-400 mb-2 tracking-widest uppercase">Água Total</div>
+                <div id="p-total" class="text-6xl font-black text-white italic">225</div>
+                <div class="text-amber-500 font-black mt-2 text-xl italic uppercase">ml</div>
+            </div>
+
+            <div class="grid grid-cols-2 gap-3 mt-6">
+                <div class="step-box step-active">
+                    <div class="text-[10px] text-amber-500 font-black uppercase">Bloom</div>
+                    <div class="text-2xl font-black italic">45ml</div>
+                    <div class="text-[9px] text-zinc-500 font-bold uppercase mt-1">45ml / 45s</div>
+                </div>
+                <div class="step-box">
+                    <div class="text-[10px] text-zinc-500 font-black uppercase">Ataque</div>
+                    <div class="text-2xl font-black italic text-zinc-400">180ml</div>
+                    <div class="text-[9px] text-zinc-600 font-bold uppercase mt-1">225ml / 2:30</div>
+                </div>
+            </div>
+            
+            <div id="timer" class="text-6xl font-black my-8 text-center italic tracking-tighter">00:00</div>
+            
+            <div class="flex gap-3">
+                <button class="bg-green-700 text-white font-black py-4 rounded-xl flex-1 uppercase italic shadow-lg">Iniciar</button>
+                <button class="bg-zinc-800 text-zinc-400 font-black py-4 rounded-xl flex-[0.5] uppercase italic">Reset</button>
+            </div>
         </div>
     </div>
 
@@ -101,15 +145,13 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        function magicParse() {
+        function magicG() {
             const txt = document.getElementById('g-magic').value;
             if(!txt) return;
             const linhas = txt.split('\n');
             if(linhas.length >= 1) {
-                document.getElementById('g-prod').value = "UNIQUE CAFÉS";
                 document.getElementById('g-nome').value = linhas[0].toUpperCase();
-                if(txt.toLowerCase().includes('média')) document.getElementById('g-torra').value = "MÉDIA";
-                if(txt.toLowerCase().includes('clara')) document.getElementById('g-torra').value = "CLARA";
+                document.getElementById('g-prod').value = "UNIQUE CAFÉS"; // Sugestão, pode apagar se quiser
             }
         }
 
@@ -119,21 +161,21 @@
                 document.getElementById('btn-'+i)?.classList.toggle('active-tab', i===t);
             });
             if(t==='cafes') loadG();
-            if(t==='receitas') loadR();
             if(t==='preparo') loadPrep();
         }
 
         async function saveG() {
             const btn = event.target; btn.innerText = "ENVIANDO...";
             await db.collection('cafes').add({
+                n: document.getElementById('g-n').value,
                 prod: document.getElementById('g-prod').value,
                 nome: document.getElementById('g-nome').value,
                 torra: document.getElementById('g-torra').value,
                 data: document.getElementById('g-data').value,
+                notas: document.getElementById('g-notas').value,
                 ts: firebase.firestore.FieldValue.serverTimestamp()
             });
-            document.getElementById('g-magic').value = "";
-            btn.innerText = "SALVAR NO GOOGLE"; loadG();
+            btn.innerText = "SALVAR NO ESTOQUE"; loadG();
         }
 
         async function loadG() {
@@ -145,54 +187,28 @@
                 h += `<div class="card border-l-8 border-l-amber-500">
                         <div class="flex justify-between items-start">
                             <div>
-                                <div class="text-[10px] text-zinc-500 font-black uppercase tracking-widest">${i.prod}</div>
-                                <div class="text-2xl font-black text-white italic uppercase leading-tight">${i.nome}</div>
+                                <div class="text-[10px] text-zinc-500 font-black uppercase">#${i.n} ${i.prod}</div>
+                                <div class="text-2xl font-black text-white italic uppercase">${i.nome}</div>
                             </div>
-                            <div class="text-[10px] font-black text-zinc-600 bg-zinc-800 px-2 py-1 rounded italic">${dataFtd}</div>
+                            <div class="text-[10px] font-black text-zinc-600 bg-zinc-900 px-2 py-1 rounded italic">${dataFtd}</div>
                         </div>
-                        <div class="text-[11px] mt-4 bg-zinc-800 inline-block px-3 py-1 rounded-lg text-amber-500 font-black uppercase italic">${i.torra}</div>
+                        <div class="mt-4 text-[10px] font-black text-amber-500 uppercase italic bg-zinc-900 inline-block px-3 py-1 rounded-lg border border-zinc-800">${i.torra}</div>
                       </div>`;
             });
             document.getElementById('list-g').innerHTML = h;
         }
 
-        async function saveR() {
-            await db.collection('receitas').add({
-                nome: document.getElementById('r-nome').value,
-                ratio: parseFloat(document.getElementById('r-ratio').value),
-                desc: document.getElementById('r-desc').value,
-                ts: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            loadR();
-        }
-
-        async function loadR() {
-            const snap = await db.collection('receitas').orderBy('ts', 'desc').get();
-            let h = '';
-            snap.forEach(d => {
-                const i = d.data();
-                h += `<div class="card border-l-8 border-l-zinc-700">
-                        <div class="text-2xl font-black text-amber-500 italic uppercase">${i.nome}</div>
-                        <div class="text-xs font-black text-zinc-400 mt-1 uppercase">RATIO 1:${i.ratio}</div>
-                      </div>`;
-            });
-            document.getElementById('list-r').innerHTML = h;
-        }
-
         async function loadPrep() {
             const [gc, rc] = await Promise.all([db.collection('cafes').get(), db.collection('receitas').get()]);
-            let gh = '', rh = '';
-            gc.forEach(d => gh += `<option value="${d.id}">${d.data().nome.toUpperCase()}</option>`);
-            rc.forEach(d => rh += `<option value="${d.data().ratio}">${d.data().nome.toUpperCase()} (1:${d.data().ratio})</option>`);
+            let gh = ''; gc.forEach(d => gh += `<option>#${d.data().n} - ${d.data().nome.toUpperCase()}</option>`);
             document.getElementById('p-g').innerHTML = gh;
-            document.getElementById('p-r').innerHTML = rh;
             upCalc();
         }
 
         function upCalc() {
-            const po = parseFloat(document.getElementById('p-po').value) || 0;
-            const ratio = parseFloat(document.getElementById('p-r').value) || 0;
-            document.getElementById('res').innerText = Math.round(po * ratio);
+            const po = parseFloat(document.getElementById('p-po-val').value) || 0;
+            const ratio = parseFloat(document.getElementById('p-ratio-val').value) || 0;
+            document.getElementById('p-total').innerText = Math.round(po * ratio);
         }
 
         loadG();
