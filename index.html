@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Master Cloud v5.0</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
+    <style>
+        body{background:#0a0a0a;color:#d1d1d1;font-family:sans-serif;padding-bottom:50px}
+        .card{background:#161616;border-radius:16px;padding:18px;margin-bottom:14px;border:1px solid #262626}
+        input,select,textarea{background:#222;border:1px solid #333;color:#fff;padding:12px;border-radius:10px;width:100%;margin-bottom:12px;font-size:14px;font-family:inherit;-webkit-appearance:none}
+        ::placeholder { color: #888 !important; }
+        select.is-placeholder { color: #888 !important; }
+        button{background:#f59e0b;color:#000;font-weight:800;padding:14px;border-radius:12px;width:100%;text-transform:uppercase}
+        .tab-btn{background:#1a1a1a;color:#666;margin:2px;flex:1;padding:12px 5px;border-radius:10px;font-size:10px;font-weight:bold}
+        .active-tab{background:#f59e0b;color:#000}
+        .step-card{background:#1f1f1f;border:2px solid transparent;padding:10px;border-radius:8px;text-align:center;transition:all 0.4s ease-in-out}
+        .active-step{transform:scale(1.15);border-color:#f59e0b;background:#262626;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,0.6)}
+        .step-info-bold{color:#ffffff !important;font-weight:900 !important;text-transform:uppercase;font-size:11px;line-height:1.2;margin-top:4px}
+    </style>
+</head>
+<body class="p-4 max-w-lg mx-auto">
+    <h1 class="text-2xl font-black text-amber-500 mb-6 text-center italic">COFFEE MASTER <span class="text-white font-light text-sm">v5.0 CLOUD</span></h1>
+    
+    <div class="flex flex-wrap mb-6 bg-black p-1 rounded-2xl sticky top-0 z-50 border border-zinc-800">
+        <button id="btn-cafes" class="tab-btn active-tab" onclick="showTab('cafes')">GRÃOS</button>
+        <button id="btn-receitas" class="tab-btn" onclick="showTab('receitas')">RECEITAS</button>
+        <button id="btn-preparo" class="tab-btn" onclick="showTab('preparo')">PREPARAR</button>
+        <button id="btn-log" class="tab-btn" onclick="showTab('log')">DIÁRIO</button>
+    </div>
+
+    <div id="tab-cafes">
+        <div class="card">
+            <input type="text" id="g-prod" placeholder="Produtor">
+            <input type="text" id="g-nome" placeholder="Identificação do Grão">
+            <select id="g-torra" class="is-placeholder" onchange="this.classList.remove('is-placeholder')">
+                <option value="" disabled selected>Torra</option>
+                <option>Média</option><option>Clara</option><option>Média-Clara</option>
+            </select>
+            <input type="date" id="g-data">
+            <button onclick="saveG()">SALVAR NA NUVEM</button>
+        </div>
+        <div id="list-g"></div>
+    </div>
+
+    <div id="tab-receitas" class="hidden">
+        <div id="list-r"></div>
+    </div>
+
+    <div id="tab-preparo" class="hidden text-center">
+        <div class="card border-2 border-amber-600">
+            <select id="p-g" onchange="upCalc()"></select>
+            <div id="res" class="text-amber-500 font-black text-xl my-4">--- ML</div>
+            <div id="wf" class="grid grid-cols-2 gap-3"></div>
+        </div>
+    </div>
+
+    <script>
+        // Configuração do teu Firebase
+        const firebaseConfig = {
+            apiKey: "AIzaSyCbIsrGjuu6KN-A0xpZUC6ID9aOHBEIJSE",
+            authDomain: "coffee-master-e1f5c.firebaseapp.com",
+            projectId: "coffee-master-e1f5c",
+            storageBucket: "coffee-master-e1f5c.firebasestorage.app",
+            messagingSenderId: "171441357303",
+            appId: "1:171441357303:web:c85dc841ee73f6f29e2ef2"
+        };
+        firebase.initializeApp(firebaseConfig);
+        const firestore = firebase.firestore();
+
+        // Lógica de Abas
+        function showTab(t){
+            ['cafes','receitas','preparo','log'].forEach(i=>{
+                document.getElementById('tab-'+i)?.classList.toggle('hidden', i!==t);
+                document.getElementById('btn-'+i)?.classList.toggle('active-tab', i===t);
+            });
+            if(t==='cafes') loadG();
+        }
+
+        // Guardar Grãos no Firestore
+        async function saveG() {
+            const grao = {
+                produtor: document.getElementById('g-prod').value,
+                nome: document.getElementById('g-nome').value,
+                torra: document.getElementById('g-torra').value,
+                data: document.getElementById('g-data').value,
+                timestamp: firebase.firestore.FieldValue.serverTimestamp()
+            };
+            await firestore.collection('cafes').add(grao);
+            alert('Grão guardado no Google!');
+            loadG();
+        }
+
+        // Carregar Grãos da Nuvem
+        async function loadG() {
+            const snap = await firestore.collection('cafes').orderBy('timestamp', 'desc').get();
+            let h = '';
+            snap.forEach(doc => {
+                const i = doc.data();
+                h += `<div class="card"><b>${i.nome}</b><br><small>${i.produtor} | ${i.torra}</small></div>`;
+            });
+            document.getElementById('list-g').innerHTML = h;
+        }
+
+        loadG();
+    </script>
+</body>
+</html>
