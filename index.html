@@ -2,7 +2,7 @@
 <html lang="pt-br">
 <head>
     <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coffee Master v5.8 Slim</title>
+    <title>Coffee Master v6.0</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
@@ -10,31 +10,22 @@
     <style>
         body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding-bottom:100px;zoom:1.15}
         .card{background:#161616;border-radius:20px;padding:16px;margin-bottom:14px;border:1px solid #262626;box-shadow:0 10px 40px rgba(0,0,0,0.6)}
-        
-        /* TÍTULOS: Ajuste de espaço para não empurrar os botões */
-        .label-gold{color:#f59e0b;font-size:9px;font-weight:900;text-transform:uppercase;margin-top:12px;margin-bottom:2px;margin-left:4px;letter-spacing:1px;display:block}
+        .label-gold{color:#f59e0b;font-size:9px;font-weight:900;text-transform:uppercase;margin-top:10px;margin-bottom:2px;margin-left:4px;letter-spacing:1px;display:block}
         .label-gold:first-child{margin-top:0}
-        
-        /* INPUTS SLIM: Menos padding para caber na tela */
         input,select,textarea{background:#222;border:1px solid #333;color:#fff;padding:10px 14px;border-radius:12px;width:100%;margin-bottom:2px;font-size:15px;font-weight:900;font-style:italic;-webkit-appearance:none}
         ::placeholder { color: #444; font-weight: 800; text-transform: uppercase; font-size: 10px; font-style: normal; }
-        
-        .btn-gold{background:#f59e0b;color:#000;font-weight:900;padding:16px;border-radius:16px;width:100%;text-transform:uppercase;font-size:14px;letter-spacing:1px;margin-top:14px}
+        .btn-gold{background:#f59e0b;color:#000;font-weight:900;padding:16px;border-radius:16px;width:100%;text-transform:uppercase;font-size:14px;letter-spacing:1px;margin-top:12px}
         .tab-btn{background:#111;color:#444;flex:1;padding:14px 5px;border-radius:12px;font-size:10px;font-weight:900;margin:3px;border:1px solid #222}
         .active-tab{background:#f59e0b;color:#000;border-color:#fbbf24}
-        
-        /* Ataques horizontais e minúsculos no preparo */
-        .step-box{background:#1f1f1f;padding:6px;border-radius:10px;text-align:center;border:1px solid #333;flex:1;min-width:60px}
+        .step-box{background:#1f1f1f;padding:6px;border-radius:10px;text-align:center;border:1px solid #333;flex:1;min-width:70px}
         .step-active{border-color:#f59e0b;background:#262626}
-        
         #pix-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:100;padding:20px;justify-content:center;align-items:center}
-        /* Ajuste do QR Code para fundo branco */
         #pix-qrcode img { border: 8px solid white; border-radius: 12px; margin: 0 auto; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
     <div class="flex justify-between items-center mb-4">
-        <h1 class="text-2xl font-black text-amber-500 italic uppercase leading-none">COFFEE MASTER</h1>
+        <h1 class="text-2xl font-black text-amber-500 italic uppercase">COFFEE MASTER</h1>
         <button onclick="openPix()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-amber-600 text-amber-500 italic uppercase">PAGAR CAFÉ ☕</button>
     </div>
     
@@ -53,13 +44,13 @@
             </div>
             <div class="flex gap-2">
                 <div style="width:25%"><span class="label-gold">Nº</span><input type="text" id="g-n" placeholder="00"></div>
-                <div style="flex:1"><span class="label-gold">Produtor</span><input type="text" id="g-prod" placeholder="EX: UNIQUE"></div>
+                <div style="flex:1"><span class="label-gold">Produtor</span><input type="text" id="g-prod" placeholder="NOME DO PRODUTOR"></div>
             </div>
             <span class="label-gold">Identificação do Grão</span>
             <input type="text" id="g-nome" placeholder="NOME DO CAFÉ">
             <div class="flex gap-2">
-                <div class="flex-1"><span class="label-gold">Torra</span><select id="g-torra"><option value="" disabled selected>SELECIONE</option><option>CLARA</option><option>MÉDIA</option><option>ESCURA</option></select></div>
-                <div class="flex-1"><span class="label-gold">Data</span><input type="date" id="g-data"></div>
+                <div class="flex-1"><span class="label-gold">Torra</span><select id="g-torra"><option value="" disabled selected>SELECIONE</option><option>CLARA</option><option>MÉDIA-CLARA</option><option>MÉDIA</option><option>ESCURA</option></select></div>
+                <div class="flex-1"><span class="label-gold">DATA DA TORRA</span><input type="date" id="g-data"></div>
             </div>
             <span class="label-gold">Notas Sensoriais</span>
             <textarea id="g-notas" placeholder="EX: CHOCOLATE..." rows="2" class="mb-1"></textarea>
@@ -71,13 +62,22 @@
     <div id="tab-receitas" class="hidden">
         <div class="card">
             <span class="label-gold">Nome da Receita</span>
-            <input type="text" id="r-nome" placeholder="EX: V60 PADRÃO">
+            <input type="text" id="r-nome" placeholder="EX: V60 GABRIEL">
             <span class="label-gold">Método</span>
             <select id="r-metodo"><option>V60</option><option>AEROPRESS</option><option>KOAR</option></select>
-            <div class="flex gap-3">
-                <div class="flex-1"><span class="label-gold">Ratio Sugerido (1:x)</span><input type="number" id="r-ratio" placeholder="15"></div>
+            
+            <div class="grid grid-cols-3 gap-2">
+                <div><span class="label-gold">Ratio</span><input type="number" id="r-ratio" placeholder="15"></div>
+                <div><span class="label-gold">Bloom(ml)</span><input type="number" id="r-bloom-ml" placeholder="45"></div>
+                <div><span class="label-gold">Tempo(s)</span><input type="number" id="r-bloom-sec" placeholder="45"></div>
             </div>
-            <button class="btn-gold w-full" onclick="saveR()">Salvar Receita</button>
+
+            <div id="ataques-container" class="mt-2 space-y-1">
+                </div>
+            
+            <button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-2 border border-dashed border-amber-900 w-full rounded-lg uppercase">+ ADICIONAR ATAQUE</button>
+
+            <button class="btn-gold w-full mt-4" onclick="saveR()">Salvar Receita</button>
         </div>
         <div id="list-r" class="space-y-3"></div>
     </div>
@@ -91,28 +91,22 @@
                 <div><span class="label-gold">Pó (g)</span><input type="number" id="p-po-val" value="15" oninput="upCalc()" class="text-center text-xl text-amber-500 font-black italic p-2"></div>
                 <div><span class="label-gold">Ratio</span><input type="number" id="p-ratio-val" value="15" oninput="upCalc()" class="text-center text-xl text-white font-black italic p-2"></div>
                 <div><span class="label-gold text-zinc-600">Clicks</span><input type="number" placeholder="--" class="text-center text-xl text-zinc-300 p-2"></div>
-                <div><span class="label-gold text-zinc-600">Temp</span><input type="number" placeholder="92" class="text-center text-xl text-zinc-300 p-2"></div>
+                <div><span class="label-gold text-zinc-600">Temp</span><input type="number" placeholder="--" class="text-center text-xl text-zinc-300 p-2"></div>
             </div>
 
             <div class="bg-zinc-900 rounded-xl py-3 px-4 mt-4 border border-zinc-800 flex justify-between items-center">
                 <div class="text-[9px] font-black text-zinc-500 uppercase italic">Água Total</div>
-                <div class="flex items-baseline gap-1">
-                    <div id="p-total" class="text-3xl font-black text-white italic leading-none">225</div>
-                    <div class="text-amber-500 font-black text-xs italic uppercase">ml</div>
-                </div>
+                <div class="flex items-baseline gap-1"><div id="p-total" class="text-3xl font-black text-white italic leading-none">225</div><div class="text-amber-500 font-black text-xs italic uppercase">ml</div></div>
             </div>
 
-            <div class="flex gap-2 mt-4 overflow-x-auto pb-1">
-                <div class="step-box step-active"><div class="text-[8px] text-amber-500 font-black">BLOOM</div><div class="text-base font-black italic">45ml</div><div class="text-[7px] text-zinc-500 font-bold">45s</div></div>
-                <div class="step-box"><div class="text-[8px] text-zinc-500 font-black">ATK 1</div><div class="text-base font-black italic text-zinc-400">90ml</div><div class="text-[7px] text-zinc-600">1:15</div></div>
-                <div class="step-box"><div class="text-[8px] text-zinc-500 font-black">ATK 2</div><div class="text-base font-black italic text-zinc-400">90ml</div><div class="text-[7px] text-zinc-600">2:15</div></div>
-            </div>
+            <div id="p-steps" class="flex gap-2 mt-4 overflow-x-auto pb-1">
+                </div>
             
             <div id="timer" class="text-5xl font-black my-5 text-center italic tracking-tighter leading-none">00:00</div>
             
             <div class="flex gap-2">
-                <button class="bg-green-700 text-white font-black py-3 rounded-xl flex-1 uppercase italic text-sm shadow-lg">Iniciar</button>
-                <button class="bg-zinc-800 text-zinc-400 font-black py-3 rounded-xl flex-[0.4] uppercase italic text-sm">Reset</button>
+                <button id="btn-timer-main" onclick="toggleTimer()" class="bg-green-700 text-white font-black py-3 rounded-xl flex-1 uppercase italic text-sm shadow-lg">Iniciar</button>
+                <button onclick="resetTimer()" class="bg-zinc-800 text-zinc-400 font-black py-3 rounded-xl flex-[0.4] uppercase italic text-sm">Reset</button>
             </div>
             <button class="bg-amber-600 text-black font-black py-3 rounded-xl w-full mt-2 uppercase italic text-sm">Finalizar</button>
         </div>
@@ -122,12 +116,9 @@
         <div class="card w-full text-center max-w-sm" onclick="event.stopPropagation()">
             <h3 class="text-amber-500 font-black mb-1 italic uppercase">Apoie o Projeto ☕</h3>
             <p class="text-[10px] text-zinc-400 mb-6 uppercase">Alan Douglas Pereira Rodrigues</p>
-            
             <div id="pix-qrcode" class="mb-5 inline-block"></div>
-            
             <input type="text" readonly value="alanpocos@gmail.com" class="text-center text-xs mb-2 p-3 bg-zinc-900 border-dashed border-zinc-700 text-amber-300">
-            <button onclick="copyPix()" class="btn-gold w-full mt-1">Copiar Chave Pix (E-mail)</button>
-            <button onclick="closePix()" class="text-[10px] font-bold text-zinc-600 mt-6 block w-full uppercase">Fechar</button>
+            <button onclick="copyPix()" class="btn-gold w-full mt-1">Copiar Chave Pix</button>
         </div>
     </div>
 
@@ -143,58 +134,64 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
-        function magicG() {
-            const txt = document.getElementById('g-magic').value;
-            if(txt) document.getElementById('g-nome').value = txt.split('\n')[0].toUpperCase();
-        }
+        let timer = null, seg = 0;
+        let activeSteps = [];
 
-        function showTab(t){
-            ['cafes','receitas','preparo'].forEach(i=>{
-                document.getElementById('tab-'+i)?.classList.toggle('hidden', i!==t);
-                document.getElementById('btn-'+i)?.classList.toggle('active-tab', i===t);
-            });
-            if(t==='cafes') loadG();
-            if(t==='receitas') loadR();
-            if(t==='preparo') loadPrep();
-        }
-
-        async function saveG() {
-            const btn = event.target; btn.innerText = "...", btn.disabled=true;
-            await db.collection('cafes').add({
-                n: document.getElementById('g-n').value,
-                prod: document.getElementById('g-prod').value,
-                nome: document.getElementById('g-nome').value,
-                torra: document.getElementById('g-torra').value,
-                data: document.getElementById('g-data').value,
-                notas: document.getElementById('g-notas').value,
-                ts: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            btn.innerText = "Salvar no Estoque", btn.disabled=false; loadG();
-        }
-
-        async function loadG() {
-            const snap = await db.collection('cafes').orderBy('ts', 'desc').limit(10).get();
-            let h = '';
-            snap.forEach(d => {
-                const i = d.data();
-                const dataFtd = i.data ? i.data.split('-').reverse().join('/') : '--/--';
-                h += `<div class="card p-3 border-l-4 border-l-amber-500 mb-2 shadow-none">
-                    <div class="flex justify-between items-start"><div class="flex-1"><div class="text-[9px] text-zinc-600 font-black uppercaseLeading-tight">#${i.n} ${i.prod}</div><div class="text-lg font-black italic uppercase leading-tight">${i.nome}</div></div><div class="text-[9px] font-black text-zinc-700 bg-zinc-900 px-2 py-1 rounded italic">${dataFtd}</div></div>
-                    <div class="mt-2 text-[8px] font-black text-amber-500 uppercase italic bg-zinc-900 px-2 py-1 rounded border border-zinc-800 inline-block">${i.torra}</div>
+        function addAtackField() {
+            const container = document.getElementById('ataques-container');
+            const id = container.children.length + 1;
+            const html = `
+                <div class="flex gap-2 items-end atk-row">
+                    <div class="flex-1"><span class="label-gold">${id}º ATK (ml)</span><input type="number" class="atk-ml" placeholder="00"></div>
+                    <div class="flex-1"><span class="label-gold">Tempo (s)</span><input type="number" class="atk-sec" placeholder="00"></div>
                 </div>`;
-            });
-            document.getElementById('list-g').innerHTML = h;
+            container.insertAdjacentHTML('beforeend', html);
         }
 
         async function saveR() {
-            const btn = event.target; btn.innerText = "...", btn.disabled=true;
+            const atks = [];
+            document.querySelectorAll('.atk-row').forEach(row => {
+                atks.push({
+                    ml: parseFloat(row.querySelector('.atk-ml').value) || 0,
+                    sec: parseFloat(row.querySelector('.atk-sec').value) || 0
+                });
+            });
+
             await db.collection('receitas').add({
                 nome: document.getElementById('r-nome').value.toUpperCase(),
                 metodo: document.getElementById('r-metodo').value,
                 ratio: parseFloat(document.getElementById('r-ratio').value),
+                bloomMl: parseFloat(document.getElementById('r-bloom-ml').value) || 0,
+                bloomSec: parseFloat(document.getElementById('r-bloom-sec').value) || 0,
+                ataques: atks,
                 ts: firebase.firestore.FieldValue.serverTimestamp()
             });
-            btn.innerText = "Salvar Receita", btn.disabled=false; loadR();
+            document.getElementById('ataques-container').innerHTML = '';
+            loadR();
+        }
+
+        function upCalc() {
+            const sR = document.getElementById('p-r');
+            const sel = sR.options[sR.selectedIndex];
+            if(sR.value == "0") return;
+
+            const ratio = parseFloat(sR.value);
+            const po = parseFloat(document.getElementById('p-po-val').value) || 0;
+            const total = Math.round(po * ratio);
+            document.getElementById('p-total').innerText = total;
+            document.getElementById('p-ratio-val').value = ratio;
+
+            // Puxar ataques da receita (armazenados no atributo data-atks)
+            const bloomMl = parseFloat(sel.getAttribute('data-bloom'));
+            const bloomSec = parseFloat(sel.getAttribute('data-sec'));
+            const atks = JSON.parse(sel.getAttribute('data-atks') || '[]');
+
+            let h = `<div class="step-box step-active"><div class="text-[8px] text-amber-500 font-black">BLOOM</div><div class="text-base font-black italic">${bloomMl}ml</div><div class="text-[7px] text-zinc-500 font-bold">${bloomSec}s</div></div>`;
+            
+            atks.forEach((a, idx) => {
+                h += `<div class="step-box"><div class="text-[8px] text-zinc-500 font-black">ATK ${idx+1}</div><div class="text-base font-black italic text-zinc-400">${a.ml}ml</div><div class="text-[7px] text-zinc-600 font-bold">${a.sec}s</div></div>`;
+            });
+            document.getElementById('p-steps').innerHTML = h;
         }
 
         async function loadR() {
@@ -203,8 +200,8 @@
             snap.forEach(d => {
                 const i = d.data();
                 h += `<div class="card p-3 border-l-4 border-l-zinc-700 mb-2">
-                    <div class="text-xl font-black italic uppercase text-amber-500 leading-tight">${i.nome}</div>
-                    <div class="text-[9px] text-zinc-500 uppercase font-bold mt-1">${i.metodo} | Ratio 1:${i.ratio}</div>
+                    <div class="text-xl font-black italic uppercase text-amber-500">${i.nome}</div>
+                    <div class="text-[9px] text-zinc-500 uppercase font-bold mt-1">${i.metodo} | Ratio 1:${i.ratio} | ${i.ataques?.length || 0} Ataques</div>
                 </div>`;
             });
             document.getElementById('list-r').innerHTML = h;
@@ -214,43 +211,35 @@
             const [gc, rc] = await Promise.all([db.collection('cafes').get(), db.collection('receitas').get()]);
             let gh = '', rh = '<option value="0">Selecione a Receita</option>';
             gc.forEach(d => gh += `<option value="${d.id}">#${d.data().n} - ${d.data().nome.toUpperCase()}</option>`);
-            rc.forEach(d => rh += `<option value="${d.data().ratio}">${d.data().nome.toUpperCase()} (${d.data().metodo})</option>`);
+            rc.forEach(d => {
+                const i = d.data();
+                rh += `<option value="${i.ratio}" data-bloom="${i.bloomMl}" data-sec="${i.bloomSec}" data-atks='${JSON.stringify(i.ataques || [])}'>${i.nome}</option>`;
+            });
             document.getElementById('p-g').innerHTML = gh;
             document.getElementById('p-r').innerHTML = rh;
-            upCalc();
         }
 
-        function upCalc() {
-            // Se mudou a receita, atualiza o ratio no input
-            const sR = document.getElementById('p-r');
-            if(sR.value != "0") document.getElementById('p-ratio-val').value = sR.value;
-
-            const po = parseFloat(document.getElementById('p-po-val').value) || 0;
-            const ratio = parseFloat(document.getElementById('p-ratio-val').value) || 0;
-            document.getElementById('p-total').innerText = Math.round(po * ratio);
-        }
-
-        // Lógica Pix com Gerador de QR Code
-        const pixChave = "alanpocos@gmail.com";
-        const pixNome = "ALAN DOUGLAS PEREIRA RODRIGUES";
-        let qrObj = null;
-
-        function openPix(){ 
-            document.getElementById('pix-modal').style.display = 'flex'; 
-            if(!qrObj){
-                // Padrão Pix estático simplificado
-                const pixPayload = `00020101021126480014br.gov.bcb.pix0119${pixChave}5204000053039865802BR5930${pixNome.substring(0,25)}6005POCOS6304`;
-                qrObj = new QRCode(document.getElementById("pix-qrcode"), {
-                    text: pixPayload,
-                    width: 160, height: 160,
-                    colorDark : "#000000", colorLight : "#ffffff",
-                    correctLevel : QRCode.CorrectLevel.M
-                });
+        function toggleTimer() {
+            const btn = document.getElementById('btn-timer-main');
+            if(timer) { clearInterval(timer); timer = null; btn.innerText = "CONTINUAR"; }
+            else {
+                timer = setInterval(() => {
+                    seg++;
+                    const m = Math.floor(seg/60).toString().padStart(2,'0');
+                    const s = (seg%60).toString().padStart(2,'0');
+                    document.getElementById('timer').innerText = `${m}:${s}`;
+                }, 1000);
+                btn.innerText = "PAUSAR";
             }
         }
-        function closePix(){ document.getElementById('pix-modal').style.display = 'none'; }
-        function copyPix(){ navigator.clipboard.writeText(pixChave); alert('E-mail Pix copiado!'); }
-
+        function resetTimer() { clearInterval(timer); timer = null; seg = 0; document.getElementById('timer').innerText = "00:00"; document.getElementById('btn-timer-main').innerText = "INICIAR"; }
+        function openPix(){ document.getElementById('pix-modal').style.display='flex'; if(!document.querySelector("#pix-qrcode img")) new QRCode(document.getElementById("pix-qrcode"), {text: "00020101021126480014br.gov.bcb.pix0119alanpocos@gmail.com5204000053039865802BR5930ALAN DOUGLAS PEREIRA RODRIGUES6005POCOS6304", width: 140, height: 140}); }
+        function closePix(){ document.getElementById('pix-modal').style.display='none'; }
+        function copyPix(){ navigator.clipboard.writeText("alanpocos@gmail.com"); alert('Pix copiado!'); }
+        function magicG() { const t = document.getElementById('g-magic').value; if(t) document.getElementById('g-nome').value = t.split('\n')[0].toUpperCase(); }
+        function showTab(t){ ['cafes','receitas','preparo'].forEach(i=>{ document.getElementById('tab-'+i).classList.toggle('hidden', i!==t); document.getElementById('btn-'+i).classList.toggle('active-tab', i===t); }); if(t==='cafes') loadG(); if(t==='receitas') loadR(); if(t==='preparo') loadPrep(); }
+        async function saveG() { await db.collection('cafes').add({ n: document.getElementById('g-n').value, prod: document.getElementById('g-prod').value, nome: document.getElementById('g-nome').value, torra: document.getElementById('g-torra').value, data: document.getElementById('g-data').value, notas: document.getElementById('g-notas').value, ts: firebase.firestore.FieldValue.serverTimestamp() }); loadG(); }
+        async function loadG() { const snap = await db.collection('cafes').orderBy('ts', 'desc').limit(10).get(); let h = ''; snap.forEach(d => { const i = d.data(); const df = i.data ? i.data.split('-').reverse().join('/') : '--/--'; h += `<div class="card p-3 border-l-4 border-l-amber-500 mb-2 shadow-none"><div class="flex justify-between items-start"><div class="flex-1"><div class="text-[9px] text-zinc-600 font-black">#${i.n} ${i.prod}</div><div class="text-lg font-black italic uppercase leading-tight">${i.nome}</div></div><div class="text-[9px] font-black text-zinc-700 bg-zinc-900 px-2 py-1 rounded italic">${df}</div></div><div class="mt-2 text-[8px] font-black text-amber-500 uppercase italic bg-zinc-900 px-2 py-1 rounded border border-zinc-800 inline-block">${i.torra}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
         loadG();
     </script>
 </body>
