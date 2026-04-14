@@ -1,43 +1,48 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coffee Master v7.1 - Restaurado</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Coffee Master v7.2 - Cloud Advanced</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body{background:#0a0a0a;color:#fff;font-family:sans-serif;padding-bottom:100px;zoom:1.15}
-        .card{background:#161616;border-radius:20px;padding:16px;margin-bottom:14px;border:1px solid #262626;box-shadow:0 10px 40px rgba(0,0,0,0.6)}
-        .label-gold{color:#f59e0b;font-size:9px;font-weight:900;text-transform:uppercase;margin-top:10px;margin-bottom:2px;margin-left:4px;letter-spacing:1px;display:block}
-        .label-gold:first-child{margin-top:0}
+        body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding-bottom: 120px; zoom: 1.15; }
+        .card { background: #161616; border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid #262626; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         
-        input,select,textarea{background:#222;border:2px solid #333;color:#fff;padding:12px;border-radius:12px;width:100%;margin-bottom:4px;font-size:16px;font-weight:900;font-style:italic;-webkit-appearance:none}
-        select { color: #fff !important; font-weight: 900 !important; font-style: italic !important; }
+        .label-gold { color: #f59e0b; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-top: 22px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
+        .label-gold:first-child { margin-top: 0; }
+
+        input, select, textarea { background: #222; border: 2px solid #333; color: #fff; padding: 14px; border-radius: 12px; width: 100%; margin-bottom: 4px; font-size: 16px; font-weight: 900; font-style: italic; -webkit-appearance: none; }
         
+        /* Estilo SELECIONAR (Igual ao placeholder) */
+        .placeholder-style { color: #555 !important; font-weight: 800 !important; font-style: italic !important; }
         ::placeholder { color: #555; font-weight: 800; text-transform: uppercase; font-size: 11px; font-style: normal; }
-        .btn-gold{background:#f59e0b;color:#000;font-weight:900;padding:16px;border-radius:16px;width:100%;text-transform:uppercase;font-size:14px;letter-spacing:1px;margin-top:12px}
-        .tab-btn{background:#111;color:#444;flex:1;padding:14px 5px;border-radius:12px;font-size:10px;font-weight:900;margin:3px;border:1px solid #222}
-        .active-tab{background:#f59e0b;color:#000;border-color:#fbbf24}
         
-        .step-box{background:#161616;padding:8px;border-radius:12px;text-align:center;border:2px solid #262626;flex:1;min-width:90px;transition: all 0.3s ease}
-        .step-box-active{border-color:#f59e0b !important;box-shadow: 0 0 10px rgba(245,158,11,0.2)}
-        
-        #pix-modal{display:none;position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,0.95);z-index:100;padding:20px;justify-content:center;align-items:center}
+        .btn-gold { background: #f59e0b; color: #000; font-weight: 900; padding: 18px; border-radius: 18px; width: 100%; text-transform: uppercase; font-size: 14px; margin-top: 15px; cursor: pointer; }
+        .tab-btn { background: #111; color: #444; flex: 1; padding: 16px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
+        .active-tab { background: #f59e0b; color: #000; border-color: #fbbf24; }
+
+        .step-box { background: #161616; padding: 10px; border-radius: 14px; text-align: center; border: 2px solid #262626; flex: 1; min-width: 95px; transition: all 0.3s; }
+        .step-box-active { border-color: #f59e0b !important; box-shadow: 0 0 15px rgba(245,158,11,0.2); }
+
+        #pix-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 100; padding: 20px; justify-content: center; align-items: center; }
         #pix-qrcode img { border: 8px solid white; border-radius: 12px; margin: 0 auto; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
-    <div class="flex justify-between items-center mb-4">
-        <h1 class="text-2xl font-black text-amber-500 italic uppercase leading-none">COFFEE MASTER</h1>
+    <div class="flex justify-between items-center mb-5">
+        <h1 class="text-2xl font-black text-amber-500 italic uppercase">COFFEE MASTER</h1>
         <button onclick="openPix()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-amber-600 text-amber-500 italic uppercase">PAGAR CAFÉ ☕</button>
     </div>
     
-    <div class="flex mb-6 bg-black p-1 rounded-2xl sticky top-2 z-50 border border-zinc-800 shadow-2xl">
+    <div class="flex mb-8 bg-black p-1 rounded-2xl sticky top-2 z-50 border border-zinc-800 shadow-2xl">
         <button id="btn-cafes" class="tab-btn active-tab" onclick="showTab('cafes')">GRÃOS</button>
         <button id="btn-receitas" class="tab-btn" onclick="showTab('receitas')">RECEITAS</button>
         <button id="btn-preparo" class="tab-btn" onclick="showTab('preparo')">PREPARAR</button>
+        <button id="btn-diario" class="tab-btn" onclick="showTab('diario')">DIÁRIO</button>
     </div>
 
     <div id="tab-cafes">
@@ -45,7 +50,7 @@
             <span class="label-gold">Carga Mágica</span>
             <div class="flex gap-2 mb-2">
                 <input type="text" id="g-magic" placeholder="Cole o código..." class="mb-0 flex-1">
-                <button class="bg-zinc-800 px-3 rounded-xl font-black text-[9px] text-amber-500 border border-zinc-700" onclick="magicG()">MÁGICA</button>
+                <button class="bg-zinc-800 px-3 rounded-xl font-black text-[9px] text-amber-500" onclick="magicG()">MÁGICA</button>
             </div>
             <div class="flex gap-2">
                 <div style="width:25%"><span class="label-gold">Nº</span><input type="text" id="g-n" placeholder="00"></div>
@@ -56,23 +61,25 @@
             <div class="flex gap-2">
                 <div class="flex-1">
                     <span class="label-gold">Torra</span>
-                    <select id="g-torra">
-                        <option value="" disabled selected>SELECIONE</option>
-                        <option>CLARA</option><option>MÉDIA-CLARA</option><option>MÉDIA</option><option>ESCURA</option>
+                    <select id="g-torra" class="placeholder-style" onchange="this.classList.remove('placeholder-style')">
+                        <option value="" disabled selected>SELECIONAR</option>
+                        <option class="text-white">CLARA</option><option class="text-white">MÉDIA-CLARA</option><option class="text-white">MÉDIA</option><option class="text-white">ESCURA</option>
                     </select>
                 </div>
-                <div class="flex-1"><span class="label-gold">DATA DA TORRA</span><input type="date" id="g-data"></div>
+                <div class="flex-1">
+                    <span class="label-gold">DATA DA TORRA</span>
+                    <input type="date" id="g-data" class="placeholder-style" onfocus="this.classList.remove('placeholder-style')">
+                </div>
             </div>
             <span class="label-gold">Notas Sensoriais</span>
-            <textarea id="g-notas" placeholder="EX: CHOCOLATE..." rows="2" class="mb-1"></textarea>
-            
-            <div id="g-edit-actions" class="hidden flex gap-2 mt-3">
-                <button class="btn-gold w-full mt-0" onclick="saveG()" id="g-btn-save">Atualizar Grão</button>
-                <button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.5] text-xs uppercase" onclick="cancelEdit('g')">Canc.</button>
+            <textarea id="g-notas" placeholder="EX: CHOCOLATE, MEL..." rows="2"></textarea>
+            <div id="g-edit-actions" class="hidden flex gap-2 mt-4">
+                <button class="btn-gold flex-1 mt-0" onclick="saveG()" id="g-btn-save">Atualizar Grão</button>
+                <button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3] text-xs uppercase" onclick="cancelEdit('g')">Canc.</button>
             </div>
             <button class="btn-gold w-full" onclick="saveG()" id="g-btn-main">Salvar no Estoque</button>
         </div>
-        <div id="list-g" class="space-y-3"></div>
+        <div id="list-g" class="space-y-3 mt-6"></div>
     </div>
 
     <div id="tab-receitas" class="hidden">
@@ -81,59 +88,56 @@
             <input type="text" id="r-nome" placeholder="EX: V60 GABRIEL">
             <span class="label-gold">Método</span>
             <select id="r-metodo"><option>V60</option><option>AEROPRESS</option><option>KOAR</option></select>
-            
-            <div class="bg-zinc-900 p-3 rounded-xl border border-dashed border-zinc-700 mt-2 mb-1">
+            <div class="bg-zinc-900 p-3 rounded-xl border border-dashed border-zinc-700 mt-4">
+                <div class="text-[9px] font-black text-amber-600 mb-2 uppercase text-center tracking-widest">Base de Cálculo Original</div>
                 <div class="grid grid-cols-3 gap-2">
                     <div><span class="label-gold mt-0">Ratio</span><input type="number" id="r-ratio-base" placeholder="15"></div>
                     <div><span class="label-gold mt-0">Pó Base(g)</span><input type="number" id="r-po-base" placeholder="20"></div>
-                    <div><span class="label-gold mt-0">Total Água</span><input type="number" id="r-total-base" readonly class="text-zinc-500 font-black"></div>
+                    <div><span class="label-gold mt-0">Água Total</span><input type="number" id="r-total-base" readonly placeholder="300" class="text-zinc-500"></div>
                 </div>
             </div>
-
-            <div class="grid grid-cols-2 gap-2 mt-2">
-                <div><span class="label-gold">Bloom (ml)</span><input type="number" id="r-bloom-ml" placeholder="45"></div>
+            <div class="grid grid-cols-2 gap-2 mt-4">
+                <div><span class="label-gold">Bloom (ml original)</span><input type="number" id="r-bloom-ml" placeholder="45"></div>
                 <div><span class="label-gold">Tempo (s)</span><input type="number" id="r-bloom-sec" placeholder="45"></div>
             </div>
-
             <div id="ataques-container" class="mt-2 space-y-1"></div>
-            <button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-2 border border-dashed border-amber-900 w-full rounded-lg uppercase bg-black shadow-inner">+ ADICIONAR ATAQUE</button>
-
-            <div id="r-edit-actions" class="hidden flex gap-2 mt-4">
-                <button class="btn-gold w-full mt-0" onclick="saveR()" id="r-btn-save">Atualizar Receita</button>
-                <button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.5] text-xs uppercase" onclick="cancelEdit('r')">Canc.</button>
+            <button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase bg-black shadow-inner">+ ADICIONAR ATAQUE</button>
+            <div id="r-edit-actions" class="hidden flex gap-2 mt-5">
+                <button class="btn-gold flex-1 mt-0" onclick="saveR()" id="r-btn-save">Atualizar Receita</button>
+                <button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3] text-xs uppercase" onclick="cancelEdit('r')">Canc.</button>
             </div>
-            <button class="btn-gold w-full mt-4" onclick="saveR()" id="r-btn-main">Salvar Receita</button>
+            <button class="btn-gold w-full mt-5" onclick="saveR()" id="r-btn-main">Salvar Receita</button>
         </div>
-        <div id="list-r" class="space-y-3"></div>
+        <div id="list-r" class="space-y-3 mt-6"></div>
     </div>
 
     <div id="tab-preparo" class="hidden">
-        <div class="card border-amber-600 bg-black p-4">
-            <select id="p-g" onchange="upCalc()" class="mb-1 text-sm"></select>
-            <select id="p-r" onchange="upCalc()" class="mb-2 text-sm"></select>
-            
-            <div class="grid grid-cols-4 gap-2 text-center mt-2">
-                <div><span class="label-gold">Pó(g)</span><input type="number" id="p-po-val" value="15" oninput="upCalc()" class="text-center text-xl text-amber-500 font-black italic bg-transparent border-none"></div>
-                <div><span class="label-gold">Ratio</span><input type="number" id="p-ratio-val" value="15" oninput="upCalc()" class="text-center text-xl text-white font-black italic bg-transparent border-none"></div>
-                <div><span class="label-gold text-zinc-600">Clicks</span><input type="number" placeholder="--" class="text-center text-xl text-zinc-300 bg-transparent border-none"></div>
-                <div><span class="label-gold text-zinc-600">Temp</span><input type="number" placeholder="--" class="text-center text-xl text-zinc-300 bg-transparent border-none"></div>
+        <div class="card border-amber-600 bg-black p-5">
+            <select id="p-g" onchange="upCalc()" class="mb-2 text-sm"></select>
+            <select id="p-r" onchange="upCalc()" class="mb-4 text-sm"></select>
+            <div class="grid grid-cols-4 gap-2 text-center">
+                <div><span class="label-gold mt-0">Pó (g)</span><input type="number" id="p-po-val" value="15" oninput="upCalc()" class="text-center text-xl text-amber-500 font-black bg-transparent border-none"></div>
+                <div><span class="label-gold mt-0">Ratio</span><input type="number" id="p-ratio-val" value="15" oninput="upCalc()" class="text-center text-xl text-white font-black bg-transparent border-none"></div>
+                <div><span class="label-gold mt-0 text-zinc-600">Clicks</span><input type="number" id="p-clicks" placeholder="--" class="text-center text-xl text-zinc-300 bg-transparent border-none"></div>
+                <div><span class="label-gold mt-0 text-zinc-600">Temp</span><input type="number" id="p-temp" placeholder="--" class="text-center text-xl text-zinc-300 bg-transparent border-none"></div>
             </div>
-
-            <div class="bg-zinc-900 rounded-xl py-3 px-4 mt-5 border border-zinc-800 flex justify-between items-center">
-                <span class="text-[9px] font-black text-zinc-500 uppercase italic">Água Total</span>
-                <div class="flex items-baseline gap-1"><div id="p-total" class="text-3xl font-black text-white italic">225</div><span class="text-amber-500 font-black text-xs uppercase italic">ml</span></div>
+            <div class="bg-zinc-900 rounded-2xl py-4 px-5 mt-6 border border-zinc-800 flex justify-between items-center">
+                <span class="text-[10px] font-black text-zinc-500 uppercase italic">Água Total ( ml )</span>
+                <div><span id="p-total" class="text-4xl font-black text-white italic">225</span><span class="text-amber-500 text-sm ml-1">ml</span></div>
             </div>
-
-            <div id="p-steps" class="flex gap-2 mt-4 overflow-x-auto pb-1 scroll-smooth"></div>
-            
-            <div id="timer" class="text-5xl font-black my-5 text-center italic tracking-tighter leading-none">00:00</div>
-            
-            <div class="flex gap-2">
-                <button id="btn-timer-main" onclick="toggleTimer()" class="bg-green-700 text-white font-black py-3 rounded-xl flex-1 uppercase italic text-sm shadow-lg">Iniciar</button>
-                <button onclick="resetTimer()" class="bg-zinc-800 text-zinc-400 font-black py-3 rounded-xl flex-[0.4] uppercase italic text-sm">Reset</button>
+            <div id="p-steps" class="flex gap-3 mt-6 overflow-x-auto pb-2 scroll-smooth"></div>
+            <div id="timer" class="text-6xl font-black my-6 text-center italic tracking-tighter">00:00</div>
+            <div class="flex gap-3">
+                <button id="btn-timer-main" onclick="toggleTimer()" class="bg-green-700 text-white font-black py-4 rounded-xl flex-1 text-sm uppercase">Iniciar</button>
+                <button onclick="resetTimer()" class="bg-zinc-800 text-zinc-400 font-black py-4 rounded-xl flex-[0.4] text-sm uppercase">Reset</button>
             </div>
-            <button class="bg-amber-600 text-black font-black py-3 rounded-xl w-full mt-2 uppercase italic text-sm">Finalizar</button>
+            <button onclick="finalizarPreparo()" class="bg-amber-600 text-black font-black py-4 rounded-xl w-full mt-3 text-sm uppercase">Finalizar Preparo</button>
         </div>
+    </div>
+
+    <div id="tab-diario" class="hidden">
+        <h2 class="text-amber-500 font-black uppercase italic mb-4">Histórico de Preparos</h2>
+        <div id="list-logs" class="space-y-3"></div>
     </div>
 
     <div id="pix-modal" onclick="closePix()">
@@ -149,155 +153,162 @@
         const firebaseConfig = { apiKey: "AIzaSyCbIsrGjuu6KN-A0xpZUC6ID9aOHBEIJSE", authDomain: "coffee-master-e1f5c.firebaseapp.com", projectId: "coffee-master-e1f5c", storageBucket: "coffee-master-e1f5c.firebasestorage.app", messagingSenderId: "171441357303", appId: "1:171441357303:web:c85dc841ee73f6f29e2ef2" };
         firebase.initializeApp(firebaseConfig); const db = firebase.firestore();
 
-        let timer = null, seg = 0, editIds = { g: null, r: null }, activeStepsData = { steps: [], cumulativeTimes: [], totalSegs: 0 };
-        let currentStepHighlightIdx = -1;
+        let timer = null, seg = 0, editIds = { g: null, r: null }, activeStepsData = { steps: [], times: [], total: 0 };
 
-        // Cadastro dinâmico
         ['r-ratio-base', 'r-po-base'].forEach(id => {
-            const el = document.getElementById(id);
-            if(el) el.addEventListener('input', () => { 
-                const r = parseFloat(document.getElementById('r-ratio-base').value) || 0; 
-                const p = parseFloat(document.getElementById('r-po-base').value) || 0; 
-                document.getElementById('r-total-base').value = Math.round(r * p); 
-            }); 
+            document.getElementById(id).addEventListener('input', () => {
+                const r = parseFloat(document.getElementById('r-ratio-base').value) || 0;
+                const p = parseFloat(document.getElementById('r-po-base').value) || 0;
+                document.getElementById('r-total-base').value = Math.round(r * p);
+            });
         });
 
-        function addAtackField(ml = '', sec = '') { 
-            const container = document.getElementById('ataques-container'); 
-            const id = container.children.length + 1; 
-            const html = `<div class="flex gap-2 items-end atk-row"><div class="flex-1"><span class="label-gold">${id}º ATK (ml)</span><input type="number" class="atk-ml" placeholder="00" value="${ml}"></div><div class="flex-1"><span class="label-gold">Tempo (s)</span><input type="number" class="atk-sec" placeholder="00" value="${sec}"></div><button onclick="this.closest('.atk-row').remove()" class="bg-zinc-900 text-zinc-600 px-3 py-3 rounded-xl mb-1 text-xs">X</button></div>`; 
-            container.insertAdjacentHTML('beforeend', html); 
+        function addAtackField(ml = '', sec = '') {
+            const container = document.getElementById('ataques-container');
+            const id = container.children.length + 1;
+            const html = `<div class="flex gap-2 items-end atk-row"> <div class="flex-1"><span class="label-gold">${id}º ATK</span><input type="number" class="atk-ml" placeholder="ml" value="${ml}"></div> <div class="flex-1"><span class="label-gold">Tempo</span><input type="number" class="atk-sec" placeholder="s" value="${sec}"></div> <button onclick="this.closest('.atk-row').remove()" class="bg-zinc-900 border border-zinc-700 text-zinc-600 px-3 py-3 rounded-xl mb-1 font-black">X</button> </div>`;
+            container.insertAdjacentHTML('beforeend', html);
         }
 
-        async function saveG() { 
-            const d = { 
-                n: document.getElementById('g-n').value, 
-                prod: document.getElementById('g-prod').value.toUpperCase(), 
-                nome: document.getElementById('g-nome').value.toUpperCase(), 
-                torra: document.getElementById('g-torra').value, 
-                data: document.getElementById('g-data').value, 
-                notas: document.getElementById('g-notas').value.toUpperCase(), 
-                ts: firebase.firestore.FieldValue.serverTimestamp() 
-            }; 
-            if (editIds.g) { await db.collection('cafes').doc(editIds.g).update(d); cancelEdit('g'); } 
-            else { await db.collection('cafes').add(d); document.querySelectorAll('#tab-cafes input, #tab-cafes textarea').forEach(i=>i.value=''); } 
-            loadG(); 
+        async function saveG() {
+            const data = { n: document.getElementById('g-n').value, prod: document.getElementById('g-prod').value.toUpperCase(), nome: document.getElementById('g-nome').value.toUpperCase(), torra: document.getElementById('g-torra').value, data: document.getElementById('g-data').value, notas: document.getElementById('g-notas').value.toUpperCase(), ts: firebase.firestore.FieldValue.serverTimestamp() };
+            if (editIds.g) { await db.collection('cafes').doc(editIds.g).update(data); cancelEdit('g'); } 
+            else { await db.collection('cafes').add(data); resetG(); }
+            loadG();
         }
 
-        async function loadG() { 
-            const snap = await db.collection('cafes').orderBy('ts', 'desc').get(); 
-            let h = ''; 
-            snap.forEach(d => { 
-                const i = d.data(); 
-                h += `
-                <div class="card p-4 flex justify-between items-center border border-zinc-800">
-                    <div class="flex-1">
-                        <div class="text-[10px] text-zinc-600 font-black uppercase">#${i.n} ${i.prod}</div>
-                        <div class="text-xl font-black italic uppercase text-white mt-1 leading-tight">${i.nome}</div>
-                        <div class="mt-3 text-[10px] font-black text-amber-600 uppercase italic bg-black inline-block px-3 py-1 rounded-lg border border-amber-900">${i.torra}</div>
-                    </div>
-                    <div class="flex gap-1 ml-3">
-                        <button onclick='startEditGrao("${d.id}", ${JSON.stringify(i).replace(/'/g, "&apos;")})' class="text-xl p-3 bg-zinc-900 rounded-2xl border border-dashed border-zinc-700">✏️</button>
-                        <button onclick='deleteItem("cafes", "${d.id}", "${i.nome}")' class="text-xl p-3 bg-zinc-900 rounded-2xl border border-dashed border-red-900">🗑️</button>
-                    </div>
-                </div>`; 
-            }); 
-            document.getElementById('list-g').innerHTML = h; 
+        async function saveR() {
+            const totalBase = parseFloat(document.getElementById('r-total-base').value) || 0;
+            const bloom = parseFloat(document.getElementById('r-bloom-ml').value) || 0;
+            const atks = []; let soma = bloom;
+            document.querySelectorAll('.atk-row').forEach(row => {
+                const val = parseFloat(row.querySelector('.atk-ml').value) || 0;
+                soma += val;
+                atks.push({ ml: val, sec: parseFloat(row.querySelector('.atk-sec').value) || 0 });
+            });
+            if (Math.round(soma) !== Math.round(totalBase)) { alert(`Soma incorreta! Total esperado: ${totalBase}ml. Sua soma: ${soma}ml.`); return; }
+            const data = { nome: document.getElementById('r-nome').value.toUpperCase(), metodo: document.getElementById('r-metodo').value, origRatio: parseFloat(document.getElementById('r-ratio-base').value), origPo: parseFloat(document.getElementById('r-po-base').value), origTotal: totalBase, bloomMl: bloom, bloomSec: parseFloat(document.getElementById('r-bloom-sec').value), ataques: atks, ts: firebase.firestore.FieldValue.serverTimestamp() };
+            if (editIds.r) { await db.collection('receitas').doc(editIds.r).update(data); cancelEdit('r'); }
+            else { await db.collection('receitas').add(data); cancelEdit('r'); }
+            loadR();
         }
 
-        async function saveR() { 
-            const atks = []; 
-            document.querySelectorAll('#ataques-container .atk-row').forEach(row => { atks.push({ ml: parseFloat(row.querySelector('.atk-ml').value) || 0, sec: parseFloat(row.querySelector('.atk-sec').value) || 0 }); }); 
-            const d = { 
-                nome: document.getElementById('r-nome').value.toUpperCase(), 
-                metodo: document.getElementById('r-metodo').value, 
-                origRatio: parseFloat(document.getElementById('r-ratio-base').value), 
-                origPo: parseFloat(document.getElementById('r-po-base').value), 
-                origTotal: parseFloat(document.getElementById('r-total-base').value), 
-                bloomMl: parseFloat(document.getElementById('r-bloom-ml').value), 
-                bloomSec: parseFloat(document.getElementById('r-bloom-sec').value), 
-                ataques: atks, 
-                ts: firebase.firestore.FieldValue.serverTimestamp() 
-            }; 
-            if (editIds.r) { await db.collection('receitas').doc(editIds.r).update(d); cancelEdit('r'); } 
-            else { await db.collection('receitas').add(d); cancelEdit('r'); } 
-            loadR(); 
+        async function loadG() {
+            const s = await db.collection('cafes').orderBy('ts', 'desc').get(); let h = '';
+            s.forEach(d => {
+                const i = d.data(); const df = i.data ? i.data.split('-').reverse().join('/') : '--/--';
+                h += `<div class="card p-4 flex justify-between items-center border border-zinc-800"><div class="flex-1"><div class="text-[10px] text-zinc-600 font-black">#${i.n} <span class="text-white">${i.prod}</span></div><div class="text-xl font-black italic uppercase text-white mt-1">${i.nome}</div><div class="mt-3 text-[10px] font-black text-amber-600 uppercase bg-black px-3 py-1 rounded-lg border border-amber-900 leading-none">${i.torra}</div></div><div class="flex gap-2"><button onclick='editG("${d.id}", ${JSON.stringify(i)})' class="text-xl p-3 bg-zinc-900 rounded-2xl">✏️</button><button onclick='del("cafes","${d.id}","${i.nome}")' class="text-xl p-3 bg-zinc-900 rounded-2xl">🗑️</button></div></div>`;
+            });
+            document.getElementById('list-g').innerHTML = h;
         }
 
-        async function loadR() { 
-            const snap = await db.collection('receitas').orderBy('ts', 'desc').get(); 
-            let h = ''; 
-            snap.forEach(d => { 
-                const i = d.data(); 
-                h += `
-                <div class="card p-4 flex justify-between items-center border border-zinc-800">
-                    <div class="flex-1">
-                        <div class="text-xl font-black italic uppercase text-amber-500">${i.nome}</div>
-                        <div class="text-[10px] text-zinc-500 uppercase font-black italic mt-1 border border-zinc-800 bg-black inline-block px-2 py-1 rounded-lg">Ratio 1:${i.origRatio} | ${i.metodo}</div>
-                    </div>
-                    <div class="flex gap-1 ml-3">
-                        <button onclick='startEditReceita("${d.id}", ${JSON.stringify(i).replace(/'/g, "&apos;")})' class="text-xl p-3 bg-zinc-900 rounded-2xl border border-dashed border-zinc-700">✏️</button>
-                        <button onclick='deleteItem("receitas", "${d.id}", "${i.nome}")' class="text-xl p-3 bg-zinc-900 rounded-2xl border border-dashed border-red-900">🗑️</button>
-                    </div>
-                </div>`; 
-            }); 
-            document.getElementById('list-r').innerHTML = h; 
+        async function loadR() {
+            const s = await db.collection('receitas').orderBy('ts', 'desc').get(); let h = '';
+            s.forEach(d => {
+                const i = d.data();
+                h += `<div class="card p-4 flex justify-between items-center border border-zinc-800"><div class="flex-1"><div class="text-xl font-black italic uppercase text-amber-500">${i.nome}</div><div class="text-[10px] text-zinc-500 font-black italic mt-1 leading-tight border border-zinc-800 bg-black inline-block px-2 py-1 rounded-lg">Ratio 1:${i.origRatio} | Base ${i.origPo}g | ${i.ataques?.length || 0} ATK | ${i.metodo}</div></div><div class="flex gap-2"><button onclick='editR("${d.id}", ${JSON.stringify(i)})' class="text-xl p-3 bg-zinc-900 rounded-2xl">✏️</button><button onclick='del("receitas","${d.id}","${i.nome}")' class="text-xl p-3 bg-zinc-900 rounded-2xl">🗑️</button></div></div>`;
+            });
+            document.getElementById('list-r').innerHTML = h;
         }
 
-        function startEditGrao(id, i) { editIds.g = id; document.getElementById('g-n').value = i.n; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-torra').value = i.torra; document.getElementById('g-data').value = i.data; document.getElementById('g-notas').value = i.notas; document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
-        function startEditReceita(id, i) { editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = i.metodo; document.getElementById('r-ratio-base').value = i.origRatio; document.getElementById('r-po-base').value = i.origPo; document.getElementById('r-total-base').value = i.origTotal; document.getElementById('r-bloom-ml').value = i.bloomMl; document.getElementById('r-bloom-sec').value = i.bloomSec; document.getElementById('ataques-container').innerHTML = ''; if(i.ataques) i.ataques.forEach(a => addAtackField(a.ml, a.sec)); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
-        function cancelEdit(tab) { editIds[tab] = null; document.getElementById(tab+'-edit-actions').classList.add('hidden'); document.getElementById(tab+'-btn-main').classList.remove('hidden'); }
-        async function deleteItem(col, id, nome) { if(confirm(`Excluir ${nome}?`)) { await db.collection(col).doc(id).delete(); col === 'cafes' ? loadG() : loadR(); } }
+        function editG(id, i) { editIds.g = id; document.getElementById('g-n').value = i.n; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-torra').value = i.torra; document.getElementById('g-data').value = i.data; document.getElementById('g-torra').classList.remove('placeholder-style'); document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
+        function editR(id, i) { editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = i.metodo; document.getElementById('r-ratio-base').value = i.origRatio; document.getElementById('r-po-base').value = i.origPo; document.getElementById('r-total-base').value = i.origTotal; document.getElementById('r-bloom-ml').value = i.bloomMl; document.getElementById('r-bloom-sec').value = i.bloomSec; document.getElementById('ataques-container').innerHTML = ''; if (i.ataques) i.ataques.forEach(a => addAtackField(a.ml, a.sec)); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
+        
+        function cancelEdit(t) { editIds[t] = null; document.getElementById(t + '-edit-actions').classList.add('hidden'); document.getElementById(t + '-btn-main').classList.remove('hidden'); t === 'g' ? resetG() : resetR(); }
+        function resetG() { document.querySelectorAll('#tab-cafes input, #tab-cafes select, #tab-cafes textarea').forEach(el => el.value = ''); document.getElementById('g-torra').classList.add('placeholder-style'); }
+        function resetR() { document.querySelectorAll('#tab-receitas input, #tab-receitas select').forEach(el => el.value = ''); document.getElementById('ataques-container').innerHTML = ''; }
+        async function del(c, id, n) { if(confirm(`Excluir ${n}?`)) { await db.collection(c).doc(id).delete(); c === 'cafes' ? loadG() : loadR(); } }
 
         function upCalc() {
             const sR = document.getElementById('p-r'); const sel = sR.options[sR.selectedIndex]; if(sR.value == "0") return;
             const rP = parseFloat(document.getElementById('p-ratio-val').value) || parseFloat(sR.value);
-            const pP = parseFloat(document.getElementById('p-po-val').value) || 0;
-            const tP = Math.round(pP * rP); document.getElementById('p-total').innerText = tP; document.getElementById('p-ratio-val').value = rP;
+            const poP = parseFloat(document.getElementById('p-po-val').value) || 0;
+            const totalP = Math.round(poP * rP);
+            document.getElementById('p-total').innerText = totalP;
 
-            const oT = parseFloat(sel.getAttribute('data-total')), bM = parseFloat(sel.getAttribute('data-bloom')), bS = parseFloat(sel.getAttribute('data-sec')), atO = JSON.parse(sel.getAttribute('data-atks') || '[]');
+            const oT = parseFloat(sel.getAttribute('data-total'));
+            const bM = parseFloat(sel.getAttribute('data-bloom'));
+            const bS = parseFloat(sel.getAttribute('data-sec'));
+            const atO = JSON.parse(sel.getAttribute('data-atks') || '[]');
+
             activeStepsData = { steps: [], times: [], total: 0 };
-            const bNew = Math.round(tP * (bM / oT));
-            activeStepsData.steps.push({ type: 'BLOOM', ml: bNew, sec: bS }); activeStepsData.total += bS; activeStepsData.times.push(activeStepsData.total);
-            atO.forEach((a, idx) => { const aNew = Math.round(tP * (a.ml / oT)); activeStepsData.steps.push({ type: `ATK ${idx+1}`, ml: aNew, sec: a.sec }); activeStepsData.total += a.sec; activeStepsData.times.push(activeStepsData.total); });
+            const bN = Math.round(totalP * (bM / oT));
+            activeStepsData.steps.push({ type: 'BLOOM', ml: bN, sec: bS });
+            activeStepsData.total += bS; activeStepsData.times.push(activeStepsData.total);
+
+            atO.forEach((a, idx) => {
+                const aN = Math.round(totalP * (a.ml / oT));
+                activeStepsData.steps.push({ type: `ATK ${idx+1}`, ml: aN, sec: a.sec });
+                activeStepsData.total += a.sec; activeStepsData.times.push(activeStepsData.total);
+            });
             renderSteps(0);
         }
 
         function renderSteps(segA) {
-            let h = '', target = 0; activeStepsData.times.forEach((t, i) => { if (segA >= t) target = i + 1; });
+            let h = ''; let target = 0; activeStepsData.times.forEach((t, i) => { if(segA >= t) target = i + 1; });
             activeStepsData.steps.forEach((s, idx) => {
                 const act = idx === target;
-                h += `<div class="step-box ${act?'step-box-active':''}" id="step-${idx}"><div class="text-[8px] ${act?'text-amber-500':'text-zinc-600'} font-black uppercase leading-none">${s.type}</div><div class="text-base font-black italic ${act?'text-white':'text-zinc-500'} leading-tight mt-1">${segA >= (activeStepsData.times[idx-1]||0) + s.sec ? s.ml : 0}ml / ${s.ml}ml</div><div class="text-[7px] text-zinc-600 mt-1">/ ${s.sec}s</div></div>`;
+                h += `<div class="step-box ${act?'step-box-active':''}" id="step-${idx}"><div class="text-[9px] ${act?'text-amber-500':'text-zinc-600'} font-black">${s.type}</div><div class="text-base font-black italic ${act?'text-white':'text-zinc-500'} mt-1">${segA >= (activeStepsData.times[idx-1]||0) + s.sec ? s.ml : 0}ml / ${s.ml}ml</div><div class="text-[8px] ${act?'text-amber-500':'text-zinc-600'} font-bold">/ ${s.sec}s</div></div>`;
             });
             document.getElementById('p-steps').innerHTML = h;
-            if(target < activeStepsData.steps.length) document.getElementById(`step-${target}`)?.scrollIntoView({behavior:'smooth', inline:'center'});
+            if(target < activeStepsData.steps.length) document.getElementById(`step-${target}`)?.scrollIntoView({ behavior: 'smooth', inline: 'center' });
         }
 
-        function toggleTimer() { 
-            const b = document.getElementById('btn-timer-main'); 
-            if(timer) { clearInterval(timer); timer = null; b.innerText = "CONTINUAR"; } 
-            else { 
-                timer = setInterval(() => { seg++; document.getElementById('timer').innerText = `${Math.floor(seg/60).toString().padStart(2,'0')}:${(seg%60).toString().padStart(2,'0')}`; renderSteps(seg); if(seg >= activeStepsData.total) { clearInterval(timer); timer = null; b.innerText = "FIM ☕"; } }, 1000); 
-                b.innerText = "PAUSAR"; 
-            } 
+        function toggleTimer() {
+            const b = document.getElementById('btn-timer-main');
+            if(timer) { clearInterval(timer); timer = null; b.innerText = "CONTINUAR"; }
+            else {
+                timer = setInterval(() => {
+                    seg++; document.getElementById('timer').innerText = `${Math.floor(seg/60).toString().padStart(2,'0')}:${(seg%60).toString().padStart(2,'0')}`;
+                    renderSteps(seg);
+                    if(seg >= activeStepsData.total) { clearInterval(timer); timer = null; b.innerText = "FIM ☕"; }
+                }, 1000);
+                b.innerText = "PAUSAR";
+            }
         }
+
         function resetTimer() { clearInterval(timer); timer = null; seg = 0; document.getElementById('timer').innerText = "00:00"; document.getElementById('btn-timer-main').innerText = "INICIAR"; renderSteps(0); }
-        
-        async function loadPrep() { 
-            const [gc, rc] = await Promise.all([db.collection('cafes').get(), db.collection('receitas').get()]); 
-            let gh = '', rh = '<option value="0">SELECIONE A RECEITA</option>'; 
-            gc.forEach(d => { const i = d.data(); gh += `<option value="${d.id}">#${i.n} - ${i.nome}</option>`; }); 
-            rc.forEach(d => { const i = d.data(); rh += `<option value="${i.origRatio}" data-total="${i.origTotal}" data-bloom="${i.bloomMl}" data-sec="${i.bloomSec}" data-atks='${JSON.stringify(i.ataques || [])}'>${i.nome}</option>`; }); 
-            document.getElementById('p-g').innerHTML = gh; 
-            document.getElementById('p-r').innerHTML = rh; 
+
+        async function finalizarPreparo() {
+            const note = prompt("Feedback do café (opcional):");
+            const score = prompt("Nota de 0 a 5:");
+            await db.collection('logs').add({
+                grao: document.getElementById('p-g').options[document.getElementById('p-g').selectedIndex].text,
+                receita: document.getElementById('p-r').options[document.getElementById('p-r').selectedIndex].text,
+                clicks: document.getElementById('p-clicks').value,
+                temp: document.getElementById('p-temp').value,
+                totalAgua: document.getElementById('p-total').innerText,
+                feedback: note,
+                nota: score,
+                data: new Date().toLocaleString(),
+                ts: firebase.firestore.FieldValue.serverTimestamp()
+            });
+            alert("Preparo registrado no Diário!");
+            resetTimer();
         }
 
-        function showTab(t){ ['cafes','receitas','preparo'].forEach(i=>{ document.getElementById('tab-'+i).classList.toggle('hidden', i!==t); document.getElementById('btn-'+i).classList.toggle('active-tab', i===t); }); if(t==='cafes') loadG(); if(t==='receitas') loadR(); if(t==='preparo') loadPrep(); }
+        async function loadDiario() {
+            const s = await db.collection('logs').orderBy('ts', 'desc').get(); let h = '';
+            s.forEach(d => {
+                const i = d.data();
+                h += `<div class="card p-4 border-l-4 border-l-amber-600"> <div class="text-[10px] text-zinc-500 font-bold">${i.data}</div> <div class="text-lg font-black italic text-white">${i.grao}</div> <div class="text-xs font-bold text-amber-500 uppercase">${i.receita} | ${i.clicks} Clicks | ${i.temp}°C</div> <p class="mt-2 text-sm italic text-zinc-400">"${i.feedback || 'Sem feedback'}"</p> <div class="mt-2 text-xl">⭐ ${i.nota || '-'}</div> </div>`;
+            });
+            document.getElementById('list-logs').innerHTML = h;
+        }
+
+        async function loadPrep() {
+            const [gc, rc] = await Promise.all([db.collection('cafes').get(), db.collection('receitas').get()]);
+            let gh = '', rh = '<option value="0">SELECIONE A RECEITA</option>';
+            gc.forEach(d => gh += `<option value="${d.id}">#${d.data().n} - ${d.data().nome}</option>`);
+            rc.forEach(d => { const i = d.data(); rh += `<option value="${i.origRatio}" data-total="${i.origTotal}" data-bloom="${i.bloomMl}" data-sec="${i.bloomSec}" data-atks='${JSON.stringify(i.ataques || [])}'>${i.nome}</option>`; });
+            document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh;
+        }
+
+        function showTab(t){ ['cafes','receitas','preparo','diario'].forEach(i=>{ document.getElementById('tab-'+i).classList.toggle('hidden', i!==t); document.getElementById('btn-'+i).classList.toggle('active-tab', i===t); }); if(t==='cafes') loadG(); if(t==='receitas') loadR(); if(t==='preparo') loadPrep(); if(t==='diario') loadDiario(); }
         function openPix(){ document.getElementById('pix-modal').style.display='flex'; if(!document.querySelector("#pix-qrcode img")) new QRCode(document.getElementById("pix-qrcode"), {text: "00020101021126480014br.gov.bcb.pix0119alanpocos@gmail.com5204000053039865802BR5930ALAN DOUGLAS PEREIRA RODRIGUES6005POCOS6304", width: 150, height: 150}); }
         function closePix(){ document.getElementById('pix-modal').style.display='none'; }
         function copyPix(){ navigator.clipboard.writeText("alanpocos@gmail.com"); alert('Pix copiado!'); }
         function magicG() { const t = document.getElementById('g-magic').value; if(t) document.getElementById('g-nome').value = t.split('\n')[0].toUpperCase(); }
-        
         loadG();
     </script>
 </body>
