@@ -3,46 +3,51 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coffee Master v7.4</title>
+    <title>Coffee Master v7.5 - Master Edition</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding-bottom: 50px; zoom: 1.15; }
-        .card { background: #161616; border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid #262626; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .label-gold { color: #f59e0b; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-top: 22px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
+        body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding-bottom: 120px; zoom: 1.15; }
+        .card { background: #161616; border-radius: 18px; padding: 14px; margin-bottom: 12px; border: 1px solid #262626; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
+        .label-gold { color: #f59e0b; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-top: 20px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
         .label-gold:first-child { margin-top: 0; }
-        input, select, textarea { background: #222; border: 2px solid #333; color: #fff; padding: 14px; border-radius: 12px; width: 100%; margin-bottom: 4px; font-size: 16px; font-weight: 900; font-style: italic; -webkit-appearance: none; }
         
-        /* Estilo Placeholder/Selecionar Cinza Opaco */
+        input, select, textarea { background: #222; border: 2px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 4px; font-size: 16px; font-weight: 900; font-style: italic; -webkit-appearance: none; }
+        
+        /* Placeholder e Selecionar com cinza opaco */
         .placeholder-style { color: #555 !important; font-weight: 800 !important; font-style: italic !important; }
         ::placeholder { color: #555; font-weight: 800; text-transform: uppercase; font-size: 11px; font-style: normal; }
         
-        .btn-gold { background: #f59e0b; color: #000; font-weight: 900; padding: 18px; border-radius: 18px; width: 100%; text-transform: uppercase; font-size: 14px; margin-top: 15px; cursor: pointer; border: none; }
-        .tab-btn { background: #111; color: #444; flex: 1; padding: 16px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
+        .btn-gold { background: #f59e0b; color: #000; font-weight: 900; padding: 18px; border-radius: 18px; width: 100%; text-transform: uppercase; font-size: 14px; margin-top: 15px; cursor: pointer; }
+        .tab-btn { background: #111; color: #444; flex: 1; padding: 14px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
         .active-tab { background: #f59e0b; color: #000; border-color: #fbbf24; }
 
         .step-box { background: #161616; padding: 10px; border-radius: 14px; text-align: center; border: 2px solid #262626; flex: 1; min-width: 105px; transition: all 0.3s; }
         .step-box-active { border-color: #f59e0b !important; box-shadow: 0 0 15px rgba(245,158,11,0.2); }
 
-        /* Sliders Feedback */
+        /* Sliders Customizados */
         input[type=range] { -webkit-appearance: none; background: #333; height: 6px; border-radius: 5px; margin: 10px 0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #f59e0b; cursor: pointer; }
 
+        /* Modais */
         #modal-feedback, #pix-modal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 1000; padding: 20px; justify-content: center; align-items: center; overflow-y: auto; }
-        .star { font-size: 32px; cursor: pointer; color: #333; transition: color 0.2s; padding: 0 4px; }
+        .star { font-size: 28px; cursor: pointer; color: #333; transition: color 0.2s; }
         .star.active { color: #f59e0b; }
         .hidden { display: none; }
+        
+        /* Busca */
+        .search-input { background: #000; border: 1px solid #333; font-size: 11px; padding: 10px; margin-bottom: 15px; border-radius: 10px; font-style: normal; text-transform: uppercase; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
     <div class="flex justify-between items-center mb-5">
         <h1 class="text-2xl font-black text-amber-500 italic uppercase">COFFEE MASTER</h1>
-        <button onclick="openPix()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-amber-600 text-amber-500 italic uppercase">PAGAR CAFÉ ☕</button>
+        <button onclick="openPix()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-amber-600 text-amber-500 italic">PAGAR CAFÉ ☕</button>
     </div>
     
-    <div class="flex mb-8 bg-black p-1 rounded-2xl sticky top-2 z-50 border border-zinc-800 shadow-2xl">
+    <div class="flex mb-6 bg-black p-1 rounded-2xl sticky top-2 z-50 border border-zinc-800 shadow-2xl">
         <button id="btn-cafes" class="tab-btn active-tab" onclick="showTab('cafes')">GRÃOS</button>
         <button id="btn-receitas" class="tab-btn" onclick="showTab('receitas')">RECEITAS</button>
         <button id="btn-preparo" class="tab-btn" onclick="showTab('preparo')">PREPARAR</button>
@@ -59,11 +64,12 @@
                 <div class="flex-1"><span class="label-gold">Torra</span><select id="g-torra" class="placeholder-style" onchange="this.classList.remove('placeholder-style')"><option value="" disabled selected>SELECIONAR</option><option class="text-white">CLARA</option><option class="text-white">MÉDIA-CLARA</option><option class="text-white">MÉDIA</option><option class="text-white">ESCURA</option></select></div>
                 <div class="flex-1"><span class="label-gold">DATA DA TORRA</span><input type="date" id="g-data" class="placeholder-style" onfocus="this.classList.remove('placeholder-style')"></div>
             </div>
-            <span class="label-gold">Notas Sensoriais</span><textarea id="g-notas" placeholder="EX: CHOCOLATE, MEL..." rows="2"></textarea>
+            <span class="label-gold">Notas Sensoriais</span><textarea id="g-notas" placeholder="EX: CHOCOLATE..." rows="2"></textarea>
             <div id="g-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveG()">Atualizar Grão</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3] text-xs uppercase" onclick="cancelEdit('g')">Canc.</button></div>
             <button class="btn-gold w-full" onclick="saveG()" id="g-btn-main">Salvar no Estoque</button>
         </div>
-        <div id="list-g" class="space-y-3 mt-6"></div>
+        <input type="text" id="search-g" class="search-input w-full" placeholder="🔍 BUSCAR GRÃO OU PRODUTOR..." oninput="filterList('g')">
+        <div id="list-g" class="space-y-3"></div>
     </div>
 
     <div id="tab-receitas" class="hidden">
@@ -71,7 +77,9 @@
             <span class="label-gold">Nome da Receita</span><input type="text" id="r-nome" placeholder="">
             <span class="label-gold">Método</span>
             <select id="r-metodo" class="placeholder-style" onchange="checkMetodo(this)">
-                </select>
+                <option value="" disabled selected>SELECIONAR</option>
+                <option class="text-white">V60</option><option class="text-white">AEROPRESS</option><option class="text-white">KOAR</option><option class="text-white" value="OUTROS">OUTROS...</option>
+            </select>
             <div id="r-metodo-outro-div" class="hidden mt-2"><input type="text" id="r-metodo-outro" placeholder="DIGITE O NOME DO MÉTODO"></div>
             
             <div class="bg-zinc-900 p-3 rounded-xl border border-dashed border-zinc-700 mt-4">
@@ -86,26 +94,26 @@
                 <div><span class="label-gold">Tempo (s)</span><input type="number" id="r-bloom-sec" placeholder=""></div>
             </div>
             <div id="ataques-container" class="mt-2 space-y-1"></div>
-            <button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase bg-black">+ ADICIONAR ATAQUE</button>
+            <button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase bg-black shadow-inner">+ ADICIONAR ATAQUE</button>
             <div id="r-edit-actions" class="hidden flex gap-2 mt-5"><button class="btn-gold flex-1 mt-0" onclick="saveR()">Atualizar Receita</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3] text-xs uppercase" onclick="cancelEdit('r')">Canc.</button></div>
             <button class="btn-gold w-full mt-5" onclick="saveR()" id="r-btn-main">Salvar Receita</button>
         </div>
-        <div id="list-r" class="space-y-3 mt-6"></div>
+        <input type="text" id="search-r" class="search-input w-full" placeholder="🔍 BUSCAR RECEITA OU MÉTODO..." oninput="filterList('r')">
+        <div id="list-r" class="space-y-3"></div>
     </div>
 
     <div id="tab-preparo" class="hidden">
         <div class="card border-amber-600 bg-black p-5">
-            <select id="p-g" onchange="upCalc()" class="mb-2"></select>
-            <select id="p-r" onchange="puxarDadosReceita(this)" class="mb-4"></select>
+            <select id="p-g" onchange="upCalc()"></select><select id="p-r" onchange="handleRecipeSelect()"></select>
             <div class="grid grid-cols-4 gap-2 text-center mt-4">
-                <div><span class="label-gold mt-0">Pó (g)</span><input type="number" id="p-po-val" oninput="upCalc()" class="text-center text-xl text-amber-500 font-black bg-transparent border-none"></div>
-                <div><span class="label-gold mt-0">Ratio</span><input type="number" id="p-ratio-val" oninput="upCalc()" class="text-center text-xl text-white font-black bg-transparent border-none"></div>
+                <div><span class="label-gold mt-0">Pó (g)</span><input type="number" id="p-po-val" value="15" oninput="upCalc()" class="text-center text-xl text-amber-500 font-black bg-transparent border-none"></div>
+                <div><span class="label-gold mt-0">Ratio</span><input type="number" id="p-ratio-val" value="15" oninput="upCalc()" class="text-center text-xl text-white font-black bg-transparent border-none"></div>
                 <div><span class="label-gold mt-0 text-zinc-600">Clicks</span><input type="number" id="p-clicks" placeholder="--" class="text-center text-xl text-zinc-300 bg-transparent border-none"></div>
                 <div><span class="label-gold mt-0 text-zinc-600">Temp</span><input type="number" id="p-temp" placeholder="--" class="text-center text-xl text-zinc-300 bg-transparent border-none"></div>
             </div>
             <div class="bg-zinc-900 rounded-2xl py-4 px-5 mt-6 border border-zinc-800 flex justify-between items-center">
                 <span class="text-[10px] font-black text-zinc-500 uppercase italic">Água Total</span>
-                <div><span id="p-total" class="text-4xl font-black text-white italic">0</span><span class="text-amber-500 text-sm ml-1">ml</span></div>
+                <div><span id="p-total" class="text-4xl font-black text-white italic">225</span><span class="text-amber-500 text-sm ml-1">ml</span></div>
             </div>
             <div id="p-steps" class="flex gap-3 mt-6 overflow-x-auto pb-2 scroll-smooth"></div>
             <div id="timer" class="text-6xl font-black my-6 text-center italic tracking-tighter">00:00</div>
@@ -114,11 +122,14 @@
         </div>
     </div>
 
-    <div id="tab-diario" class="hidden"><div id="list-logs" class="space-y-3"></div></div>
+    <div id="tab-diario" class="hidden">
+        <h2 class="text-amber-500 font-black uppercase italic mb-4">Feedbacks Recentes</h2>
+        <div id="list-logs" class="space-y-3"></div>
+    </div>
 
     <div id="modal-feedback">
         <div class="card w-full max-w-sm">
-            <h3 class="text-amber-500 font-black italic uppercase text-center mb-6">Classificar extração?</h3>
+            <h3 id="feedback-title" class="text-amber-500 font-black italic uppercase text-center mb-6">Classificar extração?</h3>
             <div id="f-pergunta" class="flex gap-2">
                 <button class="btn-gold flex-1" onclick="exibirCamposFeedback()">SIM</button>
                 <button class="bg-zinc-800 text-zinc-400 font-black py-4 rounded-xl flex-1" onclick="fecharFeedback()">NÃO</button>
@@ -127,14 +138,14 @@
                 <div class="flex justify-center gap-1 mb-4" id="star-rating">
                     <span class="star" data-v="1">★</span><span class="star" data-v="2">★</span><span class="star" data-v="3">★</span><span class="star" data-v="4">★</span><span class="star" data-v="5">★</span>
                 </div>
-                <span class="label-gold">Observações</span><textarea id="f-obs" rows="2"></textarea>
+                <span class="label-gold">Observações</span><textarea id="f-obs" placeholder="EX: FICOU DOCE..." rows="2"></textarea>
                 <div class="mt-4 space-y-3">
                     <div><div class="flex justify-between text-[10px] font-black uppercase text-zinc-500"><span>Doçura</span><span id="v-doce">3</span></div><input type="range" id="f-doce" min="1" max="5" value="3" oninput="document.getElementById('v-doce').innerText=this.value" class="w-full"></div>
                     <div><div class="flex justify-between text-[10px] font-black uppercase text-zinc-500"><span>Acidez</span><span id="v-acidez">3</span></div><input type="range" id="f-acidez" min="1" max="5" value="3" oninput="document.getElementById('v-acidez').innerText=this.value" class="w-full"></div>
                     <div><div class="flex justify-between text-[10px] font-black uppercase text-zinc-500"><span>Amargor</span><span id="v-amargor">3</span></div><input type="range" id="f-amargor" min="1" max="5" value="3" oninput="document.getElementById('v-amargor').innerText=this.value" class="w-full"></div>
                     <div><div class="flex justify-between text-[10px] font-black uppercase text-zinc-500"><span>Corpo</span><span id="v-corpo">3</span></div><input type="range" id="f-corpo" min="1" max="5" value="3" oninput="document.getElementById('v-corpo').innerText=this.value" class="w-full"></div>
                 </div>
-                <button class="btn-gold w-full mt-6" onclick="salvarFeedback()">SALVAR DIÁRIO</button>
+                <button id="btn-save-log" class="btn-gold w-full mt-6" onclick="salvarFeedback()">SALVAR DIÁRIO</button>
             </div>
         </div>
     </div>
@@ -144,44 +155,33 @@
     <script>
         const config = { apiKey: "AIzaSyCbIsrGjuu6KN-A0xpZUC6ID9aOHBEIJSE", authDomain: "coffee-master-e1f5c.firebaseapp.com", projectId: "coffee-master-e1f5c", storageBucket: "coffee-master-e1f5c.firebasestorage.app", messagingSenderId: "171441357303", appId: "1:171441357303:web:c85dc841ee73f6f29e2ef2" };
         firebase.initializeApp(config); const db = firebase.firestore();
-        let timer = null, seg = 0, editIds = { g: null, r: null }, activeStepsData = { steps: [], times: [], total: 0 }, notaSelecionada = 0;
+        let timer = null, seg = 0, editIds = { g: null, r: null, log: null }, activeStepsData = { steps: [], times: [], total: 0 }, notaSelecionada = 0;
+        let localData = { g: [], r: [], log: [] };
 
         ['r-ratio-base', 'r-po-base'].forEach(id => document.getElementById(id).addEventListener('input', () => { const r = parseFloat(document.getElementById('r-ratio-base').value)||0, p = parseFloat(document.getElementById('r-po-base').value)||0; document.getElementById('r-total-base').value = Math.round(r * p); }));
-        
-        async function loadMetodos() {
-            const snap = await db.collection('receitas').get();
-            const mets = new Set(['V60', 'AEROPRESS', 'KOAR']);
-            snap.forEach(d => mets.add(d.data().metodo));
-            let h = '<option value="" disabled selected>SELECIONAR</option>';
-            mets.forEach(m => h += `<option class="text-white" value="${m}">${m}</option>`);
-            h += `<option class="text-white" value="OUTROS">OUTROS...</option>`;
-            document.getElementById('r-metodo').innerHTML = h;
-        }
-
         function checkMetodo(sel) { const div = document.getElementById('r-metodo-outro-div'); if(sel.value === 'OUTROS') { div.classList.remove('hidden'); } else { div.classList.add('hidden'); sel.classList.remove('placeholder-style'); } }
         function addAtackField(ml = '', sec = '') { const c = document.getElementById('ataques-container'); c.insertAdjacentHTML('beforeend', `<div class="flex gap-2 items-end atk-row"><div class="flex-1"><span class="label-gold">ML</span><input type="number" class="atk-ml" value="${ml}"></div><div class="flex-1"><span class="label-gold">Tempo (s)</span><input type="number" class="atk-sec" value="${sec}"></div><button onclick="this.closest('.atk-row').remove()" class="bg-zinc-900 text-zinc-600 px-3 py-3 rounded-xl mb-1">X</button></div>`); }
         
         async function saveG() { const d = { n: document.getElementById('g-n').value, prod: document.getElementById('g-prod').value.toUpperCase(), nome: document.getElementById('g-nome').value.toUpperCase(), torra: document.getElementById('g-torra').value, data: document.getElementById('g-data').value, notas: document.getElementById('g-notas').value.toUpperCase(), ts: firebase.firestore.FieldValue.serverTimestamp() }; if (editIds.g) { await db.collection('cafes').doc(editIds.g).update(d); cancelEdit('g'); } else { await db.collection('cafes').add(d); resetG(); } loadG(); }
-        async function saveR() { const tB = parseFloat(document.getElementById('r-total-base').value)||0, bM = parseFloat(document.getElementById('r-bloom-ml').value)||0, atks = []; let s = bM; document.querySelectorAll('.atk-row').forEach(r => { const v = parseFloat(r.querySelector('.atk-ml').value)||0; s += v; atks.push({ ml: v, sec: parseFloat(r.querySelector('.atk-sec').value)||0 }); }); if (Math.round(s) !== Math.round(tB)) { alert(`Soma: ${s}ml / Esperado: ${tB}ml`); return; } let met = document.getElementById('r-metodo').value; if(met === 'OUTROS') met = document.getElementById('r-metodo-outro').value.toUpperCase(); const d = { nome: document.getElementById('r-nome').value.toUpperCase(), metodo: met, origRatio: parseFloat(document.getElementById('r-ratio-base').value), origPo: parseFloat(document.getElementById('r-po-base').value), origTotal: tB, bloomMl: bM, bloomSec: parseFloat(document.getElementById('r-bloom-sec').value), ataques: atks, ts: firebase.firestore.FieldValue.serverTimestamp() }; if (editIds.r) { await db.collection('receitas').doc(editIds.r).update(d); cancelEdit('r'); } else { await db.collection('receitas').add(d); cancelEdit('r'); } loadMetodos(); loadR(); }
+        async function saveR() { const tB = parseFloat(document.getElementById('r-total-base').value)||0, bM = parseFloat(document.getElementById('r-bloom-ml').value)||0, atks = []; let s = bM; document.querySelectorAll('.atk-row').forEach(r => { const v = parseFloat(r.querySelector('.atk-ml').value)||0; s += v; atks.push({ ml: v, sec: parseFloat(r.querySelector('.atk-sec').value)||0 }); }); if (Math.round(s) !== Math.round(tB)) { alert(`Soma: ${s}ml / Esperado: ${tB}ml`); return; } let met = document.getElementById('r-metodo').value; if(met === 'OUTROS') met = document.getElementById('r-metodo-outro').value.toUpperCase(); const d = { nome: document.getElementById('r-nome').value.toUpperCase(), metodo: met, origRatio: parseFloat(document.getElementById('r-ratio-base').value), origPo: parseFloat(document.getElementById('r-po-base').value), origTotal: tB, bloomMl: bM, bloomSec: parseFloat(document.getElementById('r-bloom-sec').value), ataques: atks, ts: firebase.firestore.FieldValue.serverTimestamp() }; if (editIds.r) { await db.collection('receitas').doc(editIds.r).update(d); cancelEdit('r'); } else { await db.collection('receitas').add(d); cancelEdit('r'); } loadR(); }
         
-        async function loadG() { const snap = await db.collection('cafes').orderBy('ts', 'desc').get(); let h = ''; snap.forEach(d => { const i = d.data(); h += `<div class="card p-4 flex justify-between items-center border border-zinc-800"><div class="flex-1"><div class="text-[10px] text-zinc-600 font-black">#${i.n} <span class="text-white">${i.prod}</span></div><div class="text-xl font-black italic uppercase text-white mt-1">${i.nome}</div><div class="mt-3 text-[10px] font-black text-amber-600 uppercase bg-black px-3 py-1 rounded-lg border border-amber-900 inline-block leading-none">${i.torra}</div></div><div class="flex gap-2"><button onclick='editG("${d.id}", ${JSON.stringify(i).replace(/'/g, "&apos;")})' class="text-xl p-3 bg-zinc-900 rounded-2xl border border-zinc-700">✏️</button><button onclick='del("cafes","${d.id}","${i.nome}")' class="text-xl p-3 bg-zinc-900 rounded-2xl border border-red-900">🗑️</button></div></div>`; }); document.getElementById('list-g').innerHTML = h; }
-        async function loadR() { const snap = await db.collection('receitas').orderBy('ts', 'desc').get(); let h = ''; snap.forEach(d => { const i = d.data(); h += `<div class="card p-4 flex justify-between items-center border border-zinc-800"><div class="flex-1"><div class="text-xl font-black italic uppercase text-amber-500">${i.nome}</div><div class="text-[10px] text-zinc-500 font-black italic mt-1 bg-black inline-block px-2 py-1 rounded-lg">Ratio 1:${i.origRatio} | Base ${i.origPo}g | ${i.metodo}</div></div><div class="flex gap-2"><button onclick='editR("${d.id}", ${JSON.stringify(i).replace(/'/g, "&apos;")})' class="text-xl p-3 bg-zinc-900 rounded-2xl border border-zinc-700">✏️</button><button onclick='del("receitas","${d.id}","${i.nome}")' class="text-xl p-3 bg-zinc-900 rounded-2xl border border-red-900">🗑️</button></div></div>`; }); document.getElementById('list-r').innerHTML = h; }
+        async function loadG() { const snap = await db.collection('cafes').orderBy('ts', 'desc').get(); localData.g = snap.docs.map(d => ({id: d.id, ...d.data()})); renderG(localData.g); }
+        function renderG(data) { let h = ''; data.forEach(i => { h += `<div class="card p-3 flex justify-between items-center border border-zinc-800"><div class="flex-1"><div class="text-[9px] text-zinc-600 font-black">#${i.n} <span class="text-white">${i.prod}</span></div><div class="text-lg font-black italic uppercase text-white mt-1 leading-tight">${i.nome}</div><div class="mt-2 text-[9px] font-black text-amber-500 uppercase bg-black px-2 py-1 rounded border border-amber-900 inline-block">${i.torra}</div></div><div class="flex gap-2"><button onclick='editG("${i.id}", ${JSON.stringify(i).replace(/'/g, "&apos;")})' class="text-lg p-2 bg-zinc-900 rounded-xl">✏️</button><button onclick='del("cafes","${i.id}","${i.nome}")' class="text-lg p-2 bg-zinc-900 rounded-xl">🗑️</button></div></div>`; }); document.getElementById('list-g').innerHTML = h; }
         
+        async function loadR() { const snap = await db.collection('receitas').orderBy('ts', 'desc').get(); localData.r = snap.docs.map(d => ({id: d.id, ...d.data()})); renderR(localData.r); }
+        function renderR(data) { let h = ''; data.forEach(i => { h += `<div class="card p-3 flex justify-between items-center border border-zinc-800"><div class="flex-1"><div class="text-lg font-black italic uppercase text-amber-500">${i.nome}</div><div class="text-[10px] text-zinc-500 font-black italic mt-1 bg-black inline-block px-2 py-0.5 rounded border border-zinc-800">Ratio 1:${i.origRatio} | Base ${i.origPo}g | ${i.metodo}</div></div><div class="flex gap-2"><button onclick='editR("${i.id}", ${JSON.stringify(i).replace(/'/g, "&apos;")})' class="text-lg p-2 bg-zinc-900 rounded-xl">✏️</button><button onclick='del("receitas","${i.id}","${i.nome}")' class="text-lg p-2 bg-zinc-900 rounded-xl">🗑️</button></div></div>`; }); document.getElementById('list-r').innerHTML = h; }
+        
+        function filterList(tab) { const q = document.getElementById('search-'+tab).value.toLowerCase(); if(tab==='g') renderG(localData.g.filter(i => i.nome.toLowerCase().includes(q) || i.prod.toLowerCase().includes(q))); if(tab==='r') renderR(localData.r.filter(i => i.nome.toLowerCase().includes(q) || i.metodo.toLowerCase().includes(q))); }
+
         function editG(id, i) { editIds.g = id; document.getElementById('g-n').value = i.n; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-torra').value = i.torra; document.getElementById('g-data').value = i.data; document.getElementById('g-torra').classList.remove('placeholder-style'); document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
-        function editR(id, i) { editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = i.metodo; document.getElementById('r-ratio-base').value = i.origRatio; document.getElementById('r-po-base').value = i.origPo; document.getElementById('r-total-base').value = i.origTotal; document.getElementById('r-bloom-ml').value = i.bloomMl; document.getElementById('r-bloom-sec').value = i.bloomSec; document.getElementById('ataques-container').innerHTML = ''; if (i.ataques) i.ataques.forEach(a => addAtackField(a.ml, a.sec)); document.getElementById('r-metodo').classList.remove('placeholder-style'); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
+        function editR(id, i) { editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = i.metodo; document.getElementById('r-ratio-base').value = i.origRatio; document.getElementById('r-po-base').value = i.origPo; document.getElementById('r-bloom-ml').value = i.bloomMl; document.getElementById('r-bloom-sec').value = i.bloomSec; document.getElementById('ataques-container').innerHTML = ''; i.ataques?.forEach(a => addAtackField(a.ml, a.sec)); document.getElementById('r-metodo').classList.remove('placeholder-style'); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
         
         function cancelEdit(t) { editIds[t] = null; document.getElementById(t + '-edit-actions').classList.add('hidden'); document.getElementById(t + '-btn-main').classList.remove('hidden'); t === 'g' ? resetG() : resetR(); }
         function resetG() { document.querySelectorAll('#tab-cafes input, #tab-cafes select, #tab-cafes textarea').forEach(el => el.value = ''); document.getElementById('g-torra').classList.add('placeholder-style'); }
         function resetR() { document.querySelectorAll('#tab-receitas input, #tab-receitas select').forEach(el => el.value = ''); document.getElementById('ataques-container').innerHTML = ''; document.getElementById('r-metodo').classList.add('placeholder-style'); document.getElementById('r-metodo-outro-div').classList.add('hidden'); }
-        async function del(c, id, n) { if(confirm(`Excluir ${n}?`)) { await db.collection(c).doc(id).delete(); c === 'cafes' ? loadG() : loadR(); } }
+        async function del(c, id, n) { if(confirm(`Excluir ${n}?`)) { await db.collection(c).doc(id).delete(); c === 'cafes' ? loadG() : (c==='logs'?loadDiario():loadR()); } }
         
-        function puxarDadosReceita(sel) {
-            const opt = sel.options[sel.selectedIndex];
-            if(sel.value === "0") return;
-            document.getElementById('p-po-val').value = opt.getAttribute('data-po');
-            document.getElementById('p-ratio-val').value = opt.getAttribute('data-ratio');
-            upCalc();
-        }
+        function handleRecipeSelect() { const sR = document.getElementById('p-r'); const sel = sR.options[sR.selectedIndex]; if(sR.value == "0") return; document.getElementById('p-po-val').value = sel.getAttribute('data-po'); document.getElementById('p-ratio-val').value = sel.getAttribute('data-ratio'); upCalc(); }
 
         function upCalc() {
             const sR = document.getElementById('p-r'); const sel = sR.options[sR.selectedIndex]; if(sR.value == "0") return;
@@ -201,11 +201,7 @@
             activeStepsData.steps.forEach((s, idx) => {
                 const act = idx === tIdx;
                 const ok = segA >= (activeStepsData.times[idx-1]||0) + s.sec;
-                h += `<div class="step-box ${act?'step-box-active':''}" id="step-${idx}">
-                        <div class="text-[9px] ${act?'text-amber-500':'text-zinc-600'} font-black uppercase">${s.type}</div>
-                        <div class="text-base font-black italic ${act?'text-white':'text-zinc-500'} mt-1">${ok ? s.ml : 0}ml / ${s.ml}ml</div>
-                        <div class="text-[10px] text-amber-600 font-bold uppercase mt-1">TOTAL: ${s.cum}ml</div>
-                      </div>`;
+                h += `<div class="step-box ${act?'step-box-active':''}" id="step-${idx}"><div class="text-[9px] ${act?'text-amber-500':'text-zinc-600'} font-black uppercase">${s.type}</div><div class="text-base font-black italic ${act?'text-white':'text-zinc-500'} mt-1">${ok ? s.ml : 0}ml / ${s.ml}ml</div><div class="text-[10px] text-amber-600 font-bold uppercase mt-1">TOTAL: ${s.cum}ml</div></div>`;
             });
             document.getElementById('p-steps').innerHTML = h;
             if(tIdx < activeStepsData.steps.length) document.getElementById(`step-${tIdx}`)?.scrollIntoView({ behavior: 'smooth', inline: 'center' });
@@ -214,55 +210,68 @@
         function toggleTimer() { const b = document.getElementById('btn-timer-main'); if(timer) { clearInterval(timer); timer = null; b.innerText = "CONTINUAR"; } else { timer = setInterval(() => { seg++; document.getElementById('timer').innerText = `${Math.floor(seg/60).toString().padStart(2,'0')}:${(seg%60).toString().padStart(2,'0')}`; renderSteps(seg); }, 1000); b.innerText = "PAUSAR"; } }
         function resetTimer() { clearInterval(timer); timer = null; seg = 0; document.getElementById('timer').innerText = "00:00"; document.getElementById('btn-timer-main').innerText = "INICIAR"; renderSteps(0); }
         
-        function abrirFeedback() { document.getElementById('modal-feedback').style.display = 'flex'; document.getElementById('f-pergunta').classList.remove('hidden'); document.getElementById('f-form').classList.add('hidden'); }
+        function abrirFeedback() { editIds.log = null; document.getElementById('modal-feedback').style.display = 'flex'; document.getElementById('feedback-title').innerText = "Classificar extração?"; document.getElementById('f-pergunta').classList.remove('hidden'); document.getElementById('f-form').classList.add('hidden'); }
         function exibirCamposFeedback() { document.getElementById('f-pergunta').classList.add('hidden'); document.getElementById('f-form').classList.remove('hidden'); }
         function fecharFeedback() { document.getElementById('modal-feedback').style.display = 'none'; resetTimer(); }
         
-        document.querySelectorAll('.star').forEach(s => s.onclick = () => {
-            notaSelecionada = parseInt(s.dataset.v);
-            document.querySelectorAll('.star').forEach(st => st.classList.toggle('active', parseInt(st.dataset.v) <= notaSelecionada));
-        });
+        document.querySelectorAll('.star').forEach(s => s.onclick = () => { notaSelecionada = parseInt(s.dataset.v); document.querySelectorAll('.star').forEach(st => st.classList.toggle('active', parseInt(st.dataset.v) <= notaSelecionada)); });
 
         async function salvarFeedback() {
-            await db.collection('logs').add({
-                grao: document.getElementById('p-g').options[document.getElementById('p-g').selectedIndex].text,
-                receita: document.getElementById('p-r').options[document.getElementById('p-r').selectedIndex].text,
-                clicks: document.getElementById('p-clicks').value, temp: document.getElementById('p-temp').value,
-                feedback: document.getElementById('f-obs').value, nota: notaSelecionada,
-                doce: document.getElementById('f-doce').value, acidez: document.getElementById('f-acidez').value,
-                amargor: document.getElementById('f-amargor').value, corpo: document.getElementById('f-corpo').value,
-                tempoTotal: document.getElementById('timer').innerText, data: new Date().toLocaleString(), ts: firebase.firestore.FieldValue.serverTimestamp()
-            });
-            fecharFeedback();
+            const d = { grao: document.getElementById('p-g').options[document.getElementById('p-g').selectedIndex].text, receita: document.getElementById('p-r').options[document.getElementById('p-r').selectedIndex].text, clicks: document.getElementById('p-clicks').value, temp: document.getElementById('p-temp').value, feedback: document.getElementById('f-obs').value, nota: notaSelecionada, doce: document.getElementById('f-doce').value, acidez: document.getElementById('f-acidez').value, amargor: document.getElementById('f-amargor').value, corpo: document.getElementById('f-corpo').value, tempoTotal: document.getElementById('timer').innerText, data: new Date().toLocaleString(), ts: firebase.firestore.FieldValue.serverTimestamp() };
+            if (editIds.log) { await db.collection('logs').doc(editIds.log).update(d); } else { await db.collection('logs').add(d); }
+            fecharFeedback(); loadDiario();
         }
 
         async function loadDiario() {
             const snap = await db.collection('logs').orderBy('ts', 'desc').get(); let h = '';
             snap.forEach(d => {
                 const i = d.data();
-                h += `<div class="card p-4 border-l-4 border-l-amber-600 shadow-none">
+                h += `<div class="card p-4 border-l-4 border-l-amber-600 shadow-none relative">
                         <div class="text-[10px] text-zinc-500 font-bold">${i.data}</div>
                         <div class="text-lg font-black italic text-white">${i.grao}</div>
-                        <div class="text-xs font-bold text-amber-500 uppercase">${i.receita} | ${i.clicks} Clicks | ${i.tempoTotal} Total</div>
-                        <div class="grid grid-cols-4 gap-1 mt-2 text-[8px] font-black uppercase text-zinc-600">
-                            <div>DOC:${i.doce}</div><div>ACI:${i.acidez}</div><div>AMA:${i.amargor}</div><div>COR:${i.corpo}</div>
-                        </div>
+                        <div class="text-xs font-bold text-amber-500 uppercase">${i.receita} | ${i.clicks} Clicks | ${i.tempoTotal}</div>
+                        <div class="grid grid-cols-4 gap-1 mt-2 text-[8px] font-black uppercase text-zinc-600"><div>DOC:${i.doce}</div><div>ACI:${i.acidez}</div><div>AMA:${i.amargor}</div><div>COR:${i.corpo}</div></div>
                         <p class="mt-2 text-sm italic text-zinc-400">"${i.feedback || '---'}"</p>
-                        <div class="mt-2 text-xl">${'★'.repeat(i.nota)}${'☆'.repeat(5-i.nota)}</div>
+                        <div class="mt-3 flex justify-between items-center">
+                            <div class="text-lg">${'★'.repeat(i.nota)}${'☆'.repeat(5-i.nota)}</div>
+                            <div class="flex gap-2">
+                                <button onclick='editLog("${d.id}", ${JSON.stringify(i).replace(/'/g, "&apos;")})' class="text-xs p-2 bg-zinc-900 rounded-lg">✏️</button>
+                                <button onclick='del("logs","${d.id}","O Preparo")' class="text-xs p-2 bg-zinc-900 rounded-lg text-red-800">🗑️</button>
+                            </div>
+                        </div>
                       </div>`;
             });
             document.getElementById('list-logs').innerHTML = h;
         }
 
-        async function loadPrep() {
-            const [gc, rc] = await Promise.all([db.collection('cafes').get(), db.collection('receitas').get()]);
-            let gh = '', rh = '<option value="0">SELECIONE A RECEITA</option>';
-            gc.forEach(d => gh += `<option value="${d.id}">#${d.data().n} - ${d.data().nome}</option>`);
-            rc.forEach(d => { const i = d.data(); rh += `<option value="${i.origRatio}" data-ratio="${i.origRatio}" data-po="${i.origPo}" data-total="${i.origTotal}" data-bloom="${i.bloomMl}" data-sec="${i.bloomSec}" data-atks='${JSON.stringify(i.ataques||[])}'>${i.nome}</option>`; });
-            document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh;
+        function editLog(id, i) {
+            editIds.log = id; notaSelecionada = i.nota;
+            document.getElementById('modal-feedback').style.display = 'flex';
+            document.getElementById('feedback-title').innerText = "Editar Registro";
+            document.getElementById('f-pergunta').classList.add('hidden');
+            document.getElementById('f-form').classList.remove('hidden');
+            document.getElementById('f-obs').value = i.feedback;
+            ['doce','acidez','amargor','corpo'].forEach(k => { document.getElementById('f-'+k).value = i[k]; document.getElementById('v-'+k).innerText = i[k]; });
+            document.querySelectorAll('.star').forEach(st => st.classList.toggle('active', parseInt(st.dataset.v) <= notaSelecionada));
         }
 
-        function showTab(t){ ['cafes','receitas','preparo','diario'].forEach(i=>{ document.getElementById('tab-'+i).classList.toggle('hidden', i!==t); document.getElementById('btn-'+i).classList.toggle('active-tab', i===t); }); if(t==='cafes') loadG(); if(t==='receitas') { loadMetodos(); loadR(); } if(t==='preparo') loadPrep(); if(t==='diario') loadDiario(); }
+        async function loadPrep() {
+            const [gc, rc] = await Promise.all([db.collection('cafes').get(), db.collection('receitas').get()]);
+            let gh = '', rh = '<option value="0">SELECIONE A RECEITA</option>', methods = new Set(['V60', 'AEROPRESS', 'KOAR']);
+            gc.forEach(d => gh += `<option value="${d.id}">#${d.data().n} - ${d.data().nome}</option>`);
+            rc.forEach(d => { 
+                const i = d.data(); rh += `<option value="${i.id}" data-ratio="${i.origRatio}" data-po="${i.origPo}" data-total="${i.origTotal}" data-bloom="${i.bloomMl}" data-sec="${i.bloomSec}" data-atks='${JSON.stringify(i.ataques || [])}'>${i.nome}</option>`; 
+                if(i.metodo) methods.add(i.metodo);
+            });
+            document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh;
+            const mSel = document.getElementById('r-metodo'); const currentV = mSel.value;
+            mSel.innerHTML = '<option value="" disabled selected>SELECIONAR</option>';
+            methods.forEach(m => mSel.innerHTML += `<option class="text-white" value="${m}">${m}</option>`);
+            mSel.innerHTML += '<option class="text-white" value="OUTROS">OUTROS...</option>';
+            mSel.value = currentV;
+        }
+
+        function showTab(t){ ['cafes','receitas','preparo','diario'].forEach(i=>{ document.getElementById('tab-'+i).classList.toggle('hidden', i!==t); document.getElementById('btn-'+i).classList.toggle('active-tab', i===t); }); if(t==='cafes') loadG(); if(t==='receitas') loadR(); if(t==='preparo') loadPrep(); if(t==='diario') loadDiario(); }
         function openPix(){ document.getElementById('pix-modal').style.display='flex'; if(!document.querySelector("#pix-qrcode img")) new QRCode(document.getElementById("pix-qrcode"), {text: "00020101021126480014br.gov.bcb.pix0119alanpocos@gmail.com5204000053039865802BR5930ALAN DOUGLAS PEREIRA RODRIGUES6005POCOS6304", width: 150, height: 150}); }
         function closePix(){ document.getElementById('pix-modal').style.display='none'; }
         function copyPix(){ navigator.clipboard.writeText("alanpocos@gmail.com"); alert('Pix copiado!'); }
