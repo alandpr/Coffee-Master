@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Coffee Master v7.2 - Cloud Advanced</title>
+    <title>Coffee Master v7.3 - Cloud Advanced</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-firestore-compat.js"></script>
@@ -12,11 +12,9 @@
         body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding-bottom: 120px; zoom: 1.15; }
         .card { background: #161616; border-radius: 20px; padding: 18px; margin-bottom: 15px; border: 1px solid #262626; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         
-        /* Títulos Dourados */
         .label-gold { color: #f59e0b; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-top: 22px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
         .label-gold:first-child { margin-top: 0; }
 
-        /* Inputs e Selects Base */
         input, select, textarea { 
             background: #222; 
             border: 2px solid #333; 
@@ -31,17 +29,14 @@
             -webkit-appearance: none; 
         }
 
-        /* Estilo Placeholder (Cinza Discreto) */
+        /* ESTILO "SELECIONAR" - Idêntico ao placeholder que você desenhou */
+        .is-placeholder { color: #555 !important; font-weight: 800 !important; font-style: italic !important; font-size: 11px !important; text-transform: uppercase; }
         ::placeholder { color: #555; font-weight: 800; text-transform: uppercase; font-size: 11px; font-style: normal; }
         
-        /* Classe para simular placeholder no Select e Data (Cinza e Itálico) */
-        .is-placeholder { color: #555 !important; font-weight: 800 !important; font-style: italic !important; font-size: 11px !important; text-transform: uppercase; }
-
         .btn-gold { background: #f59e0b; color: #000; font-weight: 900; padding: 18px; border-radius: 18px; width: 100%; text-transform: uppercase; font-size: 14px; margin-top: 15px; cursor: pointer; }
         .tab-btn { background: #111; color: #444; flex: 1; padding: 16px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
         .active-tab { background: #f59e0b; color: #000; border-color: #fbbf24; }
 
-        /* Estilo Foto 5 (Preparo) */
         .step-box { background: #161616; padding: 10px; border-radius: 14px; text-align: center; border: 2px solid #262626; flex: 1; min-width: 95px; transition: all 0.3s; }
         .step-box-active { border-color: #f59e0b !important; box-shadow: 0 0 15px rgba(245,158,11,0.2); }
 
@@ -85,7 +80,7 @@
                 </div>
                 <div class="flex-1">
                     <span class="label-gold">DATA DA TORRA</span>
-                    <input type="text" id="g-data" placeholder="SELECIONAR" onfocus="(this.type='date'); this.classList.remove('is-placeholder')" class="is-placeholder">
+                    <input type="text" id="g-data" placeholder="SELECIONAR" class="is-placeholder" onfocus="(this.type='date'); this.classList.remove('is-placeholder')" onblur="if(!this.value){this.type='text'; this.classList.add('is-placeholder')}">
                 </div>
             </div>
             <span class="label-gold">Notas Sensoriais</span>
@@ -106,24 +101,19 @@
             <input type="text" id="r-nome" placeholder="EX: V60 GABRIEL">
             <span class="label-gold">Método</span>
             <select id="r-metodo"><option>V60</option><option>AEROPRESS</option><option>KOAR</option></select>
-            
             <div class="bg-zinc-900 p-3 rounded-xl border border-dashed border-zinc-700 mt-4">
-                <div class="text-[9px] font-black text-amber-600 mb-2 uppercase text-center tracking-widest">Base de Cálculo Original</div>
                 <div class="grid grid-cols-3 gap-2">
                     <div><span class="label-gold mt-0">Ratio</span><input type="number" id="r-ratio-base" placeholder="15"></div>
                     <div><span class="label-gold mt-0">Pó Base</span><input type="number" id="r-po-base" placeholder="20"></div>
-                    <div><span class="label-gold mt-0">Total</span><input type="number" id="r-total-base" readonly placeholder="300" class="text-zinc-500"></div>
+                    <div><span class="label-gold mt-0">Total Água</span><input type="number" id="r-total-base" readonly placeholder="300" class="text-zinc-500"></div>
                 </div>
             </div>
-
             <div class="grid grid-cols-2 gap-2 mt-4">
-                <div><span class="label-gold">Bloom (ml)</span><input type="number" id="r-bloom-ml" placeholder="45"></div>
+                <div><span class="label-gold">Bloom (ml original)</span><input type="number" id="r-bloom-ml" placeholder="45"></div>
                 <div><span class="label-gold">Tempo (s)</span><input type="number" id="r-bloom-sec" placeholder="45"></div>
             </div>
-
             <div id="ataques-container" class="mt-2 space-y-1"></div>
-            <button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase bg-black">+ ADICIONAR ATAQUE</button>
-
+            <button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase bg-black shadow-inner">+ ADICIONAR ATAQUE</button>
             <div id="r-edit-actions" class="hidden flex gap-2 mt-5">
                 <button class="btn-gold flex-1 mt-0" onclick="saveR()" id="r-btn-save">Atualizar Receita</button>
                 <button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3] text-xs uppercase" onclick="cancelEdit('r')">Canc.</button>
@@ -137,24 +127,20 @@
         <div class="card border-amber-600 bg-black p-5">
             <select id="p-g" onchange="upCalc()" class="mb-2 text-sm"></select>
             <select id="p-r" onchange="upCalc()" class="mb-4 text-sm"></select>
-            
             <div class="grid grid-cols-4 gap-2 text-center">
                 <div><span class="label-gold mt-0">Pó (g)</span><input type="number" id="p-po-val" value="15" oninput="upCalc()" class="text-center text-xl text-amber-500 font-black bg-transparent border-none"></div>
                 <div><span class="label-gold mt-0">Ratio</span><input type="number" id="p-ratio-val" value="15" oninput="upCalc()" class="text-center text-xl text-white font-black bg-transparent border-none"></div>
                 <div><span class="label-gold mt-0 text-zinc-600">Clicks</span><input type="number" id="p-clicks" placeholder="--" class="text-center text-xl text-zinc-300 bg-transparent border-none"></div>
                 <div><span class="label-gold mt-0 text-zinc-600">Temp</span><input type="number" id="p-temp" placeholder="--" class="text-center text-xl text-zinc-300 bg-transparent border-none"></div>
             </div>
-
             <div class="bg-zinc-900 rounded-2xl py-4 px-5 mt-6 border border-zinc-800 flex justify-between items-center">
                 <span class="text-[10px] font-black text-zinc-500 uppercase italic">Água Total ( ml )</span>
                 <div><span id="p-total" class="text-4xl font-black text-white italic">225</span><span class="text-amber-500 text-sm ml-1">ml</span></div>
             </div>
-
             <div id="p-steps" class="flex gap-3 mt-6 overflow-x-auto pb-2 scroll-smooth"></div>
             <div id="timer" class="text-6xl font-black my-6 text-center italic tracking-tighter">00:00</div>
-            
             <div class="flex gap-3">
-                <button id="btn-timer-main" onclick="toggleTimer()" class="bg-green-700 text-white font-black py-4 rounded-xl flex-1 text-sm uppercase shadow-lg">Iniciar</button>
+                <button id="btn-timer-main" onclick="toggleTimer()" class="bg-green-700 text-white font-black py-4 rounded-xl flex-1 text-sm uppercase">Iniciar</button>
                 <button onclick="resetTimer()" class="bg-zinc-800 text-zinc-400 font-black py-4 rounded-xl flex-[0.4] text-sm uppercase">Reset</button>
             </div>
             <button onclick="finalizarPreparo()" class="bg-amber-600 text-black font-black py-4 rounded-xl w-full mt-3 text-sm uppercase">Finalizar Preparo</button>
@@ -181,7 +167,6 @@
 
         let timer = null, seg = 0, editIds = { g: null, r: null }, activeStepsData = { steps: [], times: [], total: 0 };
 
-        // Ratio calc base
         ['r-ratio-base', 'r-po-base'].forEach(id => {
             document.getElementById(id).addEventListener('input', () => {
                 const r = parseFloat(document.getElementById('r-ratio-base').value) || 0;
@@ -207,12 +192,12 @@
         async function saveR() {
             const total = parseFloat(document.getElementById('r-total-base').value) || 0;
             const bloom = parseFloat(document.getElementById('r-bloom-ml').value) || 0;
-            const atks = []; let soma = bloom;
+            let soma = bloom; const atks = [];
             document.querySelectorAll('.atk-row').forEach(row => {
                 const v = parseFloat(row.querySelector('.atk-ml').value) || 0;
                 soma += v; atks.push({ ml: v, sec: parseFloat(row.querySelector('.atk-sec').value) || 0 });
             });
-            if (Math.round(soma) !== Math.round(total)) { alert(`ERRO MATEMÁTICO: Soma ${soma}ml ≠ Total ${total}ml!`); return; }
+            if (Math.round(soma) !== Math.round(total)) { alert(`Soma de passos (${soma}ml) não bate com total (${total}ml)!`); return; }
             const d = { nome: document.getElementById('r-nome').value.toUpperCase(), metodo: document.getElementById('r-metodo').value, origRatio: parseFloat(document.getElementById('r-ratio-base').value), origPo: parseFloat(document.getElementById('r-po-base').value), origTotal: total, bloomMl: bloom, bloomSec: parseFloat(document.getElementById('r-bloom-sec').value), ataques: atks, ts: firebase.firestore.FieldValue.serverTimestamp() };
             if (editIds.r) { await db.collection('receitas').doc(editIds.r).update(d); cancelEdit('r'); }
             else { await db.collection('receitas').add(d); resetR(); }
@@ -237,8 +222,8 @@
             document.getElementById('list-r').innerHTML = h;
         }
 
-        function editG(id, i) { editIds.g = id; document.getElementById('g-n').value = i.n; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-torra').value = i.torra; document.getElementById('g-data').value = i.data; document.getElementById('g-notas').value = i.notas; document.getElementById('g-torra').classList.remove('is-placeholder'); document.getElementById('g-data').classList.remove('is-placeholder'); document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
-        function editR(id, i) { editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = i.metodo; document.getElementById('r-ratio-base').value = i.origRatio; document.getElementById('r-po-base').value = i.origPo; document.getElementById('r-total-base').value = i.origTotal; document.getElementById('r-bloom-ml').value = i.bloomMl; document.getElementById('r-bloom-sec').value = i.bloomSec; document.getElementById('ataques-container').innerHTML = ''; i.ataques.forEach(a => addAtackField(a.ml, a.sec)); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
+        function editG(id, i) { editIds.g = id; document.getElementById('g-n').value = i.n; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-torra').value = i.torra; document.getElementById('g-data').value = i.data; document.getElementById('g-notas').value = i.notas; document.getElementById('g-torra').classList.remove('is-placeholder'); document.getElementById('g-data').classList.remove('is-placeholder'); document.getElementById('g-data').type = 'date'; document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
+        function editR(id, i) { editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = i.metodo; document.getElementById('r-ratio-base').value = i.origRatio; document.getElementById('r-po-base').value = i.origPo; document.getElementById('r-total-base').value = i.origTotal; document.getElementById('r-bloom-ml').value = i.bloomMl; document.getElementById('r-bloom-sec').value = i.bloomSec; document.getElementById('ataques-container').innerHTML = ''; if (i.ataques) i.ataques.forEach(a => addAtackField(a.ml, a.sec)); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); window.scrollTo(0,0); }
         
         function cancelEdit(t) { editIds[t] = null; document.getElementById(t + '-edit-actions').classList.add('hidden'); document.getElementById(t + '-btn-main').classList.remove('hidden'); t === 'g' ? resetG() : resetR(); }
         function resetG() { document.querySelectorAll('#tab-cafes input, #tab-cafes select, #tab-cafes textarea').forEach(el => el.value = ''); document.getElementById('g-torra').classList.add('is-placeholder'); document.getElementById('g-data').classList.add('is-placeholder'); document.getElementById('g-data').type = 'text'; }
@@ -266,7 +251,7 @@
             let h = ''; let target = 0; activeStepsData.times.forEach((t, i) => { if(segA >= t) target = i + 1; });
             activeStepsData.steps.forEach((s, idx) => {
                 const act = idx === target;
-                h += `<div class="step-box ${act?'step-box-active':''}" id="step-${idx}"><div class="text-[9px] ${act?'text-amber-500':'text-zinc-600'} font-black">${s.type}</div><div class="text-base font-black italic ${act?'text-white':'text-zinc-500'} mt-1">${segA >= (activeStepsData.times[idx-1]||0) + s.sec ? s.ml : 0}ml / ${s.ml}ml</div><div class="text-[8px] ${act?'text-amber-500':'text-zinc-600'} font-bold">/ ${s.sec}s</div></div>`;
+                h += `<div class="step-box ${act?'step-box-active':''}" id="step-${idx}"><div class="text-[9px] ${act?'text-amber-500':'text-zinc-600'} font-black uppercase">${s.type}</div><div class="text-base font-black italic ${act?'text-white':'text-zinc-500'} mt-1">${segA >= (activeStepsData.times[idx-1]||0) + s.sec ? s.ml : 0}ml / ${s.ml}ml</div><div class="text-[8px] ${act?'text-amber-500':'text-zinc-600'} font-bold mt-1">/ ${s.sec}s</div></div>`;
             });
             document.getElementById('p-steps').innerHTML = h;
             if(target < activeStepsData.steps.length) document.getElementById(`step-${target}`)?.scrollIntoView({ behavior: 'smooth', inline: 'center' });
