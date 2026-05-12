@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Coffee Master v12.8</title>
+    <title>Coffee Master v12.9</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -29,8 +29,6 @@
         .star.active { color: #f59e0b; }
         .grain-thumb { width: 75px; height: 75px; border-radius: 16px; object-fit: cover; background: #222; border: 1px solid #333; }
         .atk-row { background: #111; padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #222; }
-        input[type=range] { -webkit-appearance: none; background: #333; height: 6px; border-radius: 5px; margin: 10px 0; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #f59e0b; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
@@ -43,7 +41,6 @@
 
     <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()"><h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2><div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div><button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button><button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button></div></div>
 
-    <!-- MAIN APP -->
     <div id="auth-screen"><div class="card w-full max-w-sm mx-auto text-center"><h1 class="text-3xl font-black text-amber-500 italic uppercase mb-8">COFFEE MASTER</h1><div id="login-form"><input type="email" id="login-email" placeholder="E-MAIL"><input type="password" id="login-pass" placeholder="SENHA"><button class="btn-gold w-full mt-6" onclick="handleLogin()">Entrar</button><p class="text-[10px] mt-6 uppercase text-zinc-500 underline" onclick="toggleAuth(false)">Criar agora</p></div><div id="signup-form" class="hidden text-left"><input type="text" id="sign-nick" placeholder="NICKNAME"><input type="email" id="sign-email" placeholder="E-MAIL"><input type="password" id="sign-pass" placeholder="SENHA"><select id="sign-type"><option value="pessoal">PESSOAL (PRIVADO)</option><option value="comunidade" selected>COMUNIDADE (PÚBLICO)</option></select><button class="btn-gold w-full mt-6" onclick="handleSignup()">Criar Conta</button><p class="text-[10px] mt-6 text-center uppercase text-zinc-500 underline" onclick="toggleAuth(true)">Já tenho conta</p></div></div></div>
 
     <div id="main-app" class="hidden">
@@ -103,40 +100,55 @@
             if(t==='cafes') loadG(); if(t==='receitas') loadR(); if(t==='preparo') loadPrep(); if(t==='diario') loadDiario(); if(t==='admin') loadAdmin();
         }
 
+        // --- LÓGICA DE CARREGAMENTO v12.9 (FIX DE INDEX E COMUNIDADE) ---
         async function loadG() { 
-            let results = []; const search = (document.getElementById('search-g').value || "").toUpperCase();
-            if (currentUser.email === ADMIN_EMAIL) { const snap = await db.collection('cafes').orderBy('ts', 'desc').get(); results = snap.docs.map(d => ({id: d.id, ...d.data()})); }
-            else if (userProfile.type === 'pessoal') { const snapOwn = await db.collection('cafes').where('owner_uid', '==', currentUser.uid).orderBy('ts', 'desc').get(); results = snapOwn.docs.map(d => ({id: d.id, ...d.data()})); }
-            else { 
-                const snapPub = await db.collection('cafes').where('visibilidade', '==', 'publico').orderBy('ts', 'desc').get(); 
-                const snapOwn = await db.collection('cafes').where('owner_uid', '==', currentUser.uid).orderBy('ts', 'desc').get(); 
-                const map = new Map(); snapPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()})); snapOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()})); 
-                results = Array.from(map.values()).sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
-            }
-            if(search) results = results.filter(i => i.nome.includes(search) || (i.prod && i.prod.includes(search)));
-            localData.g = results; renderG(results);
+            let finalResults = []; const search = (document.getElementById('search-g').value || "").toUpperCase();
+            try {
+                if (currentUser.email === ADMIN_EMAIL) {
+                    const snap = await db.collection('cafes').get();
+                    finalResults = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                } else {
+                    const snapPub = await db.collection('cafes').where('visibilidade', '==', 'publico').get();
+                    const snapOwn = await db.collection('cafes').where('owner_uid', '==', currentUser.uid).get();
+                    const map = new Map();
+                    snapPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                    snapOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                    finalResults = Array.from(map.values());
+                }
+                // Ordenação via Javascript (evita erro de índice no Firebase)
+                finalResults.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
+                if(search) finalResults = finalResults.filter(i => i.nome.includes(search) || (i.prod && i.prod.includes(search)));
+                localData.g = finalResults; renderG(finalResults);
+            } catch(e) { console.error("Erro loadG:", e); }
         }
+
+        async function loadR() {
+            let finalResults = [];
+            try {
+                if (currentUser.email === ADMIN_EMAIL) {
+                    const snap = await db.collection('receitas').get();
+                    finalResults = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                } else {
+                    const snapPub = await db.collection('receitas').where('visibilidade', '==', 'publico').get();
+                    const snapOwn = await db.collection('receitas').where('owner_uid', '==', currentUser.uid).get();
+                    const map = new Map();
+                    snapPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                    snapOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                    finalResults = Array.from(map.values());
+                }
+                // Ordenação via Javascript
+                finalResults.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
+                localData.r = finalResults; renderR(finalResults);
+            } catch(e) { console.error("Erro loadR:", e); }
+        }
+
+        // --- FUNÇÕES COMPLEMENTARES ---
         function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div></div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
-        
-        async function loadR() { 
-            let results = []; 
-            if (currentUser.email === ADMIN_EMAIL) { const snap = await db.collection('receitas').orderBy('ts', 'desc').get(); results = snap.docs.map(d => ({id: d.id, ...d.data()})); }
-            else if (userProfile.type === 'pessoal') { const snapOwn = await db.collection('receitas').where('owner_uid', '==', currentUser.uid).orderBy('ts', 'desc').get(); results = snapOwn.docs.map(d => ({id: d.id, ...d.data()})); }
-            else { 
-                const snapPub = await db.collection('receitas').where('visibilidade', '==', 'publico').orderBy('ts', 'desc').get(); 
-                const snapOwn = await db.collection('receitas').where('owner_uid', '==', currentUser.uid).orderBy('ts', 'desc').get(); 
-                const map = new Map(); snapPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()})); snapOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()})); 
-                results = Array.from(map.values()).sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
-            }
-            localData.r = results; renderR(results); 
-        }
         function renderR(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; h += `<div class="card p-3 flex justify-between items-center h-[85px]"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesR('${i.id}')"><div class="text-lg font-black italic uppercase text-amber-500 truncate">${i.nome}</div><div class="text-[8px] text-zinc-600 font-black uppercase mt-1">por @${i.owner_nick || 'Mestre'} | ${i.metodo || '--'}</div></div><div class="flex gap-2"> ${isOwner ? `<button onclick="editR('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('receitas','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''} <button onclick="showTab('preparo'); handleRecipeSelect('${i.id}')" class="text-xs font-black p-3 bg-amber-600 text-black rounded-lg italic uppercase">Preparar</button> </div></div>`; }); document.getElementById('list-r').innerHTML = h; }
-        
         async function loadPrep() { let gh = '<option value="0">SELECIONE O GRÃO</option>', rh = '<option value="0">SELECIONE A RECEITA</option>'; localData.g.forEach(i => gh += `<option value="${i.id}">${i.nome}</option>`); localData.r.forEach(i => rh += `<option value="${i.id}">${i.nome}</option>`); document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh; }
         function handleRecipeSelect(rid) { if(rid && typeof rid === 'string') document.getElementById('p-r').value = rid; const i = localData.r.find(x => x.id === document.getElementById('p-r').value); if(i) { document.getElementById('p-po-val').value = i.origPo; document.getElementById('p-ratio-val').value = i.origRatio; document.getElementById('p-clicks-val').value = i.origClicks || "--"; document.getElementById('p-temp-val').value = i.origTemp || "--"; upCalc(); } }
         function upCalc() { const p = parseFloat(document.getElementById('p-po-val').value) || 0, r = parseFloat(document.getElementById('p-ratio-val').value) || 0; const total = Math.round(p * r); document.getElementById('p-total-display').innerText = total; const i = localData.r.find(x => x.id === document.getElementById('p-r').value); if(!i) return; const ratioF = total / i.origTotal; activeStepsData = { steps: [], times: [] }; let sum = 0; if(i.bloomMl > 0) { let bN = Math.round(i.bloomMl * ratioF); sum += bN; activeStepsData.steps.push({ title: 'BLOOM', ml: bN, sum, sec: i.bloomSec }); activeStepsData.times.push(i.bloomSec); } (i.ataques || []).forEach((a, idx) => { let aN = Math.round(a.ml * ratioF); sum += aN; activeStepsData.steps.push({ title: `ATK ${idx+1}`, ml: aN, sum, sec: a.sec }); activeStepsData.times.push((activeStepsData.times.length > 0 ? activeStepsData.times[activeStepsData.times.length-1] : 0) + a.sec); }); renderSteps(0); }
         function renderSteps(segA) { let h = '', tIdx = 0; activeStepsData.times.forEach((t, i) => { if(segA >= t) tIdx = i + 1; }); activeStepsData.steps.forEach((s, idx) => { const act = idx === tIdx; h += `<div class="step-box ${act?'step-box-active':''}" id="p-step-${idx}"><div class="text-[9px] ${act?'text-amber-500':'text-zinc-600'} font-black uppercase">${s.title}</div><div class="text-xl font-black italic ${act?'text-white':'text-zinc-400'} mt-1">${s.ml}ml</div><div class="text-[10px] text-amber-600 font-bold uppercase mt-1">SOMA: ${s.sum}ml</div><div class="text-[8px] text-zinc-500 font-bold mt-1">TEMPO: ${s.sec}s</div></div>`; }); document.getElementById('p-steps').innerHTML = h; const activeEl = document.getElementById(`p-step-${tIdx}`); if(activeEl) activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }
-        
         async function loadAdmin() { if(currentUser.email !== ADMIN_EMAIL) return; const uSnap = await db.collection('users').get(), rSnap = await db.collection('receitas').get(); document.getElementById('admin-user-count').innerText = uSnap.size; document.getElementById('admin-total-receitas').innerText = rSnap.size; let h = ''; uSnap.forEach(d => { const u = d.data(); h += `<div class="card p-3 flex justify-between items-center cursor-pointer active:bg-zinc-900" onclick="verUsuarioAdmin('${u.uid}')"><div class="flex items-center gap-3"><span class="text-white font-bold italic">@${u.nick}</span><span class="text-[8px] text-zinc-500 font-black uppercase flex items-center gap-1">${u.type === 'pessoal' ? '🔒 PRIVADO' : '🌎 COMUNIDADE'}</span></div><div class="flex gap-2"><button onclick="event.stopPropagation(); auth.sendPasswordResetEmail('${u.email}'); alert('Reset enviado!')" class="text-[8px] font-black border border-amber-600 p-2 rounded text-amber-600 uppercase">Reset</button><button onclick="event.stopPropagation(); delUser('${u.uid}', '${u.nick}')" class="text-[8px] font-black border border-red-800 p-2 rounded text-red-600 uppercase">Delete</button></div></div>`; }); document.getElementById('admin-user-list').innerHTML = h; }
         async function verUsuarioAdmin(uid) { const user = (await db.collection('users').doc(uid).get()).data(); document.getElementById('adm-u-nick').innerText = `@${user.nick.toUpperCase()}`; const gs = await db.collection('cafes').where('owner_uid', '==', uid).get(); const rs = await db.collection('receitas').where('owner_uid', '==', uid).get(); const logs = await db.collection('logs').where('owner_uid', '==', uid).get(); let content = `<div class="mb-4"><span class="label-gold">GRÃOS (${gs.size})</span>`; gs.forEach(d => { const g = d.data(); content += `<div onclick="goEdit('g','${d.id}')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-xs truncate">${g.nome}</span><div class="flex gap-2"><button onclick="event.stopPropagation(); del('cafes','${d.id}','${g.nome}')" class="p-2 bg-black rounded text-xs">🗑️</button></div></div>`; }); content += `</div><div><span class="label-gold">RECEITAS (${rs.size})</span>`; rs.forEach(d => { const r = d.data(); content += `<div onclick="goEdit('r','${d.id}')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-xs truncate">${r.nome}</span><div class="flex gap-2"><button onclick="event.stopPropagation(); del('receitas','${d.id}','${r.nome}')" class="p-2 bg-black rounded text-xs">🗑️</button></div></div>`; }); content += `</div><div class="mt-4"><span class="label-gold">DIÁRIO (${logs.size})</span>`; logs.forEach(d => { const l = d.data(); content += `<div onclick="showTab('diario'); document.getElementById('admin-user-details').classList.add('hidden')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-[10px] truncate">${l.grao} (${l.tempoTotal})</span><button onclick="event.stopPropagation(); del('logs','${d.id}','Log')" class="p-2 bg-black rounded text-xs">🗑️</button></div>`; }); content += `</div>`; document.getElementById('adm-u-content').innerHTML = content; document.getElementById('admin-user-details').classList.remove('hidden'); }
         async function delUser(uid, nick) { if(confirm(`DELETAR USUÁRIO @${nick}? TODOS OS DADOS SERÃO PERDIDOS.`)) { await db.collection('users').doc(uid).delete(); loadAdmin(); } }
@@ -144,39 +156,9 @@
         function resetPreparo() { document.getElementById('p-g').value="0"; document.getElementById('p-r').value="0"; document.getElementById('p-po-val').value="--"; document.getElementById('p-ratio-val').value="--"; document.getElementById('p-clicks-val').value="--"; document.getElementById('p-temp-val').value="--"; document.getElementById('p-total-display').innerText="0"; document.getElementById('p-steps').innerHTML=""; activeStepsData = {steps:[], times:[]}; }
         async function loadDiario() { const snap = await db.collection('logs').where('owner_uid', '==', currentUser.uid).get(); let logs = snap.docs.map(d => ({id: d.id, ...d.data()})); logs.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0)); let h = ''; logs.forEach(i => { h += `<div class="card p-4 border-l-4 border-l-amber-600 shadow-none"><div class="text-[10px] text-zinc-500 font-bold">${i.data}</div><div class="text-lg font-black italic text-white leading-tight mt-1">${i.grao}</div><div class="text-xs font-bold text-amber-500 uppercase mt-1">${i.receita} | ${i.tempoTotal}</div><div class="grid grid-cols-4 gap-1 mt-2 text-[8px] font-black text-zinc-600"><div>DOC:${i.docura||0}</div><div>ACI:${i.acidez||0}</div><div>AMA:${i.amargor||0}</div><div>COR:${i.corpo||0}</div></div><p class="mt-2 text-xs italic text-zinc-400">"${i.observacoes || '--'}"</p><div class="mt-3 flex justify-between items-center"><div class="text-xl text-amber-500">${'★'.repeat(i.nota)}</div><button onclick="del('logs','${i.id}','Log')" class="text-xs p-2 bg-zinc-900 rounded-lg text-red-800 font-black">🗑️</button></div></div>`; }); document.getElementById('list-logs').innerHTML = h || '<div class="text-center p-10 text-zinc-600 font-black uppercase italic">Vazio</div>'; }
         async function processImage(file) { return new Promise((res) => { const r = new FileReader(); r.onload = (e) => { const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); cv.width = 600; cv.height = 600; cv.getContext('2d').drawImage(img, (img.width-Math.min(img.width,img.height))/2, (img.height-Math.min(img.width,img.height))/2, Math.min(img.width,img.height), Math.min(img.width,img.height), 0, 0, 600, 600); res(cv.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; r.readAsDataURL(file); }); }
-        
-        function addAtackField(ml='', sec='', obs='') { 
-            document.getElementById('ataques-container').insertAdjacentHTML('beforeend', `<div class="atk-row"><div class="flex gap-2"><div><span class="label-gold mt-0">ML</span><input type="number" class="atk-ml" value="${ml}"></div><div><span class="label-gold mt-0">SEG</span><input type="number" class="atk-sec" value="${sec}"></div><button onclick="this.parentElement.parentElement.remove()" class="text-zinc-600 font-black pt-5 px-2">X</button></div><input type="text" class="atk-obs mt-1 text-xs" placeholder="Obs..." value="${obs}"></div>`); 
-        }
-        
+        function addAtackField(ml='', sec='', obs='') { document.getElementById('ataques-container').insertAdjacentHTML('beforeend', `<div class="atk-row"><div class="flex gap-2"><div><span class="label-gold mt-0">ML</span><input type="number" class="atk-ml" value="${ml}"></div><div><span class="label-gold mt-0">SEG</span><input type="number" class="atk-sec" value="${sec}"></div><button onclick="this.parentElement.parentElement.remove()" class="text-zinc-600 font-black pt-5 px-2">X</button></div><input type="text" class="atk-obs mt-1 text-xs" placeholder="Obs..." value="${obs}"></div>`); }
         async function saveG() { const file = document.getElementById('g-photo-input').files[0]; const orig = editIds.g ? localData.g.find(x => x.id === editIds.g) : null; const d = { prod: document.getElementById('g-prod').value.toUpperCase(), nome: document.getElementById('g-nome').value.toUpperCase(), variedade: document.getElementById('g-variedade').value.toUpperCase(), processo: document.getElementById('g-processo').value.toUpperCase(), torrefacao: document.getElementById('g-torrefacao').value.toUpperCase(), torra: document.getElementById('g-torra').value, altitude: document.getElementById('g-altitude').value, data: document.getElementById('g-data').value, notas: document.getElementById('g-notas').value.toUpperCase(), owner_uid: orig ? orig.owner_uid : currentUser.uid, owner_nick: orig ? orig.owner_nick : userProfile.nick, visibilidade: orig ? orig.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp() }; if(file) d.photo = await processImage(file); if(editIds.g) await db.collection('cafes').doc(editIds.g).update(d); else await db.collection('cafes').add(d); cancelEdit('g'); loadG(); }
-        
-        async function saveR() { 
-            try {
-                const atks = []; document.querySelectorAll('.atk-row').forEach(row => { atks.push({ ml: parseFloat(row.querySelector('.atk-ml').value)||0, sec: parseFloat(row.querySelector('.atk-sec').value)||0, obs: row.querySelector('.atk-obs').value.toUpperCase() }); }); 
-                const original = editIds.r ? localData.r.find(x => x.id === editIds.r) : null; 
-                const d = { 
-                    nome: document.getElementById('r-nome').value.toUpperCase(), 
-                    metodo: document.getElementById('r-metodo').value, 
-                    origRatio: parseFloat(document.getElementById('r-ratio').value) || 0, 
-                    origPo: parseFloat(document.getElementById('r-po').value) || 0, 
-                    origTotal: parseInt(document.getElementById('r-total').value) || 0, 
-                    origClicks: document.getElementById('r-clicks').value, 
-                    origTemp: document.getElementById('r-temp').value, 
-                    bloomMl: parseFloat(document.getElementById('r-bloom-ml').value)||0, 
-                    bloomSec: parseFloat(document.getElementById('r-bloom-sec').value)||0, 
-                    ataques: atks, 
-                    owner_uid: original ? original.owner_uid : currentUser.uid, 
-                    owner_nick: original ? original.owner_nick : userProfile.nick, 
-                    visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), 
-                    ts: firebase.firestore.FieldValue.serverTimestamp() 
-                }; 
-                if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); 
-                else await db.collection('receitas').add(d); 
-                cancelEdit('r'); loadR();
-            } catch(e) { alert("Erro ao salvar: " + e.message); }
-        }
-
+        async function saveR() { try { const atks = []; document.querySelectorAll('.atk-row').forEach(row => { atks.push({ ml: parseFloat(row.querySelector('.atk-ml').value)||0, sec: parseFloat(row.querySelector('.atk-sec').value)||0, obs: row.querySelector('.atk-obs').value.toUpperCase() }); }); const original = editIds.r ? localData.r.find(x => x.id === editIds.r) : null; const d = { nome: document.getElementById('r-nome').value.toUpperCase(), metodo: document.getElementById('r-metodo').value, origRatio: parseFloat(document.getElementById('r-ratio').value)||0, origPo: parseFloat(document.getElementById('r-po').value)||0, origTotal: parseInt(document.getElementById('r-total').value)||0, origClicks: document.getElementById('r-clicks').value, origTemp: document.getElementById('r-temp').value, bloomMl: parseFloat(document.getElementById('r-bloom-ml').value)||0, bloomSec: parseFloat(document.getElementById('r-bloom-sec').value)||0, ataques: atks, owner_uid: original ? original.owner_uid : currentUser.uid, owner_nick: original ? original.owner_nick : userProfile.nick, visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp() }; if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); else await db.collection('receitas').add(d); cancelEdit('r'); loadR(); } catch(e) { alert("Erro ao salvar: " + e.message); } }
         function editG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; editIds.g = id; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-variedade').value = i.variedade; document.getElementById('g-processo').value = i.processo || ''; document.getElementById('g-torrefacao').value = i.torrefacao || ''; document.getElementById('g-torra').value = i.torra || ''; document.getElementById('g-altitude').value = i.altitude || ''; document.getElementById('g-data').value = i.data || ''; document.getElementById('g-notas').value = i.notas || ''; document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); window.scrollTo({top:0, behavior:'smooth'}); }
         function editR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = i.metodo || ''; document.getElementById('r-ratio').value = i.origRatio; document.getElementById('r-po').value = i.origPo; document.getElementById('r-total').value = i.origTotal; document.getElementById('r-clicks').value = i.origClicks || ''; document.getElementById('r-temp').value = i.origTemp || ''; document.getElementById('r-bloom-ml').value = i.bloomMl || ''; document.getElementById('r-bloom-sec').value = i.bloomSec || ''; document.getElementById('ataques-container').innerHTML = ''; (i.ataques || []).forEach(a => addAtackField(a.ml, a.sec, a.obs)); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); window.scrollTo({top:0, behavior:'smooth'}); }
         function cancelEdit(t) { editIds[t] = null; document.getElementById(t+'-edit-actions').classList.add('hidden'); document.getElementById(t+'-btn-main').classList.remove('hidden'); document.querySelectorAll('#tab-'+(t==='g'?'cafes':'receitas')+' input, select, textarea').forEach(el => el.value = ""); document.getElementById('ataques-container').innerHTML = ''; }
