@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Coffee Master v12.4</title>
+    <title>Coffee Master v12.6</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,7 +16,6 @@
         body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding-bottom: 120px; zoom: 1.15; overflow-x: hidden; }
         .card { background: #161616; border-radius: 18px; padding: 14px; margin-bottom: 12px; border: 1px solid #262626; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .label-gold { color: #f59e0b; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-top: 20px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
-        .label-gold:first-child { margin-top: 0; }
         input, select, textarea { background: #222; border: 2px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 4px; font-size: 16px; font-weight: 900; font-style: italic; }
         .btn-gold { background: #f59e0b; color: #000; font-weight: 900; padding: 18px; border-radius: 18px; width: 100%; text-transform: uppercase; font-size: 14px; margin-top: 15px; cursor: pointer; }
         .tab-btn { background: #111; color: #444; flex: 1; padding: 14px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
@@ -24,16 +23,14 @@
         .step-box { background: #161616; padding: 12px; border-radius: 16px; text-align: center; border: 2px solid #262626; width: 145px; flex-shrink: 0; }
         .step-box-active { border: 2px solid #f59e0b !important; background: #221a05; }
         
-        /* CORREÇÃO DE CAMADAS (Z-INDEX) */
+        /* FIX DE CAMADAS - MODAL DE ZOOM SEMPRE NO TOPO */
         #auth-screen, #modal-feedback, #pix-modal, #modal-detalhes, #admin-user-details { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; z-index: 2000; padding: 20px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
-        
-        #modal-zoom { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.95); z-index: 5000; display: flex; align-items: center; justify-content: center; padding: 0; }
+        #modal-zoom { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999 !important; display: flex; align-items: center; justify-content: center; padding: 0; }
         
         .hidden { display: none !important; }
         .star { font-size: 35px; cursor: pointer; color: #333; padding: 5px; }
         .star.active { color: #f59e0b; }
         .grain-thumb { width: 75px; height: 75px; border-radius: 16px; object-fit: cover; background: #222; border: 1px solid #333; flex-shrink: 0; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
         .atk-row { background: #111; padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #222; }
         input[type=range] { -webkit-appearance: none; background: #333; height: 6px; border-radius: 5px; margin: 10px 0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #f59e0b; }
@@ -41,14 +38,15 @@
 </head>
 <body class="p-3 max-w-lg mx-auto">
     <!-- MODAIS -->
-    <div id="modal-zoom" class="hidden" onclick="this.classList.add('hidden')"><img id="img-ampliada" class="max-w-[95%] max-h-[80%] rounded-2xl border-2 border-amber-500 shadow-2xl"></div>
+    <div id="modal-zoom" class="hidden" onclick="this.classList.add('hidden')"><img id="img-ampliada" class="max-w-[95%] max-h-[85%] rounded-2xl border-2 border-amber-500 shadow-2xl"></div>
     <div id="modal-detalhes" class="hidden" onclick="fecharDetalhes()"><div class="card w-full max-w-sm mx-auto border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.1)]" onclick="event.stopPropagation()"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4 text-center">Ficha Técnica</h3><div id="detalhes-content" class="space-y-4 text-left"></div><button class="btn-gold w-full mt-8" onclick="fecharDetalhes()">VOLTAR</button></div></div>
     <div id="admin-user-details" class="hidden"><div class="card w-full max-w-md mx-auto border-amber-600 bg-black h-[90vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 id="adm-u-nick" class="text-amber-500 font-black italic uppercase text-xl">Usuário</h3><button onclick="document.getElementById('admin-user-details').classList.add('hidden')" class="text-zinc-500 font-bold">X</button></div><div id="adm-u-content" class="space-y-6 overflow-y-auto flex-1 pr-1 no-scrollbar"></div><button class="btn-gold w-full mt-4" onclick="document.getElementById('admin-user-details').classList.add('hidden')">VOLTAR</button></div></div>
 
     <div id="modal-feedback" class="hidden"><div class="card w-full max-w-sm mx-auto border-amber-600 text-center"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4">Como ficou?</h3><div class="flex justify-center mb-4"><span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span></div><div class="grid grid-cols-2 gap-4 text-left px-2"><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Doçura</span><span id="val-doce" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-doce" min="0" max="5" value="3" oninput="document.getElementById('val-doce').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Acidez</span><span id="val-acidez" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-acidez" min="0" max="5" value="3" oninput="document.getElementById('val-acidez').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Amargor</span><span id="val-amargor" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-amargor" min="0" max="5" value="3" oninput="document.getElementById('val-amargor').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Corpo</span><span id="val-corpo" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-corpo" min="0" max="5" value="3" oninput="document.getElementById('val-corpo').innerText=this.value"></div></div><textarea id="f-obs" rows="2" class="mt-4" placeholder="NOTAS DO DIÁRIO..."></textarea><button class="btn-gold w-full mt-4" onclick="salvarFeedback()">Salvar no Diário</button><button class="text-zinc-500 text-[10px] mt-4 font-bold uppercase" onclick="fecharFeedback()">Pular</button></div></div>
 
-    <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()"><h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2><div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div><button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button><button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button></div></div>
+    <div id="pix-modal" class="hidden" onclick="closePix"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()"><h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2><div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div><button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button><button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button></div></div>
 
+    <!-- AUTH -->
     <div id="auth-screen"><div class="card w-full max-w-sm mx-auto text-center"><h1 class="text-3xl font-black text-amber-500 italic uppercase mb-8">COFFEE MASTER</h1><div id="login-form"><input type="email" id="login-email" placeholder="E-MAIL"><input type="password" id="login-pass" placeholder="SENHA"><button class="btn-gold w-full mt-6" onclick="handleLogin()">Entrar</button><p class="text-[10px] mt-6 uppercase text-zinc-500 underline" onclick="toggleAuth(false)">Criar agora</p></div><div id="signup-form" class="hidden text-left"><input type="text" id="sign-nick" placeholder="NICKNAME"><input type="email" id="sign-email" placeholder="E-MAIL"><input type="password" id="sign-pass" placeholder="SENHA"><select id="sign-type"><option value="pessoal">PESSOAL (PRIVADO)</option><option value="comunidade" selected>COMUNIDADE (PÚBLICO)</option></select><button class="btn-gold w-full mt-6" onclick="handleSignup()">Criar Conta</button><p class="text-[10px] mt-6 text-center uppercase text-zinc-500 underline" onclick="toggleAuth(true)">Já tenho conta</p></div></div></div>
 
     <div id="main-app" class="hidden">
@@ -148,19 +146,22 @@
         function closePix(){ document.getElementById('pix-modal').classList.add('hidden'); }
         function copyPix(){ navigator.clipboard.writeText("alanpocos@gmail.com"); alert('Pix copiado!'); }
 
-        // AUTO-UPDATE
+        // SISTEMA DE AUTO-UPDATE v12.6
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').then(reg => {
-                    reg.onupdatefound = () => {
-                        const installingWorker = reg.installing;
-                        installingWorker.onstatechange = () => {
-                            if (installingWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                    reg.addEventListener('updatefound', () => {
+                        const newWorker = reg.installing;
+                        newWorker.addEventListener('statechange', () => {
+                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                 window.location.reload();
                             }
-                        };
-                    };
-                }).catch(err => console.log('Erro SW:', err));
+                        });
+                    });
+                });
+            });
+            navigator.serviceWorker.addEventListener('controllerchange', () => {
+                window.location.reload();
             });
         }
     </script>
