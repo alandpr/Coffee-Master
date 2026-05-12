@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Coffee Master v10.8 - PWA</title>
+    <title>Coffee Master v10.26</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -23,51 +23,70 @@
         .tab-btn { background: #111; color: #444; flex: 1; padding: 14px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
         .active-tab { background: #f59e0b; color: #000; border-color: #fbbf24; }
         .step-box { background: #161616; padding: 12px; border-radius: 16px; text-align: center; border: 2px solid #262626; width: 145px; flex-shrink: 0; transition: all 0.4s; }
-        .step-box-active { border-color: #f59e0b !important; background: #221a05; box-shadow: 0 0 20px rgba(245,158,11,0.15); }
-        #auth-screen, #modal-feedback, #pix-modal, #modal-detalhes, #admin-user-details, #admin-log-details { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; z-index: 2000; padding: 20px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+        .step-box-active { border: 2px solid #f59e0b !important; background: #221a05; box-shadow: 0 0 20px rgba(245,158,11,0.2); }
+        #auth-screen, #modal-feedback, #pix-modal, #modal-detalhes, #modal-zoom, #admin-user-details { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; z-index: 2000; padding: 20px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+        #modal-zoom { background: rgba(0,0,0,0.95); z-index: 3000; align-items: center; justify-content: center; padding: 0; }
         .hidden { display: none !important; }
         .star { font-size: 35px; cursor: pointer; color: #333; padding: 5px; }
         .star.active { color: #f59e0b; }
-        .search-input { background: #000; border: 1px solid #333; font-size: 11px; padding: 10px; border-radius: 10px; text-transform: uppercase; margin-bottom: 15px; }
+        .grain-thumb { width: 75px; height: 75px; border-radius: 16px; object-fit: cover; background: #222; border: 1px solid #333; flex-shrink: 0; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
+        .atk-row { background: #111; padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #222; }
         input[type=range] { -webkit-appearance: none; background: #333; height: 6px; border-radius: 5px; margin: 10px 0; }
         input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #f59e0b; }
-        .line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
-        .grain-thumb { width: 65px; height: 65px; border-radius: 14px; object-fit: cover; background: #222; border: 1px solid #333; flex-shrink: 0; }
-        .no-scrollbar::-webkit-scrollbar { display: none; }
-        .admin-tag { font-size: 7px; background: #222; color: #f59e0b; padding: 2px 4px; border-radius: 4px; margin-left: 4px; vertical-align: middle; border: 0.5px solid #f59e0b; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
     <!-- MODAIS -->
-    <div id="modal-detalhes" class="hidden" onclick="fecharDetalhes()"><div class="card w-full max-w-sm mx-auto border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.1)]" onclick="event.stopPropagation()"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4">Ficha Técnica</h3><div id="detalhes-content" class="space-y-4 text-left"></div><button class="btn-gold w-full mt-8" onclick="fecharDetalhes()">VOLTAR</button></div></div>
+    <div id="modal-zoom" class="hidden" onclick="this.classList.add('hidden')"><img id="img-ampliada" class="max-w-[95%] max-h-[80%] rounded-2xl border-2 border-amber-500 shadow-2xl"></div>
+    <div id="modal-detalhes" class="hidden" onclick="fecharDetalhes()"><div class="card w-full max-w-sm mx-auto border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.1)]" onclick="event.stopPropagation()"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4 text-center">Ficha Técnica</h3><div id="detalhes-content" class="space-y-4 text-left"></div><button class="btn-gold w-full mt-8" onclick="fecharDetalhes()">VOLTAR</button></div></div>
     
+    <!-- ADMIN DETAIL -->
+    <div id="admin-user-details" class="hidden"><div class="card w-full max-w-md mx-auto border-amber-600 bg-black h-[90vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 id="adm-u-nick" class="text-amber-500 font-black italic uppercase text-xl">Usuário</h3><button onclick="document.getElementById('admin-user-details').classList.add('hidden')" class="text-zinc-500 font-bold">X</button></div><div id="adm-u-content" class="space-y-6 overflow-y-auto flex-1 pr-1 no-scrollbar"></div><button class="btn-gold w-full mt-4" onclick="document.getElementById('admin-user-details').classList.add('hidden')">VOLTAR</button></div></div>
+
+    <div id="modal-feedback" class="hidden"><div class="card w-full max-w-sm mx-auto border-amber-600 text-center">
+        <h3 class="text-amber-500 font-black italic uppercase text-xl mb-4">Como ficou?</h3>
+        <div class="flex justify-center mb-4"><span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span></div>
+        <div class="grid grid-cols-2 gap-4 text-left px-2">
+            <div><div class="flex justify-between items-center"><span class="label-gold mt-0">Doçura</span><span id="val-doce" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-doce" min="0" max="5" value="3" oninput="document.getElementById('val-doce').innerText=this.value"></div>
+            <div><div class="flex justify-between items-center"><span class="label-gold mt-0">Acidez</span><span id="val-acidez" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-acidez" min="0" max="5" value="3" oninput="document.getElementById('val-acidez').innerText=this.value"></div>
+            <div><div class="flex justify-between items-center"><span class="label-gold mt-0">Amargor</span><span id="val-amargor" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-amargor" min="0" max="5" value="3" oninput="document.getElementById('val-amargor').innerText=this.value"></div>
+            <div><div class="flex justify-between items-center"><span class="label-gold mt-0">Corpo</span><span id="val-corpo" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-corpo" min="0" max="5" value="3" oninput="document.getElementById('val-corpo').innerText=this.value"></div>
+        </div>
+        <textarea id="f-obs" rows="2" class="mt-4" placeholder="NOTAS DO DIÁRIO..."></textarea>
+        <button class="btn-gold w-full mt-4" onclick="salvarFeedback()">Salvar no Diário</button>
+        <button class="text-zinc-500 text-[10px] mt-4 font-bold uppercase" onclick="fecharFeedback()">Pular</button>
+    </div></div>
+
+    <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()"><h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2><div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div><button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button><button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button></div></div>
+
+    <!-- MAIN APP -->
     <div id="auth-screen">
-        <div class="card w-full max-w-sm mx-auto border-amber-600 text-center">
+        <div class="card w-full max-w-sm mx-auto text-center">
             <h1 class="text-3xl font-black text-amber-500 italic uppercase mb-8">COFFEE MASTER</h1>
             <div id="login-form">
-                <span class="label-gold mt-0 text-left">E-mail</span><input type="email" id="login-email">
-                <span class="label-gold text-left">Senha</span><input type="password" id="login-pass">
+                <input type="email" id="login-email" placeholder="E-MAIL"><input type="password" id="login-pass" placeholder="SENHA">
                 <button class="btn-gold w-full mt-6" onclick="handleLogin()">Entrar</button>
-                <p class="text-[10px] text-center mt-6 font-black uppercase text-zinc-500">Novo? <button class="text-amber-500 underline" onclick="toggleAuth(false)">Criar agora</button></p>
+                <p class="text-[10px] mt-6 uppercase text-zinc-500 underline" onclick="toggleAuth(false)">Criar agora</p>
             </div>
             <div id="signup-form" class="hidden text-left">
-                <span class="label-gold mt-0">Nickname</span><input type="text" id="sign-nick">
-                <span class="label-gold">E-mail</span><input type="email" id="sign-email">
-                <span class="label-gold">Senha</span><input type="password" id="sign-pass">
-                <span class="label-gold">Perfil</span>
-                <select id="sign-type" onchange="updateProfileInfo(this)"><option value="" disabled selected>SELECIONAR</option><option value="pessoal">PESSOAL (PRIVADO)</option><option value="comunidade">COMUNIDADE (PÚBLICO)</option></select>
-                <div id="profile-info" class="text-[9px] font-bold text-amber-600 uppercase mt-2 italic px-2 min-h-[30px]"></div>
+                <input type="text" id="sign-nick" placeholder="NICKNAME">
+                <input type="email" id="sign-email" placeholder="E-MAIL">
+                <input type="password" id="sign-pass" placeholder="SENHA">
+                <select id="sign-type"><option value="pessoal">PESSOAL (PRIVADO)</option><option value="comunidade" selected>COMUNIDADE (PÚBLICO)</option></select>
                 <button class="btn-gold w-full mt-6" onclick="handleSignup()">Criar Conta</button>
-                <button class="text-[10px] w-full text-center mt-6 font-black uppercase text-zinc-500 underline" onclick="toggleAuth(true)">Já tenho conta</button>
+                <p class="text-[10px] mt-6 text-center uppercase text-zinc-500 underline" onclick="toggleAuth(true)">Já tenho conta</p>
             </div>
         </div>
     </div>
 
-    <!-- APP PRINCIPAL -->
     <div id="main-app" class="hidden">
         <div class="flex justify-between items-center mb-5 sticky top-0 bg-black z-50 py-2">
-            <div><h1 class="text-2xl font-black text-amber-500 italic uppercase leading-none">COFFEE MASTER</h1><span id="user-display" class="text-[8px] font-black text-zinc-600 uppercase italic"></span></div>
-            <div class="flex gap-2"><button onclick="openPix()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-amber-600 text-amber-500 italic uppercase">Pagar um café ☕</button><button onclick="handleLogout()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-zinc-700 text-zinc-500">Sair</button></div>
+            <div><h1 class="text-2xl font-black text-amber-500 italic uppercase leading-none">COFFEE MASTER</h1><span id="user-display" class="text-[8px] font-black text-zinc-600 uppercase"></span></div>
+            <div class="flex gap-2">
+                <button onclick="openPix()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-amber-600 text-amber-500 italic uppercase">Pagar um café ☕</button>
+                <button onclick="auth.signOut()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-zinc-700 text-zinc-500">Sair</button>
+            </div>
         </div>
         
         <div id="tabs-container" class="flex mb-6 bg-black p-1 rounded-2xl sticky top-[55px] z-50 border border-zinc-800 shadow-2xl overflow-x-auto no-scrollbar">
@@ -83,22 +102,15 @@
             <div class="card p-4">
                 <span class="label-gold mt-0">Produtor</span><input type="text" id="g-prod">
                 <span class="label-gold">Grão</span><input type="text" id="g-nome">
-                <span class="label-gold">Variedade</span><input type="text" id="g-variedade">
-                <span class="label-gold">Processo</span><input type="text" id="g-processo">
-                <div class="flex gap-2">
-                    <div class="flex-1"><span class="label-gold">Altitude</span><input type="text" id="g-altitude"></div>
-                    <div class="flex-1"><span class="label-gold">Torrefação</span><input type="text" id="g-torrefacao"></div>
-                </div>
-                <div class="flex gap-2">
-                    <div class="flex-1"><span class="label-gold">Torra</span><select id="g-torra"><option value="" disabled selected>SELECIONAR</option><option>CLARA</option><option>MÉDIA-CLARA</option><option>MÉDIA</option><option>ESCURA</option></select></div>
-                    <div class="flex-1"><span class="label-gold">DATA DA TORRA</span><input type="date" id="g-data"></div>
-                </div>
+                <div class="flex gap-2"><div class="flex-1"><span class="label-gold">Variedade</span><input type="text" id="g-variedade"></div><div class="flex-1"><span class="label-gold">Processo</span><input type="text" id="g-processo"></div></div>
+                <div class="flex gap-2"><div class="flex-1"><span class="label-gold">Torrefação</span><input type="text" id="g-torrefacao"></div><div class="flex-1"><span class="label-gold">Altitude</span><input type="text" id="g-altitude"></div></div>
+                <div class="flex gap-2"><div class="flex-1"><span class="label-gold">Torra</span><select id="g-torra"><option value=""></option><option>CLARA</option><option>MÉDIA</option><option>ESCURA</option></select></div><div class="flex-1"><span class="label-gold">DATA TORRA</span><input type="date" id="g-data"></div></div>
                 <span class="label-gold">Notas Sensoriais</span><textarea id="g-notas" rows="2"></textarea>
                 <span class="label-gold">Foto</span><input type="file" id="g-photo-input" accept="image/*" class="text-[10px] bg-transparent border-dashed border-zinc-700 p-2">
                 <div id="g-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveG()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('g')">X</button></div>
-                <button class="btn-gold w-full" onclick="saveG()" id="g-btn-main">Salvar</button>
+                <button class="btn-gold w-full mt-4" onclick="saveG()" id="g-btn-main">Salvar Grão</button>
             </div>
-            <input type="text" id="search-g" class="search-input w-full" placeholder="FILTRAR GRÃOS...">
+            <input type="text" id="search-g" oninput="loadG()" class="bg-black border border-zinc-800 p-3 rounded-xl w-full mb-4 text-xs uppercase" placeholder="FILTRAR GRÃOS...">
             <div id="list-g" class="space-y-3"></div>
         </div>
 
@@ -106,46 +118,27 @@
         <div id="tab-receitas" class="hidden">
             <div class="card p-4">
                 <span class="label-gold mt-0">Nome</span><input type="text" id="r-nome">
-                <span class="label-gold">Método</span><select id="r-metodo" onchange="checkMetodo(this)"><option value="" disabled selected>SELECIONAR</option><option>V60</option><option>AEROPRESS</option><option>KOAR</option><option value="OUTROS">OUTROS...</option></select>
-                <div id="r-metodo-outro-div" class="hidden mt-2"><input type="text" id="r-metodo-outro"></div>
-                <div class="bg-zinc-900 p-3 rounded-xl border border-dashed border-zinc-700 mt-4 space-y-4">
-                    <div class="grid grid-cols-3 gap-2">
-                        <div><span class="label-gold mt-0">Ratio</span><input type="number" id="r-ratio-base" step="0.1" oninput="calcTotalR()"></div>
-                        <div><span class="label-gold mt-0">Pó (g)</span><input type="number" id="r-po-base" oninput="calcTotalR()"></div>
-                        <div><span class="label-gold mt-0">Total</span><input type="number" id="r-total-base" readonly class="text-amber-500 font-bold bg-transparent border-none"></div>
-                    </div>
-                    <div class="grid grid-cols-2 gap-2">
-                        <div><span class="label-gold mt-0">Clicks</span><input type="number" id="r-clicks-base"></div>
-                        <div><span class="label-gold mt-0">Temp</span><input type="number" id="r-temp-base"></div>
-                    </div>
-                </div>
-                <div class="grid grid-cols-2 gap-2 mt-4">
-                    <div><span class="label-gold">Bloom (ml)</span><input type="number" id="r-bloom-ml"></div>
-                    <div><span class="label-gold">Tempo (s)</span><input type="number" id="r-bloom-sec"></div>
-                </div>
-                <div id="ataques-container" class="mt-2 space-y-2"></div>
-                <button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase">+ ADD ATAQUE</button>
-                <div id="r-edit-actions" class="hidden flex gap-2 mt-5"><button class="btn-gold flex-1 mt-0" onclick="saveR()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('r')">X</button></div>
-                <button class="btn-gold w-full mt-5" onclick="saveR()" id="r-btn-main">Salvar</button>
+                <span class="label-gold">Método</span><select id="r-metodo"><option value=""></option><option>V60</option><option>AEROPRESS</option><option>KOAR</option><option>OUTROS</option></select>
+                <div class="grid grid-cols-3 gap-2 mt-2"><div><span class="label-gold mt-0">Ratio</span><input type="number" id="r-ratio" step="0.1" oninput="calcTotalR()"></div><div><span class="label-gold mt-0">Pó(g)</span><input type="number" id="r-po" oninput="calcTotalR()"></div><div><span class="label-gold mt-0">Total</span><input type="number" id="r-total" readonly class="text-amber-500 font-bold bg-transparent border-none"></div></div>
+                <div class="grid grid-cols-2 gap-2"><div><span class="label-gold mt-0">Clicks</span><input type="number" id="r-clicks"></div><div><span class="label-gold mt-0">Temp</span><input type="number" id="r-temp"></div></div>
+                <div class="grid grid-cols-2 gap-2 mt-2 border-t border-zinc-800 pt-2"><div><span class="label-gold mt-0">Bloom(ml)</span><input type="number" id="r-bloom-ml"></div><div><span class="label-gold mt-0">Tempo(s)</span><input type="number" id="r-bloom-sec"></div></div>
+                <div id="ataques-container" class="mt-2"></div><button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase">+ ADD ATAQUE</button>
+                <div id="r-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveR()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('r')">X</button></div>
+                <button class="btn-gold w-full mt-4" onclick="saveR()" id="r-btn-main">Salvar Receita</button>
             </div>
-            <input type="text" id="search-r" class="search-input w-full" placeholder="FILTRAR RECEITAS...">
             <div id="list-r" class="space-y-3"></div>
         </div>
 
-        <!-- ABA PREPARO -->
         <div id="tab-preparo" class="hidden">
             <div class="card border-amber-600 bg-black p-5">
                 <select id="p-g" onchange="upCalc()"></select><select id="p-r" onchange="handleRecipeSelect()"></select>
                 <div class="grid grid-cols-4 gap-1 mt-4 text-center">
                     <div><span class="label-gold mt-0 text-[8px]">Pó(g)</span><input type="text" id="p-po-val" value="--" onfocus="handleFocus(this)" oninput="upCalc()" class="text-center text-sm text-amber-500 font-black bg-transparent border-none"></div>
                     <div><span class="label-gold mt-0 text-[8px]">Ratio</span><input type="text" id="p-ratio-val" value="--" onfocus="handleFocus(this)" oninput="upCalc()" class="text-center text-sm text-white font-black bg-transparent border-none"></div>
-                    <div><span class="label-gold mt-0 text-[8px]">Clicks</span><input type="text" id="p-clicks-val" value="--" onfocus="handleFocus(this)" class="text-center text-sm text-zinc-400 font-black bg-transparent border-none"></div>
-                    <div><span class="label-gold mt-0 text-[8px]">Temp</span><input type="text" id="p-temp-val" value="--" onfocus="handleFocus(this)" class="text-center text-sm text-zinc-400 font-black bg-transparent border-none"></div>
+                    <div><span class="label-gold mt-0 text-[8px]">Clicks</span><input type="text" id="p-clicks-val" value="--" onfocus="handleFocus(this)" class="text-center text-sm text-zinc-500 font-black bg-transparent border-none"></div>
+                    <div><span class="label-gold mt-0 text-[8px]">Temp</span><input type="text" id="p-temp-val" value="--" onfocus="handleFocus(this)" class="text-center text-sm text-zinc-500 font-black bg-transparent border-none"></div>
                 </div>
-                <div class="bg-zinc-900 rounded-2xl py-4 px-5 mt-6 border border-zinc-800 flex justify-between items-center shadow-inner">
-                    <span class="text-[10px] font-black text-zinc-500 uppercase italic">Água</span>
-                    <div class="text-4xl font-black text-white italic"><span id="p-total">0</span>ml</div>
-                </div>
+                <div class="bg-zinc-900 rounded-2xl py-4 px-5 mt-6 border border-zinc-800 flex justify-between items-center shadow-inner"><span class="text-[10px] font-black text-zinc-500 uppercase italic">Água</span><div class="text-4xl font-black text-white italic"><span id="p-total-display">0</span>ml</div></div>
                 <div id="p-steps" class="flex gap-3 mt-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar flex-nowrap"></div>
                 <div id="timer" class="text-6xl font-black my-6 text-center italic">00:00</div>
                 <button id="btn-timer-main" onclick="toggleTimer()" class="bg-green-700 text-white font-black py-4 rounded-xl w-full uppercase">Iniciar</button>
@@ -155,251 +148,201 @@
 
         <div id="tab-diario" class="hidden"><div id="list-logs" class="space-y-3"></div></div>
         
-        <div id="tab-admin" class="hidden">
-            <h2 class="text-amber-500 font-black italic uppercase text-lg mb-4 text-left">Admin</h2>
-            <div class="grid grid-cols-2 gap-2 mb-6 text-center">
-                <div class="card p-4"><span class="label-gold mt-0">Usuários</span><div id="admin-user-count" class="text-3xl font-black italic text-white">0</div></div>
-                <div class="card p-4"><span class="label-gold mt-0">Receitas</span><div id="admin-total-receitas" class="text-3xl font-black italic text-white">0</div></div>
-            </div>
-            <span class="label-gold text-left">Cadastrados</span>
-            <div id="admin-user-list" class="space-y-2"></div>
-        </div>
+        <div id="tab-admin" class="hidden text-center"><h2 class="text-amber-500 font-black italic uppercase text-lg mb-4">Painel Admin</h2><div class="grid grid-cols-2 gap-2 mb-6"><div class="card p-4"><span class="label-gold mt-0">Usuários</span><div id="admin-user-count" class="text-3xl font-black italic">0</div></div><div class="card p-4"><span class="label-gold mt-0">Receitas</span><div id="admin-total-receitas" class="text-3xl font-black italic">0</div></div></div><div id="admin-user-list" class="space-y-2"></div></div>
     </div>
 
-    <!-- MODAIS ADMIN E FEEDBACK COMPLETO -->
-    <div id="admin-user-details" class="hidden">
-        <div class="card w-full max-w-sm mx-auto shadow-2xl border-amber-500 bg-black" style="max-height: 85vh; overflow-y: auto;">
-            <div class="flex justify-between items-center mb-6"><h3 id="admin-detail-nick" class="text-amber-500 font-black italic uppercase text-xl">USUÁRIO</h3><button onclick="fecharAdminUser()" class="text-zinc-600 font-black text-xl">X</button></div>
-            <div id="admin-detail-type" class="text-[10px] font-black text-zinc-500 uppercase italic mb-6 border-b border-zinc-800 pb-2 text-left"></div>
-            <div class="space-y-6 text-left">
-                <div><span class="label-gold mt-0">Grãos</span><div id="admin-detail-grains" class="space-y-1 mt-2"></div></div>
-                <div><span class="label-gold mt-0">Receitas</span><div id="admin-detail-recipes" class="space-y-1 mt-2"></div></div>
-                <div><span class="label-gold mt-0">Diário</span><p class="text-[8px] text-zinc-600 mb-2 font-bold italic">CLIQUE PARA DETALHES</p><div id="admin-detail-logs" class="space-y-2 mt-2"></div></div>
-            </div>
-            <button class="btn-gold w-full mt-10" onclick="fecharAdminUser()">VOLTAR</button>
-        </div>
-    </div>
-
-    <div id="admin-log-details" class="hidden" onclick="this.classList.add('hidden')">
-        <div class="card w-full max-w-sm mx-auto shadow-2xl border-amber-500 bg-zinc-900" onclick="event.stopPropagation()">
-            <div class="flex justify-between items-center mb-6"><h3 class="text-amber-500 font-black italic uppercase text-xl">Ficha</h3><button onclick="document.getElementById('admin-log-details').classList.add('hidden')" class="text-zinc-600 font-black text-xl">X</button></div>
-            <div id="admin-log-content" class="space-y-4 text-left"></div><button class="btn-gold w-full mt-8" onclick="document.getElementById('admin-log-details').classList.add('hidden')">VOLTAR</button>
-        </div>
-    </div>
-
-    <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card text-center w-full max-w-sm mx-auto shadow-2xl" onclick="event.stopPropagation()"><h3 class="text-amber-500 font-black italic uppercase">Apoie</h3><div id="pix-qrcode" class="mb-5 flex justify-center bg-white p-2 rounded-xl w-fit mx-auto"></div><button onclick="copyPix()" class="btn-gold w-full mt-1">Chave Pix</button></div></div>
-    
-    <div id="modal-feedback" class="hidden">
-        <div class="card w-full max-w-sm mx-auto shadow-2xl border-amber-500 bg-black">
-            <h3 class="text-amber-500 font-black italic uppercase text-xl mb-4 text-center">Como ficou?</h3>
-            <div class="flex justify-center gap-1 my-4" id="stars-container">
-                <span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span>
-            </div>
-            <div class="grid grid-cols-2 gap-3 mt-4 text-center">
-                <div><span class="label-gold mt-0">Doçura</span><input type="range" id="f-doce" min="0" max="5" value="0" oninput="this.nextElementSibling.innerText=this.value"><span class="text-xs text-amber-500 font-bold">0</span></div>
-                <div><span class="label-gold mt-0">Acidez</span><input type="range" id="f-acidez" min="0" max="5" value="0" oninput="this.nextElementSibling.innerText=this.value"><span class="text-xs text-amber-500 font-bold">0</span></div>
-                <div><span class="label-gold mt-0">Amargor</span><input type="range" id="f-amargor" min="0" max="5" value="0" oninput="this.nextElementSibling.innerText=this.value"><span class="text-xs text-amber-500 font-bold">0</span></div>
-                <div><span class="label-gold mt-0">Corpo</span><input type="range" id="f-corpo" min="0" max="5" value="0" oninput="this.nextElementSibling.innerText=this.value"><span class="text-xs text-amber-500 font-bold">0</span></div>
-            </div>
-            <span class="label-gold mt-4">Observações (Opcional)</span><textarea id="f-obs" rows="2" class="text-xs"></textarea>
-            <div class="flex gap-2 mt-6">
-                <button class="bg-zinc-800 text-white font-black py-4 px-4 rounded-xl flex-1 uppercase" onclick="fecharFeedback()">Pular</button>
-                <button class="bg-amber-600 text-black font-black py-4 px-4 rounded-xl flex-1 uppercase" onclick="salvarFeedback()">Salvar</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- SCRIPT DA INSTALAÇÃO -->
     <script>
-        window.addEventListener('load', () => {
-          if ('serviceWorker' in navigator) {
-            navigator.serviceWorker.register('sw.js')
-              .then(reg => console.log('SW registado!', reg))
-              .catch(err => console.error('Erro no SW:', err));
-          }
-        });
-
         const config = { apiKey: "AIzaSyCbIsrGjuu6KN-A0xpZUC6ID9aOHBEIJSE", authDomain: "coffee-master-e1f5c.firebaseapp.com", projectId: "coffee-master-e1f5c", storageBucket: "coffee-master-e1f5c.firebasestorage.app", messagingSenderId: "171441357303", appId: "1:171441357303:web:c85dc841ee73f6f29e2ef2" };
         firebase.initializeApp(config); const db = firebase.firestore(); const auth = firebase.auth();
-        let currentUser = null, userProfile = null, timer = null, seg = 0, editIds = { g: null, r: null }, localData = { g: [], r: [], logs: [] }, activeStepsData = { steps: [], times: [] }, notaSelecionada = 0;
+        let currentUser = null, userProfile = null, timer = null, seg = 0, editIds = { g: null, r: null }, localData = { g: [], r: [] }, activeStepsData = { steps: [], times: [] }, notaSelecionada = 0;
         const DEFAULT_IMG = "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=150&h=150&fit=crop&q=80";
-        const ADMIN_EMAIL = "alanpocos@gmail.com";
+        const ADMIN_EMAIL = 'alanpocos@gmail.com';
 
         auth.onAuthStateChanged(async (user) => {
             if (user) {
-                currentUser = user; const p = await db.collection('users').doc(user.uid).get();
-                userProfile = p.data() || { nick: 'Visitante', type: 'comunidade' };
-                document.getElementById('auth-screen').classList.add('hidden');
-                document.getElementById('main-app').classList.remove('hidden');
-                document.getElementById('user-display').innerText = `@${userProfile.nick} (${userProfile.type})`;
-                if(user.email === ADMIN_EMAIL) document.getElementById('btn-admin').classList.remove('hidden');
-                showTab('cafes');
+                currentUser = user; 
+                try {
+                    const p = await db.collection('users').doc(user.uid).get();
+                    userProfile = p.data() || { nick: 'Visitante', type: 'comunidade' };
+                    document.getElementById('auth-screen').classList.add('hidden');
+                    document.getElementById('main-app').classList.remove('hidden');
+                    document.getElementById('user-display').innerText = `@${userProfile.nick} (${userProfile.type})`;
+                    if(user.email === ADMIN_EMAIL) document.getElementById('btn-admin').classList.remove('hidden');
+                    showTab('cafes');
+                } catch(e) { console.error(e); }
             } else { document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); }
         });
 
-        document.getElementById('search-g').oninput = (e) => {
-            const q = e.target.value.toLowerCase();
-            renderG(localData.g.filter(i => (i.nome||"").toLowerCase().includes(q) || (i.prod||"").toLowerCase().includes(q) || (i.torrefacao||"").toLowerCase().includes(q)));
-        };
-
         function showTab(t){ 
-            if(t !== 'preparo') { clearInterval(timer); timer = null; seg = 0; document.getElementById('timer').innerText = "00:00"; document.getElementById('btn-timer-main').innerText = "INICIAR"; }
+            if(t !== 'preparo') { clearInterval(timer); timer = null; seg = 0; document.getElementById('timer').innerText = "00:00"; document.getElementById('btn-timer-main').innerText = "INICIAR"; resetPreparo(); }
             ['cafes','receitas','preparo','diario','admin'].forEach(i=>{ const el = document.getElementById('tab-'+i); if(el) el.classList.toggle('hidden', i!==t); const btn = document.getElementById('btn-'+i); if(btn) btn.classList.toggle('active-tab', i===t); }); 
             if(t==='cafes') loadG(); if(t==='receitas') loadR(); if(t==='preparo') loadPrep(); if(t==='diario') loadDiario(); if(t==='admin') loadAdmin();
         }
 
         async function loadG() { 
-            let snap = (userProfile.type === 'pessoal' && currentUser.email !== ADMIN_EMAIL) ? await db.collection('cafes').where('owner_uid', '==', currentUser.uid).get() : await db.collection('cafes').get();
-            localData.g = snap.docs.map(d => ({id: d.id, ...d.data()})); renderG(localData.g);
+            let results = [];
+            const search = (document.getElementById('search-g').value || "").toUpperCase();
+            if (currentUser.email === ADMIN_EMAIL) {
+                const snap = await db.collection('cafes').get();
+                results = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            } else if (userProfile.type === 'pessoal') {
+                const snapOwn = await db.collection('cafes').where('owner_uid', '==', currentUser.uid).get();
+                results = snapOwn.docs.map(d => ({id: d.id, ...d.data()}));
+            } else {
+                const snapPub = await db.collection('cafes').where('visibilidade', '==', 'publico').get();
+                const snapOwn = await db.collection('cafes').where('owner_uid', '==', currentUser.uid).get();
+                const map = new Map(); snapPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()})); snapOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                results = Array.from(map.values());
+            }
+            if(search) results = results.filter(i => i.nome.includes(search) || (i.prod && i.prod.includes(search)));
+            localData.g = results; renderG(results);
         }
 
         function renderG(data) {
             let h = ''; data.forEach(i => {
-                const isOwner = i.owner_uid === currentUser.uid, isAdmin = currentUser.email === ADMIN_EMAIL;
-                let tag = ""; if(isAdmin) tag = `<span class="admin-tag">${i.visibilidade === 'privado' ? '[P]' : '[C]'}</span>`;
-                if(userProfile.type === 'pessoal' || i.visibilidade === 'publico' || isOwner || isAdmin) {
-                    h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800 h-[115px]"><div class="flex-1 min-w-0" onclick="abrirDetalhes('${i.id}')"><div class="text-[8px] text-zinc-600 font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}${tag}</div><div class="text-base font-black italic uppercase text-white mt-1 leading-tight line-clamp-2">${i.nome}</div><div class="text-[8px] text-amber-600 font-bold uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div></div><img src="${i.photo || DEFAULT_IMG}" class="grain-thumb"><div class="flex flex-col gap-1"> ${isOwner || isAdmin ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : `<span class="text-[8px] font-black text-amber-900 border border-amber-900 p-2 rounded-xl">LOCK</span>`} </div></div>`;
-                }
+                const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL;
+                const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG;
+                h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div></div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`;
             }); document.getElementById('list-g').innerHTML = h;
         }
 
         async function loadR() {
-            let snap = (userProfile.type === 'pessoal' && currentUser.email !== ADMIN_EMAIL) ? await db.collection('receitas').where('owner_uid', '==', currentUser.uid).get() : await db.collection('receitas').get();
-            localData.r = snap.docs.map(d => ({id: d.id, ...d.data()})); renderR(localData.r);
+            let results = [];
+            if (currentUser.email === ADMIN_EMAIL) {
+                const snap = await db.collection('receitas').get();
+                results = snap.docs.map(d => ({id: d.id, ...d.data()}));
+            } else if (userProfile.type === 'pessoal') {
+                const snapOwn = await db.collection('receitas').where('owner_uid', '==', currentUser.uid).get();
+                results = snapOwn.docs.map(d => ({id: d.id, ...d.data()}));
+            } else {
+                const snapPub = await db.collection('receitas').where('visibilidade', '==', 'publico').get();
+                const snapOwn = await db.collection('receitas').where('owner_uid', '==', currentUser.uid).get();
+                const map = new Map(); snapPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()})); snapOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                results = Array.from(map.values());
+            }
+            localData.r = results; renderR(results);
         }
 
         function renderR(data) {
             let h = ''; data.forEach(i => {
-                const isOwner = i.owner_uid === currentUser.uid, isAdmin = currentUser.email === ADMIN_EMAIL;
-                let tag = ""; if(isAdmin) tag = `<span class="admin-tag">${i.visibilidade === 'privado' ? '[P]' : '[C]'}</span>`;
-                if(userProfile.type === 'pessoal' || i.visibilidade === 'publico' || isOwner || isAdmin) {
-                    h += `<div class="card p-3 flex justify-between items-center h-[85px]"><div class="flex-1 min-w-0"><div class="text-lg font-black italic uppercase text-amber-500 truncate">${i.nome}</div><div class="text-[8px] text-zinc-600 font-black uppercase mt-1">por @${i.owner_nick || 'Mestre'}${tag} | ${i.metodo}</div></div><div class="flex gap-2"> ${isOwner || isAdmin ? `<button onclick="editR('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('receitas','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''} <button onclick="showTab('preparo'); handleRecipeSelect('${i.id}')" class="text-xs font-black p-2 bg-amber-600 text-black rounded-lg italic uppercase">Preparar</button> </div></div>`;
-                }
+                const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL;
+                h += `<div class="card p-3 flex justify-between items-center h-[85px]"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesR('${i.id}')"><div class="text-lg font-black italic uppercase text-amber-500 truncate">${i.nome}</div><div class="text-[8px] text-zinc-600 font-black uppercase mt-1">por @${i.owner_nick || 'Mestre'} | ${i.metodo || '--'}</div></div><div class="flex gap-2"> ${isOwner ? `<button onclick="editR('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('receitas','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''} <button onclick="showTab('preparo'); handleRecipeSelect('${i.id}')" class="text-xs font-black p-3 bg-amber-600 text-black rounded-lg italic uppercase">Preparar</button> </div></div>`;
             }); document.getElementById('list-r').innerHTML = h;
         }
 
         async function loadPrep() { 
-            const gc = await db.collection('cafes').get(), rc = await db.collection('receitas').get(); 
-            localData.g = gc.docs.map(d => ({id: d.id, ...d.data()})); localData.r = rc.docs.map(d => ({id: d.id, ...d.data()}));
             let gh = '<option value="0">SELECIONE O GRÃO</option>', rh = '<option value="0">SELECIONE A RECEITA</option>'; 
-            gc.forEach(d => { const data = d.data(); if(data.owner_uid === currentUser.uid || data.visibilidade === 'publico' || currentUser.email === ADMIN_EMAIL) gh += `<option value="${d.id}">${data.nome}</option>`; }); 
-            rc.forEach(d => { const data = d.data(); if(data.owner_uid === currentUser.uid || data.visibilidade === 'publico' || currentUser.email === ADMIN_EMAIL) rh += `<option value="${d.id}">${data.nome}</option>`; }); 
+            localData.g.forEach(i => gh += `<option value="${i.id}">${i.nome}</option>`); 
+            localData.r.forEach(i => rh += `<option value="${i.id}">${i.nome}</option>`); 
             document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh; 
         }
 
-        // --- CÁLCULO DE TOTAL DA RECEITA ---
-        function calcTotalR() {
-            const r = parseFloat(document.getElementById('r-ratio-base').value) || 0;
-            const p = parseFloat(document.getElementById('r-po-base').value) || 0;
-            const totalField = document.getElementById('r-total-base');
-            if (totalField) {
-                totalField.value = Math.round(r * p);
+        function handleRecipeSelect(rid) { 
+            if(rid && typeof rid === 'string') document.getElementById('p-r').value = rid;
+            const i = localData.r.find(x => x.id === document.getElementById('p-r').value);
+            if(i) {
+                document.getElementById('p-po-val').value = i.origPo; document.getElementById('p-ratio-val').value = i.origRatio;
+                document.getElementById('p-clicks-val').value = i.origClicks || "--"; document.getElementById('p-temp-val').value = i.origTemp || "--";
+                upCalc();
             }
         }
 
-        function handleRecipeSelect(rid) { 
-            if(rid) document.getElementById('p-r').value = rid;
-            const s = document.getElementById('p-r'), i = localData.r.find(x => x.id === s.value);
-            if(!i) return;
-            document.getElementById('p-ratio-val').value = i.origRatio; document.getElementById('p-po-val').value = i.origPo; 
-            document.getElementById('p-clicks-val').value = i.origClicks || "--"; document.getElementById('p-temp-val').value = i.origTemp || "--";
-            upCalc(); 
-        }
-
         function upCalc() {
-            const r = parseFloat(document.getElementById('p-ratio-val').value)||0, p = parseFloat(document.getElementById('p-po-val').value)||0, total = Math.round(r * p);
-            document.getElementById('p-total').innerText = total;
-            const sR = document.getElementById('p-r'), i = localData.r.find(x => x.id === sR.value);
+            const p = parseFloat(document.getElementById('p-po-val').value) || 0, r = parseFloat(document.getElementById('p-ratio-val').value) || 0;
+            const total = Math.round(p * r); document.getElementById('p-total-display').innerText = total;
+            const i = localData.r.find(x => x.id === document.getElementById('p-r').value);
             if(!i) return;
-            const oT = i.origTotal, bM = i.bloomMl, bS = i.bloomSec, atksOrig = i.ataques || [];
-            activeStepsData = { steps: [], times: [] };
-            const bN = Math.round(total * (bM / oT)); if(bN > 0) { activeStepsData.steps.push({ type: 'BLOOM', ml: bN, sec: bS, cum: bN, obs: "" }); activeStepsData.times.push(bS); }
-            let c = bN; atksOrig.forEach((a, idx) => { const aN = Math.round(total * (a.ml / oT)); if(aN > 0){ c += aN; activeStepsData.steps.push({ type: `ATK ${idx+1}`, ml: aN, sec: a.sec, cum: c, obs: a.obs || "" }); activeStepsData.times.push((activeStepsData.times.length > 0 ? activeStepsData.times[activeStepsData.times.length-1] : 0) + a.sec); } });
+            const ratioF = total / i.origTotal; activeStepsData = { steps: [], times: [] };
+            let sum = 0;
+            if(i.bloomMl > 0) { 
+                let bN = Math.round(i.bloomMl * ratioF); sum += bN;
+                activeStepsData.steps.push({ title: 'BLOOM', ml: bN, sum, sec: i.bloomSec });
+                activeStepsData.times.push(i.bloomSec);
+            }
+            (i.ataques || []).forEach((a, idx) => { 
+                let aN = Math.round(a.ml * ratioF); sum += aN;
+                activeStepsData.steps.push({ title: `ATK ${idx+1}`, ml: aN, sum, sec: a.sec });
+                activeStepsData.times.push((activeStepsData.times.length > 0 ? activeStepsData.times[activeStepsData.times.length-1] : 0) + a.sec);
+            });
             renderSteps(0);
         }
 
         function renderSteps(segA) {
-            let h = '', tIdx = 0; if(activeStepsData.times.length > 0 && segA >= activeStepsData.times[activeStepsData.times.length-1]) { tIdx = activeStepsData.steps.length; } else { activeStepsData.times.forEach((t, i) => { if(segA >= t) tIdx = i + 1; }); }
-            activeStepsData.steps.forEach((s, idx) => { const act = idx === tIdx; h += `<div class="step-box ${act?'step-box-active':''}" id="p-step-${idx}"><div class="text-[9px] ${act?'text-amber-500':'text-zinc-600'} font-black uppercase">${s.type}</div><div class="text-xl font-black italic ${act?'text-white':'text-zinc-500'} mt-1">${s.ml}ml</div><div class="text-[10px] text-amber-600 font-bold uppercase mt-1">SOMA: ${s.cum}ml</div><div class="text-[8px] text-zinc-500 font-bold mt-1">ESPERA: ${s.sec}s</div>${s.obs ? `<div class="text-[8px] text-amber-400 mt-2 italic leading-tight border-t border-zinc-800 pt-2">${s.obs}</div>`:''}</div>`; });
-            document.getElementById('p-steps').innerHTML = h; const activeEl = document.getElementById(`p-step-${tIdx}`); if(activeEl) activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            let h = '', tIdx = 0; 
+            activeStepsData.times.forEach((t, i) => { if(segA >= t) tIdx = i + 1; });
+            activeStepsData.steps.forEach((s, idx) => {
+                const act = idx === tIdx;
+                h += `<div class="step-box ${act?'step-box-active':''}" id="p-step-${idx}"><div class="text-[9px] ${act?'text-amber-500':'text-zinc-600'} font-black uppercase">${s.title}</div><div class="text-xl font-black italic ${act?'text-white':'text-zinc-400'} mt-1">${s.ml}ml</div><div class="text-[10px] text-amber-600 font-bold uppercase mt-1">SOMA: ${s.sum}ml</div><div class="text-[8px] text-zinc-500 font-bold mt-1">TEMPO: ${s.sec}s</div></div>`;
+            });
+            document.getElementById('p-steps').innerHTML = h;
+            const activeEl = document.getElementById(`p-step-${tIdx}`);
+            if(activeEl) activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
         }
 
         async function loadAdmin() {
             if(currentUser.email !== ADMIN_EMAIL) return;
-            const users = await db.collection('users').get(), receitas = await db.collection('receitas').get();
-            document.getElementById('admin-user-count').innerText = users.size; document.getElementById('admin-total-receitas').innerText = receitas.size;
-            let h = ''; users.forEach(d => { const u = d.data(); h += `<div class="card p-3 flex justify-between items-center border-zinc-800 bg-black active:bg-zinc-900" onclick="verUsuarioAdmin('${u.uid}')"><div><span class="text-white font-bold italic">@${u.nick}</span><br><span class="text-[8px] text-zinc-500 font-black uppercase">${u.type === 'pessoal' ? '🔒 PRIVADO' : '🌎 COMUNIDADE'}</span></div><button onclick="event.stopPropagation(); safeResetPass('${u.email}', '${u.nick}')" class="text-[8px] font-black border border-amber-600 p-2 rounded text-amber-600">RESET SENHA</button></div>`; });
+            const uSnap = await db.collection('users').get(), rSnap = await db.collection('receitas').get();
+            document.getElementById('admin-user-count').innerText = uSnap.size; document.getElementById('admin-total-receitas').innerText = rSnap.size;
+            let h = ''; uSnap.forEach(d => { 
+                const u = d.data(); 
+                h += `<div class="card p-3 flex justify-between items-center cursor-pointer active:bg-zinc-900" onclick="verUsuarioAdmin('${u.uid}')">
+                        <div class="flex items-center gap-3">
+                            <span class="text-white font-bold italic">@${u.nick}</span>
+                            <span class="text-[8px] text-zinc-500 font-black uppercase flex items-center gap-1">${u.type === 'pessoal' ? '🔒 PRIVADO' : '🌎 COMUNIDADE'}</span>
+                        </div>
+                        <div class="flex gap-2">
+                            <button onclick="event.stopPropagation(); auth.sendPasswordResetEmail('${u.email}'); alert('Reset enviado!')" class="text-[8px] font-black border border-amber-600 p-2 rounded text-amber-600 uppercase">Reset</button>
+                            <button onclick="event.stopPropagation(); delUser('${u.uid}', '${u.nick}')" class="text-[8px] font-black border border-red-800 p-2 rounded text-red-600 uppercase">Delete</button>
+                        </div>
+                      </div>`; 
+            });
             document.getElementById('admin-user-list').innerHTML = h;
         }
 
-        function safeResetPass(email, nick) { if(confirm(`RESETAR SENHA DE @${nick.toUpperCase()}?`)) { auth.sendPasswordResetEmail(email); alert('ENVIADO!'); } }
-
         async function verUsuarioAdmin(uid) {
-            const user = await db.collection('users').doc(uid).get(), u = user.data();
-            document.getElementById('admin-detail-nick').innerText = `@${u.nick.toUpperCase()}`;
-            document.getElementById('admin-detail-type').innerText = u.type === 'pessoal' ? "PRIVADA" : "PÚBLICA";
-            const gs = localData.g.filter(x => x.owner_uid === uid), rs = localData.r.filter(x => x.owner_uid === uid);
-            document.getElementById('admin-detail-grains').innerHTML = gs.map(g => `<div class="bg-zinc-900 p-2 rounded text-[10px] flex justify-between"><span>${g.nome}</span><div class="flex gap-2"><button onclick="editG('${g.id}'); fecharAdminUser();">✏️</button><button onclick="del('cafes','${g.id}','${g.nome}')">🗑️</button></div></div>`).join('') || '<span class="text-[8px] text-zinc-700">NADA</span>';
-            document.getElementById('admin-detail-recipes').innerHTML = rs.map(r => `<div class="bg-zinc-900 p-2 rounded text-[10px] flex justify-between"><span>${r.nome}</span><div class="flex gap-2"><button onclick="editR('${r.id}'); fecharAdminUser();">✏️</button><button onclick="del('receitas','${r.id}','${r.nome}')">🗑️</button></div></div>`).join('') || '<span class="text-[8px] text-zinc-700">NADA</span>';
-            const logsSnap = await db.collection('logs').where('owner_uid', '==', uid).get();
-            let lh = ''; logsSnap.forEach(l => { const log = l.data(); lh += `<div class="bg-zinc-900 p-3 rounded border border-zinc-800 mb-2 active:bg-zinc-800" onclick="abrirLogDetalhesAdmin('${l.id}')"><div class="flex justify-between items-center"><span class="text-[8px] text-zinc-500 font-black uppercase">${log.data.split(',')[0]}</span><span class="text-amber-500 text-[10px]">${'★'.repeat(log.nota)}</span></div><div class="text-[10px] font-bold italic mt-1 text-white">${log.grao}</div><div class="text-[8px] text-zinc-400 italic mt-1 truncate">"${log.observacoes || '--'}"</div></div>`; });
-            document.getElementById('admin-detail-logs').innerHTML = lh || '<span class="text-[8px] text-zinc-700">SEM REGISTROS</span>';
+            const user = (await db.collection('users').doc(uid).get()).data();
+            document.getElementById('adm-u-nick').innerText = `@${user.nick.toUpperCase()}`;
+            const gs = await db.collection('cafes').where('owner_uid', '==', uid).get();
+            const rs = await db.collection('receitas').where('owner_uid', '==', uid).get();
+            const logs = await db.collection('logs').where('owner_uid', '==', uid).get();
+            let content = `<div class="mb-4"><span class="label-gold">GRÃOS (${gs.size})</span>`;
+            gs.forEach(d => { const g = d.data(); content += `<div onclick="goEdit('g','${d.id}')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-xs truncate">${g.nome}</span><div class="flex gap-2"><button class="p-2 bg-black rounded text-xs">✏️</button><button onclick="event.stopPropagation(); del('cafes','${d.id}','${g.nome}')" class="p-2 bg-black rounded text-xs">🗑️</button></div></div>`; });
+            content += `</div><div><span class="label-gold">RECEITAS (${rs.size})</span>`;
+            rs.forEach(d => { const r = d.data(); content += `<div onclick="goEdit('r','${d.id}')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-xs truncate">${r.nome}</span><div class="flex gap-2"><button class="p-2 bg-black rounded text-xs">✏️</button><button onclick="event.stopPropagation(); del('receitas','${d.id}','${r.nome}')" class="p-2 bg-black rounded text-xs">🗑️</button></div></div>`; });
+            content += `</div><div class="mt-4"><span class="label-gold">DIÁRIO (${logs.size})</span>`;
+            logs.forEach(d => { const l = d.data(); content += `<div onclick="showTab('diario'); document.getElementById('admin-user-details').classList.add('hidden')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-[10px] truncate">${l.grao} (${l.tempoTotal})</span><button onclick="event.stopPropagation(); del('logs','${d.id}','Log')" class="p-2 bg-black rounded text-xs">🗑️</button></div>`; });
+            content += `</div>`;
+            document.getElementById('adm-u-content').innerHTML = content;
             document.getElementById('admin-user-details').classList.remove('hidden');
         }
 
-        async function abrirLogDetalhesAdmin(logId) {
-            const log = await db.collection('logs').doc(logId).get(), i = log.data();
-            document.getElementById('admin-log-content').innerHTML = `<div><span class="label-gold">GRÃO / RECEITA</span><p class="text-white font-bold italic text-sm">${i.grao}</p><p class="text-amber-600 text-[9px] font-black">${i.receita} | ${i.tempoTotal}</p></div><div class="grid grid-cols-2 gap-2"><div class="bg-black p-2 rounded"><span class="label-gold mt-0">DOÇURA</span><p class="text-white font-black">${i.docura}/5</p></div><div class="bg-black p-2 rounded"><span class="label-gold mt-0">ACIDEZ</span><p class="text-white font-black">${i.acidez}/5</p></div><div class="bg-black p-2 rounded"><span class="label-gold mt-0">AMARGOR</span><p class="text-white font-black">${i.amargor}/5</p></div><div class="bg-black p-2 rounded"><span class="label-gold mt-0">CORPO</span><p class="text-white font-black">${i.corpo}/5</p></div></div><div><span class="label-gold">AVALIAÇÃO</span><p class="text-amber-500 text-xl">${'★'.repeat(i.nota)}</p></div><div><span class="label-gold">OBSERVAÇÕES</span><p class="text-zinc-400 italic text-sm leading-tight">"${i.observacoes || '--'}"</p></div>`;
-            document.getElementById('admin-log-details').classList.remove('hidden');
-        }
-
-        function fecharAdminUser() { document.getElementById('admin-user-details').classList.add('hidden'); }
-
-        async function processImage(file) { return new Promise((resolve) => { const reader = new FileReader(); reader.onload = (e) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); canvas.width = 200; canvas.height = 200; const ctx = canvas.getContext('2d'), min = Math.min(img.width, img.height); ctx.drawImage(img, (img.width-min)/2, (img.height-min)/2, min, min, 0, 0, 200, 200); resolve(canvas.toDataURL('image/jpeg', 0.7)); }; img.src = e.target.result; }; reader.readAsDataURL(file); }); }
-
-        function editG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; editIds.g = id; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-variedade').value = i.variedade; document.getElementById('g-processo').value = i.processo; document.getElementById('g-altitude').value = i.altitude; document.getElementById('g-torrefacao').value = i.torrefacao; document.getElementById('g-torra').value = i.torra; document.getElementById('g-data').value = i.data; document.getElementById('g-notas').value = i.notas; document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); showTab('cafes'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-
-        async function saveG() { const photoFile = document.getElementById('g-photo-input').files[0]; let photoBase64 = null; if(photoFile) photoBase64 = await processImage(photoFile); const d = { prod: document.getElementById('g-prod').value.toUpperCase(), nome: document.getElementById('g-nome').value.toUpperCase(), variedade: document.getElementById('g-variedade').value.toUpperCase(), processo: document.getElementById('g-processo').value.toUpperCase(), altitude: document.getElementById('g-altitude').value.toUpperCase(), torrefacao: document.getElementById('g-torrefacao').value.toUpperCase(), torra: document.getElementById('g-torra').value, data: document.getElementById('g-data').value, notas: document.getElementById('g-notas').value.toUpperCase(), ts: firebase.firestore.FieldValue.serverTimestamp(), owner_uid: editIds.g ? localData.g.find(x=>x.id===editIds.g).owner_uid : currentUser.uid, owner_nick: editIds.g ? localData.g.find(x=>x.id===editIds.g).owner_nick : userProfile.nick, visibilidade: userProfile.type === 'pessoal' ? 'privado' : 'publico' }; if(photoBase64) d.photo = photoBase64; if (editIds.g) await db.collection('cafes').doc(editIds.g).update(d); else await db.collection('cafes').add(d); cancelEdit('g'); loadG(); }
-
-        function editR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = ['V60','AEROPRESS','KOAR'].includes(i.metodo) ? i.metodo : 'OUTROS'; if(document.getElementById('r-metodo').value === 'OUTROS') { document.getElementById('r-metodo-outro').value = i.metodo; document.getElementById('r-metodo-outro-div').classList.remove('hidden'); } document.getElementById('r-ratio-base').value = i.origRatio; document.getElementById('r-po-base').value = i.origPo; document.getElementById('r-total-base').value = i.origTotal; document.getElementById('r-clicks-base').value = i.origClicks || ""; document.getElementById('r-temp-base').value = i.origTemp || ""; document.getElementById('r-bloom-ml').value = i.bloomMl; document.getElementById('r-bloom-sec').value = i.bloomSec; document.getElementById('ataques-container').innerHTML = ''; (i.ataques || []).forEach(a => addAtackField(a.ml, a.sec, a.obs || "")); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); showTab('receitas'); window.scrollTo({ top: 0, behavior: 'smooth' }); }
-
-        async function saveR() { const tB = parseFloat(document.getElementById('r-total-base').value)||0, bM = parseFloat(document.getElementById('r-bloom-ml').value)||0; let sumAtks = bM; const atks = []; document.querySelectorAll('.atk-row').forEach(row => { const ml = parseFloat(row.querySelector('.atk-ml').value)||0; sumAtks += ml; atks.push({ ml, sec: parseFloat(row.querySelector('.atk-sec').value)||0, obs: row.querySelector('.atk-obs').value.toUpperCase() }); }); if (Math.round(sumAtks) !== Math.round(tB)) return alert(`Total deve ser ${tB}ml.`); let met = document.getElementById('r-metodo').value; if(met === 'OUTROS') met = document.getElementById('r-metodo-outro').value.toUpperCase(); const d = { nome: document.getElementById('r-nome').value.toUpperCase(), metodo: met, origRatio: parseFloat(document.getElementById('r-ratio-base').value), origPo: parseFloat(document.getElementById('r-po-base').value), origTotal: tB, origClicks: document.getElementById('r-clicks-base').value, origTemp: document.getElementById('r-temp-base').value, bloomMl: bM, bloomSec: parseFloat(document.getElementById('r-bloom-sec').value), ataques: atks, ts: firebase.firestore.FieldValue.serverTimestamp(), owner_uid: editIds.r ? localData.r.find(x=>x.id===editIds.r).owner_uid : currentUser.uid, owner_nick: editIds.r ? localData.r.find(x=>x.id===editIds.r).owner_nick : userProfile.nick, visibilidade: userProfile.type === 'pessoal' ? 'privado' : 'publico' }; if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); else await db.collection('receitas').add(d); cancelEdit('r'); loadR(); }
-
-        function toggleTimer() { if(timer) { clearInterval(timer); timer = null; document.getElementById('btn-timer-main').innerText="CONTINUAR"; } else { timer = setInterval(() => { seg++; document.getElementById('timer').innerText = `${Math.floor(seg/60).toString().padStart(2,'0')}:${(seg%60).toString().padStart(2,'0')}`; renderSteps(seg); }, 1000); document.getElementById('btn-timer-main').innerText="PAUSAR"; } }
-
-        async function loadDiario() { const snap = await db.collection('logs').where('owner_uid', '==', currentUser.uid).get(); let logs = snap.docs.map(d => ({id: d.id, ...d.data()})); logs.sort((a, b) => (b.ts ? b.ts.seconds : 0) - (a.ts ? a.ts.seconds : 0)); let h = ''; logs.forEach(i => { h += `<div class="card p-4 border-l-4 border-l-amber-600 shadow-none"><div class="text-[10px] text-zinc-500 font-bold">${i.data}</div><div class="text-lg font-black italic text-white leading-tight mt-1">${i.grao}</div><div class="text-xs font-bold text-amber-500 uppercase mt-1">${i.receita} | ${i.tempoTotal}</div><div class="grid grid-cols-4 gap-1 mt-2 text-[8px] font-black text-zinc-600"><div>DOC:${i.docura||0}</div><div>ACI:${i.acidez||0}</div><div>AMA:${i.amargor||0}</div><div>COR:${i.corpo||0}</div></div><p class="mt-2 text-xs italic text-zinc-400">"${i.observacoes || '--'}"</p><div class="mt-3 flex justify-between items-center"><div class="text-xl text-amber-500">${'★'.repeat(i.nota)}${'☆'.repeat(5-i.nota)}</div><button onclick="del('logs','${i.id}','Diário')" class="text-xs p-2 bg-zinc-900 rounded-lg text-red-800 font-black">🗑️</button></div></div>`; }); document.getElementById('list-logs').innerHTML = h; }
-
-        async function salvarFeedback() { const g = document.getElementById('p-g'), r = document.getElementById('p-r'); if(g.value=="0"||r.value=="0") return alert("Selecione tudo!"); await db.collection('logs').add({ grao: g.options[g.selectedIndex].text, receita: r.options[r.selectedIndex].text, tempoTotal: document.getElementById('timer').innerText, nota: notaSelecionada, observacoes: (document.getElementById('f-obs').value||"").toUpperCase(), docura: document.getElementById('f-doce').value, acidez: document.getElementById('f-acidez').value, amargor: document.getElementById('f-amargor').value, corpo: document.getElementById('f-corpo').value, data: new Date().toLocaleString(), ts: firebase.firestore.FieldValue.serverTimestamp(), owner_uid: currentUser.uid }); fecharFeedback(); showTab('diario'); }
-
-        function setRating(n) { notaSelecionada = n; const stars = document.querySelectorAll('.star'); stars.forEach((s, i) => { if(i < n) s.classList.add('active'); else s.classList.remove('active'); }); }
-        
-        function abrirFeedback() { if(timer){ clearInterval(timer); timer = null; } document.getElementById('modal-feedback').classList.remove('hidden'); }
-        function fecharFeedback() { document.getElementById('modal-feedback').classList.add('hidden'); seg=0; document.getElementById('timer').innerText="00:00"; upCalc(); setRating(0); document.getElementById('f-obs').value=""; }
-        
-        function cancelEdit(t) { editIds[t] = null; document.getElementById(t+'-edit-actions').classList.add('hidden'); document.getElementById(t+'-btn-main').classList.remove('hidden'); resetG(); resetR(); }
-        
-        function resetG() { document.querySelectorAll('#tab-cafes input, #tab-cafes select, #tab-cafes textarea').forEach(el => el.value = ""); }
-        function resetR() { document.querySelectorAll('#tab-receitas input, #tab-receitas select').forEach(el => el.value = ""); document.getElementById('ataques-container').innerHTML = ''; }
-        
-        async function del(c, id, n) { if(confirm(`Excluir ${n}?`)) { await db.collection(c).doc(id).delete(); if(c==='cafes') loadG(); else if(c==='receitas') loadR(); else loadDiario(); } }
-        
-        function checkMetodo(s) { document.getElementById('r-metodo-outro-div').classList.toggle('hidden', s.value !== 'OUTROS'); }
-        
-        function addAtackField(ml='', sec='', obs='') { document.getElementById('ataques-container').insertAdjacentHTML('beforeend', `<div class="bg-zinc-900 p-2 rounded-xl border border-zinc-800 atk-row"><div class="flex gap-2 items-center"><div class="flex-1"><span class="label-gold mt-0 text-[8px]">ML</span><input type="number" class="atk-ml text-sm" value="${ml}"></div><div class="flex-1"><span class="label-gold mt-0 text-[8px]">Tempo(s)</span><input type="number" class="atk-sec text-sm" value="${sec}"></div><button onclick="this.closest('.atk-row').remove()" class="text-zinc-600 font-bold px-2">X</button></div><span class="label-gold mt-1 text-[8px]">Observação</span><input type="text" class="atk-obs text-xs" value="${obs}" style="margin-bottom:0"></div>`); }
-        
+        async function delUser(uid, nick) { if(confirm(`DELETAR USUÁRIO @${nick}? TODOS OS DADOS SERÃO PERDIDOS.`)) { await db.collection('users').doc(uid).delete(); loadAdmin(); } }
+        function goEdit(t, id) { document.getElementById('admin-user-details').classList.add('hidden'); if(t === 'g') { showTab('cafes'); setTimeout(() => editG(id), 300); } else { showTab('receitas'); setTimeout(() => editR(id), 300); } }
+        function resetPreparo() { document.getElementById('p-g').value="0"; document.getElementById('p-r').value="0"; document.getElementById('p-po-val').value="--"; document.getElementById('p-ratio-val').value="--"; document.getElementById('p-clicks-val').value="--"; document.getElementById('p-temp-val').value="--"; document.getElementById('p-total-display').innerText="0"; document.getElementById('p-steps').innerHTML=""; activeStepsData = {steps:[], times:[]}; }
+        async function loadDiario() { const snap = await db.collection('logs').where('owner_uid', '==', currentUser.uid).get(); let logs = snap.docs.map(d => ({id: d.id, ...d.data()})); logs.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0)); let h = ''; logs.forEach(i => { h += `<div class="card p-4 border-l-4 border-l-amber-600 shadow-none"><div class="text-[10px] text-zinc-500 font-bold">${i.data}</div><div class="text-lg font-black italic text-white leading-tight mt-1">${i.grao}</div><div class="text-xs font-bold text-amber-500 uppercase mt-1">${i.receita} | ${i.tempoTotal}</div><div class="grid grid-cols-4 gap-1 mt-2 text-[8px] font-black text-zinc-600"><div>DOC:${i.docura||0}</div><div>ACI:${i.acidez||0}</div><div>AMA:${i.amargor||0}</div><div>COR:${i.corpo||0}</div></div><p class="mt-2 text-xs italic text-zinc-400">"${i.observacoes || '--'}"</p><div class="mt-3 flex justify-between items-center"><div class="text-xl text-amber-500">${'★'.repeat(i.nota)}</div><button onclick="del('logs','${i.id}','Log')" class="text-xs p-2 bg-zinc-900 rounded-lg text-red-800 font-black">🗑️</button></div></div>`; }); document.getElementById('list-logs').innerHTML = h || '<div class="text-center p-10 text-zinc-600 font-black uppercase italic">Vazio</div>'; }
+        async function processImage(file) { return new Promise((resolve) => { const reader = new FileReader(); reader.onload = (e) => { const img = new Image(); img.onload = () => { const canvas = document.createElement('canvas'); canvas.width = 600; canvas.height = 600; canvas.getContext('2d').drawImage(img, (img.width-Math.min(img.width,img.height))/2, (img.height-Math.min(img.width,img.height))/2, Math.min(img.width,img.height), Math.min(img.width,img.height), 0, 0, 600, 600); resolve(canvas.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; reader.readAsDataURL(file); }); }
+        function addAtackField(ml='', sec='', obs='') { document.getElementById('ataques-container').insertAdjacentHTML('beforeend', `<div class="atk-row"><div class="flex gap-2"><div><span class="label-gold mt-0">ML</span><input type="number" class="atk-ml" value="${ml}"></div><div><span class="label-gold mt-0">SEG</span><input type="number" class="atk-sec" value="${sec}"></div><button onclick="this.parentElement.parentElement.remove()" class="text-zinc-600 font-black pt-5 px-2">X</button></div><input type="text" class="atk-obs mt-1 text-xs" placeholder="Obs..." value="${obs}"></div>`); }
+        async function saveG() { const file = document.getElementById('g-photo-input').files[0]; const original = editIds.g ? localData.g.find(x => x.id === editIds.g) : null; const d = { prod: document.getElementById('g-prod').value.toUpperCase(), nome: document.getElementById('g-nome').value.toUpperCase(), variedade: document.getElementById('g-variedade').value.toUpperCase(), processo: document.getElementById('g-processo').value.toUpperCase(), torrefacao: document.getElementById('g-torrefacao').value.toUpperCase(), torra: document.getElementById('g-torra').value, altitude: document.getElementById('g-altitude').value, data: document.getElementById('g-data').value, notas: document.getElementById('g-notas').value.toUpperCase(), owner_uid: original ? original.owner_uid : currentUser.uid, owner_nick: original ? original.owner_nick : userProfile.nick, visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp() }; if(file) d.photo = await processImage(file); if(editIds.g) await db.collection('cafes').doc(editIds.g).update(d); else await db.collection('cafes').add(d); cancelEdit('g'); loadG(); }
+        async function saveR() { const atks = []; document.querySelectorAll('.atk-row').forEach(row => { atks.push({ ml: parseFloat(row.querySelector('.atk-ml').value)||0, sec: parseFloat(row.querySelector('.atk-sec').value)||0, obs: row.querySelector('.atk-obs').value.toUpperCase() }); }); const original = editIds.r ? localData.r.find(x => x.id === editIds.r) : null; const d = { nome: document.getElementById('r-nome').value.toUpperCase(), metodo: document.getElementById('r-metodo').value, origRatio: parseFloat(document.getElementById('r-ratio')), origPo: parseFloat(document.getElementById('r-po')), origTotal: parseInt(document.getElementById('r-total').value), origClicks: document.getElementById('r-clicks').value, origTemp: document.getElementById('r-temp').value, bloomMl: parseFloat(document.getElementById('r-bloom-ml').value)||0, bloomSec: parseFloat(document.getElementById('r-bloom-sec').value)||0, ataques: atks, owner_uid: original ? original.owner_uid : currentUser.uid, owner_nick: original ? original.owner_nick : userProfile.nick, visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp() }; if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); else await db.collection('receitas').add(d); cancelEdit('r'); loadR(); }
+        function editG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; editIds.g = id; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-variedade').value = i.variedade; document.getElementById('g-processo').value = i.processo || ''; document.getElementById('g-torrefacao').value = i.torrefacao || ''; document.getElementById('g-torra').value = i.torra || ''; document.getElementById('g-altitude').value = i.altitude || ''; document.getElementById('g-data').value = i.data || ''; document.getElementById('g-notas').value = i.notas || ''; document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); window.scrollTo({top:0, behavior:'smooth'}); }
+        function editR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = i.metodo || ''; document.getElementById('r-ratio').value = i.origRatio; document.getElementById('r-po').value = i.origPo; document.getElementById('r-total').value = i.origTotal; document.getElementById('r-clicks').value = i.origClicks || ''; document.getElementById('r-temp').value = i.origTemp || ''; document.getElementById('r-bloom-ml').value = i.bloomMl || ''; document.getElementById('r-bloom-sec').value = i.bloomSec || ''; document.getElementById('ataques-container').innerHTML = ''; (i.ataques || []).forEach(a => addAtackField(a.ml, a.sec, a.obs)); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); window.scrollTo({top:0, behavior:'smooth'}); }
+        function cancelEdit(t) { editIds[t] = null; document.getElementById(t+'-edit-actions').classList.add('hidden'); document.getElementById(t+'-btn-main').classList.remove('hidden'); document.querySelectorAll('#tab-'+(t==='g'?'cafes':'receitas')+' input, select, textarea').forEach(el => el.value = ""); document.getElementById('ataques-container').innerHTML = ''; }
+        async function del(c, id, n) { if(confirm(`Excluir ${n}?`)) { await db.collection(c).doc(id).delete(); loadG(); loadR(); loadDiario(); if(!document.getElementById('admin-user-details').classList.contains('hidden')) { loadAdmin(); document.getElementById('admin-user-details').classList.add('hidden'); } } }
+        function calcTotalR() { const r = parseFloat(document.getElementById('r-ratio').value)||0, p = parseFloat(document.getElementById('r-po').value)||0; document.getElementById('r-total').value = Math.round(r*p); }
         function handleFocus(el) { if(el.value === "--") el.value = ""; el.select(); }
-        
         function fecharDetalhes() { document.getElementById('modal-detalhes').classList.add('hidden'); }
-        
-        function abrirDetalhes(id) { const i = localData.g.find(x => x.id === id); if(!i) return; document.getElementById('detalhes-content').innerHTML = `<div><span class="label-gold">PRODUTOR</span><p class="text-white font-bold italic">${i.prod||'--'}</p></div><div><span class="label-gold">IDENTIFICAÇÃO</span><p class="text-white font-bold italic">${i.nome||'--'}</p></div><div><span class="label-gold">TORREFAÇÃO</span><p class="text-amber-500 font-bold italic">${i.torrefacao||'--'}</p></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">VARIEDADE</span><p class="text-white font-bold italic text-sm">${i.variedade||'--'}</p></div><div><span class="label-gold">PROCESSO</span><p class="text-white font-bold italic text-sm">${i.processo||'--'}</p></div></div><div><span class="label-gold">ALTITUDE | TORRA</span><p class="text-white font-bold italic text-sm">${i.altitude||'--'} | ${i.torra||'--'}</p></div><div><span class="label-gold">NOTAS</span><p class="text-zinc-400 italic text-sm leading-tight">"${i.notas||'--'}"</p></div>`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
-        
-        function handleLogout() { auth.signOut(); }
+        function toggleTimer() { if(timer) { clearInterval(timer); timer = null; document.getElementById('btn-timer-main').innerText="CONTINUAR"; } else { timer = setInterval(() => { seg++; document.getElementById('timer').innerText = `${Math.floor(seg/60).toString().padStart(2,'0')}:${(seg%60).toString().padStart(2,'0')}`; renderSteps(seg); }, 1000); document.getElementById('btn-timer-main').innerText="PAUSAR"; } }
+        function abrirFeedback() { if(timer){ clearInterval(timer); timer = null; } document.getElementById('modal-feedback').classList.remove('hidden'); }
+        function fecharFeedback() { document.getElementById('modal-feedback').classList.add('hidden'); seg=0; document.getElementById('timer').innerText="00:00"; setRating(0); }
+        function setRating(n) { notaSelecionada = n; document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n)); }
+        async function salvarFeedback() { const g = document.getElementById('p-g'), r = document.getElementById('p-r'); await db.collection('logs').add({ grao: g.options[g.selectedIndex].text, receita: r.options[r.selectedIndex].text, tempoTotal: document.getElementById('timer').innerText, nota: notaSelecionada, docura: document.getElementById('f-doce').value, acidez: document.getElementById('f-acidez').value, amargor: document.getElementById('f-amargor').value, corpo: document.getElementById('f-corpo').value, observacoes: (document.getElementById('f-obs').value||"").toUpperCase(), data: new Date().toLocaleString(), ts: firebase.firestore.FieldValue.serverTimestamp(), owner_uid: currentUser.uid }); fecharFeedback(); showTab('diario'); }
+        function abrirDetalhesG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; document.getElementById('detalhes-content').innerHTML = `<div class="flex justify-center mb-4"><img src="${img}" class="w-44 h-44 rounded-2xl object-cover border-2 border-zinc-800 shadow-2xl cursor-zoom-in" onclick="ampliarImagem('${img}')"></div><div><span class="label-gold">PRODUTOR</span><p class="text-white font-bold italic text-sm">${i.prod||'--'}</p></div><div><span class="label-gold">IDENTIFICAÇÃO</span><p class="text-white font-bold italic text-sm">${i.nome||'--'}</p></div><div><span class="label-gold">TORREFAÇÃO</span><p class="text-amber-500 font-bold italic text-sm">${i.torrefacao||'--'}</p></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">VARIEDADE</span><p class="text-white font-bold italic text-sm">${i.variedade||'--'}</p></div><div><span class="label-gold">PROCESSO</span><p class="text-white font-bold italic text-sm">${i.processo||'--'}</p></div></div><div><span class="label-gold">ALTITUDE | TORRA</span><p class="text-white font-bold italic text-sm"><span class="text-white">${i.altitude||'--'}</span> | <span class="text-white">${i.torra||'--'}</span></p></div><div><span class="label-gold">NOTAS</span><p class="text-zinc-400 italic text-sm">"${i.notas||'--'}"</p></div>`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
+        function abrirDetalhesR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; let atkH = (i.ataques || []).map((a, idx) => `<p class="text-zinc-500 text-[10px]">Atk ${idx+1}: ${a.ml}ml em ${a.sec}s</p>`).join(''); document.getElementById('detalhes-content').innerHTML = `<div><span class="label-gold">RECEITA</span><p class="text-white font-bold italic text-sm">${i.nome}</p></div><div class="grid grid-cols-3 gap-2"><div><span class="label-gold">RATIO</span><p class="text-white text-sm">1:${i.origRatio}</p></div><div><span class="label-gold">PÓ</span><p class="text-white text-sm">${i.origPo}g</p></div><div><span class="label-gold">TOTAL</span><p class="text-amber-500 text-sm">${i.origTotal}ml</p></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">CLICKS</span><p class="text-white text-sm">${i.origClicks||'--'}</p></div><div><span class="label-gold">TEMP</span><p class="text-white text-sm">${i.origTemp||'--'}°</p></div></div>${atkH ? `<div><span class="label-gold">ATAQUES</span>${atkH}</div>` : ''}`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
+        function ampliarImagem(src) { document.getElementById('img-ampliada').src = src; document.getElementById('modal-zoom').classList.remove('hidden'); }
         function toggleAuth(l) { document.getElementById('login-form').classList.toggle('hidden', !l); document.getElementById('signup-form').classList.toggle('hidden', l); }
         async function handleLogin() { try { await auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value); } catch(e) { alert(e.message); } }
-        async function handleSignup() { const n = document.getElementById('sign-nick').value, t = document.getElementById('sign-type').value, e = document.getElementById('sign-email').value; if(!t) return alert("Selecione o perfil!"); try { const res = await auth.createUserWithEmailAndPassword(e, document.getElementById('sign-pass').value); await db.collection('users').doc(res.user.uid).set({ nick: n, type: t, email: e, uid: res.user.uid, role: 'user' }); } catch(e) { alert(e.message); } }
-        function updateProfileInfo(s) { document.getElementById('profile-info').innerText = s.value === 'pessoal' ? "🔒 PRIVADO" : "🌎 COMUNIDADE"; }
-        
-        function openPix(){ document.getElementById('pix-modal').classList.remove('hidden'); const qr = document.getElementById("pix-qrcode"); qr.innerHTML = ""; new QRCode(qr, {text: "00020101021126480014br.gov.bcb.pix0119alanpocos@gmail.com5204000053039865802BR5930ALAN DOUGLAS PEREIRA RODRIGUES6005POCOS6304", width: 180, height: 180, colorDark : "#000000", colorLight : "#ffffff"}); }
+        async function handleSignup() { try { const res = await auth.createUserWithEmailAndPassword(document.getElementById('sign-email').value, document.getElementById('sign-pass').value); await db.collection('users').doc(res.user.uid).set({ nick: document.getElementById('sign-nick').value, type: document.getElementById('sign-type').value, email: document.getElementById('sign-email').value, uid: res.user.uid }); } catch(e) { alert(e.message); } }
+        function openPix(){ document.getElementById('pix-modal').classList.remove('hidden'); const qr = document.getElementById("pix-qrcode"); qr.innerHTML = ""; new QRCode(qr, {text: "00020101021126480014br.gov.bcb.pix0119alanpocos@gmail.com5204000053039865802BR5930ALAN DOUGLAS PEREIRA RODRIGUES6005POCOS6304", width: 180, height: 180}); }
         function closePix(){ document.getElementById('pix-modal').classList.add('hidden'); }
         function copyPix(){ navigator.clipboard.writeText("alanpocos@gmail.com"); alert('Pix copiado!'); }
     </script>
