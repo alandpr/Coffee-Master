@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Coffee Master v12.9.2</title>
+    <title>Coffee Master v13.1</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,6 +16,7 @@
         body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding-bottom: 120px; zoom: 1.15; overflow-x: hidden; }
         .card { background: #161616; border-radius: 18px; padding: 14px; margin-bottom: 12px; border: 1px solid #262626; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .label-gold { color: #f59e0b; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-top: 20px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
+        .label-gold:first-child { margin-top: 0; }
         input, select, textarea { background: #222; border: 2px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 4px; font-size: 16px; font-weight: 900; font-style: italic; }
         .btn-gold { background: #f59e0b; color: #000; font-weight: 900; padding: 18px; border-radius: 18px; width: 100%; text-transform: uppercase; font-size: 14px; margin-top: 15px; cursor: pointer; }
         .tab-btn { background: #111; color: #444; flex: 1; padding: 14px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
@@ -43,9 +44,10 @@
 
     <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()"><h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2><div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div><button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button><button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button></div></div>
 
-    <!-- AUTH -->
+    <!-- LOGIN -->
     <div id="auth-screen"><div class="card w-full max-w-sm mx-auto text-center"><h1 class="text-3xl font-black text-amber-500 italic uppercase mb-8">COFFEE MASTER</h1><div id="login-form"><input type="email" id="login-email" placeholder="E-MAIL"><input type="password" id="login-pass" placeholder="SENHA"><button class="btn-gold w-full mt-6" onclick="handleLogin()">Entrar</button><p class="text-[10px] mt-6 uppercase text-zinc-500 underline" onclick="toggleAuth(false)">Criar agora</p></div><div id="signup-form" class="hidden text-left"><input type="text" id="sign-nick" placeholder="NICKNAME"><input type="email" id="sign-email" placeholder="E-MAIL"><input type="password" id="sign-pass" placeholder="SENHA"><select id="sign-type"><option value="pessoal">PESSOAL (PRIVADO)</option><option value="comunidade" selected>COMUNIDADE (PÚBLICO)</option></select><button class="btn-gold w-full mt-6" onclick="handleSignup()">Criar Conta</button><p class="text-[10px] mt-6 text-center uppercase text-zinc-500 underline" onclick="toggleAuth(true)">Já tenho conta</p></div></div></div>
 
+    <!-- MAIN APP -->
     <div id="main-app" class="hidden">
         <div class="flex justify-between items-center mb-5 sticky top-0 bg-black z-50 py-2">
             <div><h1 class="text-2xl font-black text-amber-500 italic uppercase leading-none">COFFEE MASTER</h1><span id="user-display" class="text-[8px] font-black text-zinc-600 uppercase"></span></div>
@@ -79,6 +81,7 @@
         const config = { apiKey: "AIzaSyCbIsrGjuu6KN-A0xpZUC6ID9aOHBEIJSE", authDomain: "coffee-master-e1f5c.firebaseapp.com", projectId: "coffee-master-e1f5c", storageBucket: "coffee-master-e1f5c.firebasestorage.app", messagingSenderId: "171441357303", appId: "1:171441357303:web:c85dc841ee73f6f29e2ef2" };
         firebase.initializeApp(config); const db = firebase.firestore(); const auth = firebase.auth();
         let currentUser = null, userProfile = null, timer = null, seg = 0, editIds = { g: null, r: null }, localData = { g: [], r: [] }, activeStepsData = { steps: [], times: [] }, notaSelecionada = 0;
+        let lockedGrao = "--", lockedReceita = "--"; // MEMORIA SEGURA PARA O DIARIO
         const DEFAULT_IMG = "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=150&h=150&fit=crop&q=80";
         const ADMIN_EMAIL = 'alanpocos@gmail.com';
 
@@ -106,45 +109,30 @@
         async function loadG() { 
             let finalResults = []; const search = (document.getElementById('search-g').value || "").toUpperCase();
             try {
-                if (currentUser.email === ADMIN_EMAIL) {
-                    const snap = await db.collection('cafes').get();
-                    finalResults = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                } else {
-                    const snapPub = await db.collection('cafes').where('visibilidade', '==', 'publico').get();
-                    const snapOwn = await db.collection('cafes').where('owner_uid', '==', currentUser.uid).get();
-                    const map = new Map();
-                    snapPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
-                    snapOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
-                    finalResults = Array.from(map.values());
-                }
+                const snap = await db.collection('cafes').get();
+                const allData = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                if (currentUser.email === ADMIN_EMAIL) finalResults = allData;
+                else finalResults = allData.filter(i => i.visibilidade === 'publico' || i.owner_uid === currentUser.uid);
                 finalResults.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
                 if(search) finalResults = finalResults.filter(i => i.nome.includes(search) || (i.prod && i.prod.includes(search)));
                 localData.g = finalResults; renderG(finalResults);
             } catch(e) { console.error(e); }
         }
 
-        function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div></div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
-        
         async function loadR() {
             let finalResults = [];
             try {
-                if (currentUser.email === ADMIN_EMAIL) {
-                    const snap = await db.collection('receitas').get();
-                    finalResults = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                } else {
-                    const snapPub = await db.collection('receitas').where('visibilidade', '==', 'publico').get();
-                    const snapOwn = await db.collection('receitas').where('owner_uid', '==', currentUser.uid).get();
-                    const map = new Map();
-                    snapPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
-                    snapOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
-                    finalResults = Array.from(map.values());
-                }
+                const snap = await db.collection('receitas').get();
+                const allData = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                if (currentUser.email === ADMIN_EMAIL) finalResults = allData;
+                else finalResults = allData.filter(i => i.visibilidade === 'publico' || i.owner_uid === currentUser.uid);
                 finalResults.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
                 localData.r = finalResults; renderR(finalResults);
             } catch(e) { console.error(e); }
         }
+
+        function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div></div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
         function renderR(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; h += `<div class="card p-3 flex justify-between items-center h-[85px]"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesR('${i.id}')"><div class="text-lg font-black italic uppercase text-amber-500 truncate">${i.nome}</div><div class="text-[8px] text-zinc-600 font-black uppercase mt-1">por @${i.owner_nick || 'Mestre'} | ${i.metodo || '--'}</div></div><div class="flex gap-2"> ${isOwner ? `<button onclick="editR('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('receitas','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''} <button onclick="showTab('preparo'); handleRecipeSelect('${i.id}')" class="text-xs font-black p-3 bg-amber-600 text-black rounded-lg italic uppercase">Preparar</button> </div></div>`; }); document.getElementById('list-r').innerHTML = h; }
-        
         async function loadPrep() { let gh = '<option value="0">SELECIONE O GRÃO</option>', rh = '<option value="0">SELECIONE A RECEITA</option>'; localData.g.forEach(i => gh += `<option value="${i.id}">${i.nome}</option>`); localData.r.forEach(i => rh += `<option value="${i.id}">${i.nome}</option>`); document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh; }
         function handleRecipeSelect(rid) { if(rid && typeof rid === 'string') document.getElementById('p-r').value = rid; const i = localData.r.find(x => x.id === document.getElementById('p-r').value); if(i) { document.getElementById('p-po-val').value = i.origPo; document.getElementById('p-ratio-val').value = i.origRatio; document.getElementById('p-clicks-val').value = i.origClicks || "--"; document.getElementById('p-temp-val').value = i.origTemp || "--"; upCalc(); } }
         function upCalc() { const p = parseFloat(document.getElementById('p-po-val').value) || 0, r = parseFloat(document.getElementById('p-ratio-val').value) || 0; const total = Math.round(p * r); document.getElementById('p-total-display').innerText = total; const i = localData.r.find(x => x.id === document.getElementById('p-r').value); if(!i) return; const ratioF = total / i.origTotal; activeStepsData = { steps: [], times: [] }; let sum = 0; if(i.bloomMl > 0) { let bN = Math.round(i.bloomMl * ratioF); sum += bN; activeStepsData.steps.push({ title: 'BLOOM', ml: bN, sum, sec: i.bloomSec }); activeStepsData.times.push(i.bloomSec); } (i.ataques || []).forEach((a, idx) => { let aN = Math.round(a.ml * ratioF); sum += aN; activeStepsData.steps.push({ title: `ATK ${idx+1}`, ml: aN, sum, sec: a.sec }); activeStepsData.times.push((activeStepsData.times.length > 0 ? activeStepsData.times[activeStepsData.times.length-1] : 0) + a.sec); }); renderSteps(0); }
@@ -167,9 +155,9 @@
                 const d = { 
                     nome: document.getElementById('r-nome').value.toUpperCase(), 
                     metodo: document.getElementById('r-metodo').value, 
-                    origRatio: parseFloat(document.getElementById('r-ratio').value) || 0, 
-                    origPo: parseFloat(document.getElementById('r-po').value) || 0, 
-                    origTotal: parseInt(document.getElementById('r-total').value) || 0, 
+                    origRatio: parseFloat(document.getElementById('r-ratio').value)||0, 
+                    origPo: parseFloat(document.getElementById('r-po').value)||0, 
+                    origTotal: parseInt(document.getElementById('r-total').value)||0, 
                     origClicks: document.getElementById('r-clicks').value, 
                     origTemp: document.getElementById('r-temp').value, 
                     bloomMl: parseFloat(document.getElementById('r-bloom-ml').value)||0, 
@@ -180,7 +168,7 @@
                     visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), 
                     ts: firebase.firestore.FieldValue.serverTimestamp() 
                 }; 
-                if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); else await db.collection('receitas').add(d); cancelEdit('r'); loadR();
+                if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); else await db.collection('receitas').add(d); cancelEdit('r'); loadR(); 
             } catch(e) { alert("Erro ao salvar: " + e.message); }
         }
 
@@ -192,17 +180,28 @@
         function handleFocus(el) { if(el.value === "--") el.value = ""; el.select(); }
         function fecharDetalhes() { document.getElementById('modal-detalhes').classList.add('hidden'); }
         function toggleTimer() { if(timer) { clearInterval(timer); timer = null; document.getElementById('btn-timer-main').innerText="CONTINUAR"; } else { timer = setInterval(() => { seg++; document.getElementById('timer').innerText = `${Math.floor(seg/60).toString().padStart(2,'0')}:${(seg%60).toString().padStart(2,'0')}`; renderSteps(seg); }, 1000); document.getElementById('btn-timer-main').innerText="PAUSAR"; } }
-        function abrirFeedback() { if(timer){ clearInterval(timer); timer = null; } document.getElementById('modal-feedback').classList.remove('hidden'); }
+        
+        // --- MELHORIA CRÍTICA: BLOQUEIA OS NOMES AO CLICAR EM FINALIZAR ---
+        function abrirFeedback() { 
+            if(timer){ clearInterval(timer); timer = null; }
+            const g = document.getElementById('p-g'), r = document.getElementById('p-r');
+            lockedGrao = g.options[g.selectedIndex].text;
+            lockedReceita = r.options[r.selectedIndex].text;
+            document.getElementById('modal-feedback').classList.remove('hidden'); 
+        }
+
         function fecharFeedback() { document.getElementById('modal-feedback').classList.add('hidden'); seg=0; document.getElementById('timer').innerText="00:00"; setRating(0); }
         function setRating(n) { notaSelecionada = n; document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n)); }
         
         async function salvarFeedback() { 
-            const g = document.getElementById('p-g'), r = document.getElementById('p-r');
-            if(g.value === "0" || r.value === "0") { alert("Selecione um Grão e uma Receita antes de salvar!"); return; }
+            // Usa os nomes travados na memória, ignorando se o menu resetar no fundo
+            if(lockedGrao === "SELECIONE O GRÃO" || lockedReceita === "SELECIONE A RECEITA") { 
+                alert("Selecione um Grão e uma Receita antes de finalizar!"); return; 
+            }
             try {
                 await db.collection('logs').add({ 
-                    grao: g.options[g.selectedIndex].text, 
-                    receita: r.options[r.selectedIndex].text, 
+                    grao: lockedGrao, 
+                    receita: lockedReceita, 
                     tempoTotal: document.getElementById('timer').innerText, 
                     nota: notaSelecionada, 
                     docura: document.getElementById('f-doce').value, 
@@ -215,7 +214,7 @@
                     owner_uid: currentUser.uid 
                 }); 
                 fecharFeedback(); showTab('diario');
-            } catch(e) { alert("Erro: " + e.message); }
+            } catch(e) { alert("Erro ao salvar diário: " + e.message); }
         }
 
         function abrirDetalhesG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; document.getElementById('detalhes-content').innerHTML = `<div class="flex justify-center mb-4"><img src="${img}" class="w-44 h-44 rounded-2xl object-cover border-2 border-zinc-800 shadow-2xl cursor-zoom-in" onclick="ampliarImagem('${img}')"></div><div><span class="label-gold">PRODUTOR</span><p class="text-white font-bold italic text-sm">${i.prod||'--'}</p></div><div><span class="label-gold">IDENTIFICAÇÃO</span><p class="text-white font-bold italic text-sm">${i.nome||'--'}</p></div><div><span class="label-gold">TORREFAÇÃO</span><p class="text-amber-500 font-bold italic text-sm">${i.torrefacao||'--'}</p></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">VARIEDADE</span><p class="text-white font-bold italic text-sm">${i.variedade||'--'}</p></div><div><span class="label-gold">PROCESSO</span><p class="text-white font-bold italic text-sm">${i.processo||'--'}</p></div></div><div><span class="label-gold">ALTITUDE | TORRA</span><p class="text-white font-bold italic text-sm"><span class="text-white">${i.altitude||'--'}</span> | <span class="text-white">${i.torra||'--'}</span></p></div><div><span class="label-gold">NOTAS</span><p class="text-zinc-400 italic text-sm">"${i.notas||'--'}"</p></div>`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
