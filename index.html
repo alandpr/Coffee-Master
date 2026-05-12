@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Coffee Master v13.1</title>
+    <title>Coffee Master v13.2</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,7 +16,6 @@
         body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding-bottom: 120px; zoom: 1.15; overflow-x: hidden; }
         .card { background: #161616; border-radius: 18px; padding: 14px; margin-bottom: 12px; border: 1px solid #262626; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .label-gold { color: #f59e0b; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-top: 20px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
-        .label-gold:first-child { margin-top: 0; }
         input, select, textarea { background: #222; border: 2px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 4px; font-size: 16px; font-weight: 900; font-style: italic; }
         .btn-gold { background: #f59e0b; color: #000; font-weight: 900; padding: 18px; border-radius: 18px; width: 100%; text-transform: uppercase; font-size: 14px; margin-top: 15px; cursor: pointer; }
         .tab-btn { background: #111; color: #444; flex: 1; padding: 14px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
@@ -24,14 +23,12 @@
         .step-box { background: #161616; padding: 12px; border-radius: 16px; text-align: center; border: 2px solid #262626; width: 145px; flex-shrink: 0; }
         .step-box-active { border: 2px solid #f59e0b !important; background: #221a05; }
         #auth-screen, #modal-feedback, #pix-modal, #modal-detalhes, #admin-user-details { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; z-index: 2000; padding: 20px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
-        #modal-zoom { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999 !important; display: flex; align-items: center; justify-content: center; padding: 0; }
+        #modal-zoom { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000 !important; display: flex; align-items: center; justify-content: center; padding: 0; }
         .hidden { display: none !important; }
         .star { font-size: 35px; cursor: pointer; color: #333; padding: 5px; }
         .star.active { color: #f59e0b; }
         .grain-thumb { width: 75px; height: 75px; border-radius: 16px; object-fit: cover; background: #222; border: 1px solid #333; }
         .atk-row { background: #111; padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #222; }
-        input[type=range] { -webkit-appearance: none; background: #333; height: 6px; border-radius: 5px; margin: 10px 0; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #f59e0b; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
@@ -44,10 +41,10 @@
 
     <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()"><h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2><div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div><button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button><button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button></div></div>
 
-    <!-- LOGIN -->
+    <!-- AUTH -->
     <div id="auth-screen"><div class="card w-full max-w-sm mx-auto text-center"><h1 class="text-3xl font-black text-amber-500 italic uppercase mb-8">COFFEE MASTER</h1><div id="login-form"><input type="email" id="login-email" placeholder="E-MAIL"><input type="password" id="login-pass" placeholder="SENHA"><button class="btn-gold w-full mt-6" onclick="handleLogin()">Entrar</button><p class="text-[10px] mt-6 uppercase text-zinc-500 underline" onclick="toggleAuth(false)">Criar agora</p></div><div id="signup-form" class="hidden text-left"><input type="text" id="sign-nick" placeholder="NICKNAME"><input type="email" id="sign-email" placeholder="E-MAIL"><input type="password" id="sign-pass" placeholder="SENHA"><select id="sign-type"><option value="pessoal">PESSOAL (PRIVADO)</option><option value="comunidade" selected>COMUNIDADE (PÚBLICO)</option></select><button class="btn-gold w-full mt-6" onclick="handleSignup()">Criar Conta</button><p class="text-[10px] mt-6 text-center uppercase text-zinc-500 underline" onclick="toggleAuth(true)">Já tenho conta</p></div></div></div>
 
-    <!-- MAIN APP -->
+    <!-- MAIN -->
     <div id="main-app" class="hidden">
         <div class="flex justify-between items-center mb-5 sticky top-0 bg-black z-50 py-2">
             <div><h1 class="text-2xl font-black text-amber-500 italic uppercase leading-none">COFFEE MASTER</h1><span id="user-display" class="text-[8px] font-black text-zinc-600 uppercase"></span></div>
@@ -56,7 +53,6 @@
                 <button onclick="auth.signOut()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-zinc-700 text-zinc-500">Sair</button>
             </div>
         </div>
-        
         <div id="tabs-container" class="flex mb-6 bg-black p-1 rounded-2xl sticky top-[55px] z-50 border border-zinc-800 shadow-2xl overflow-x-auto no-scrollbar">
             <button id="btn-cafes" class="tab-btn active-tab" onclick="showTab('cafes')">GRÃOS</button>
             <button id="btn-receitas" class="tab-btn" onclick="showTab('receitas')">RECEITAS</button>
@@ -81,7 +77,7 @@
         const config = { apiKey: "AIzaSyCbIsrGjuu6KN-A0xpZUC6ID9aOHBEIJSE", authDomain: "coffee-master-e1f5c.firebaseapp.com", projectId: "coffee-master-e1f5c", storageBucket: "coffee-master-e1f5c.firebasestorage.app", messagingSenderId: "171441357303", appId: "1:171441357303:web:c85dc841ee73f6f29e2ef2" };
         firebase.initializeApp(config); const db = firebase.firestore(); const auth = firebase.auth();
         let currentUser = null, userProfile = null, timer = null, seg = 0, editIds = { g: null, r: null }, localData = { g: [], r: [] }, activeStepsData = { steps: [], times: [] }, notaSelecionada = 0;
-        let lockedGrao = "--", lockedReceita = "--"; // MEMORIA SEGURA PARA O DIARIO
+        let finalG = "--", finalR = "--"; // MEMORIA PARA O DIARIO
         const DEFAULT_IMG = "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=150&h=150&fit=crop&q=80";
         const ADMIN_EMAIL = 'alanpocos@gmail.com';
 
@@ -95,7 +91,8 @@
                     document.getElementById('main-app').classList.remove('hidden');
                     document.getElementById('user-display').innerText = `@${userProfile.nick} (${userProfile.type})`;
                     if(user.email === ADMIN_EMAIL) document.getElementById('btn-admin').classList.remove('hidden');
-                    showTab('cafes');
+                    // BUSCA IMEDIATA
+                    loadG(); loadR(); showTab('cafes');
                 } catch(e) { console.error(e); }
             } else { document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); }
         });
@@ -107,27 +104,29 @@
         }
 
         async function loadG() { 
-            let finalResults = []; const search = (document.getElementById('search-g').value || "").toUpperCase();
+            let res = []; const search = (document.getElementById('search-g').value || "").toUpperCase();
             try {
-                const snap = await db.collection('cafes').get();
-                const allData = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                if (currentUser.email === ADMIN_EMAIL) finalResults = allData;
-                else finalResults = allData.filter(i => i.visibilidade === 'publico' || i.owner_uid === currentUser.uid);
-                finalResults.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
-                if(search) finalResults = finalResults.filter(i => i.nome.includes(search) || (i.prod && i.prod.includes(search)));
-                localData.g = finalResults; renderG(finalResults);
+                const sPub = await db.collection('cafes').where('visibilidade', '==', 'publico').get();
+                const sOwn = await db.collection('cafes').where('owner_uid', '==', currentUser.uid).get();
+                const map = new Map();
+                sPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                sOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                res = Array.from(map.values()).sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
+                if(search) res = res.filter(i => i.nome.includes(search) || (i.prod && i.prod.includes(search)));
+                localData.g = res; renderG(res);
             } catch(e) { console.error(e); }
         }
 
         async function loadR() {
-            let finalResults = [];
+            let res = [];
             try {
-                const snap = await db.collection('receitas').get();
-                const allData = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                if (currentUser.email === ADMIN_EMAIL) finalResults = allData;
-                else finalResults = allData.filter(i => i.visibilidade === 'publico' || i.owner_uid === currentUser.uid);
-                finalResults.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
-                localData.r = finalResults; renderR(finalResults);
+                const sPub = await db.collection('receitas').where('visibilidade', '==', 'publico').get();
+                const sOwn = await db.collection('receitas').where('owner_uid', '==', currentUser.uid).get();
+                const map = new Map();
+                sPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                sOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                res = Array.from(map.values()).sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
+                localData.r = res; renderR(res);
             } catch(e) { console.error(e); }
         }
 
@@ -153,23 +152,16 @@
                 const atks = []; document.querySelectorAll('.atk-row').forEach(row => { atks.push({ ml: parseFloat(row.querySelector('.atk-ml').value)||0, sec: parseFloat(row.querySelector('.atk-sec').value)||0, obs: row.querySelector('.atk-obs').value.toUpperCase() }); }); 
                 const original = editIds.r ? localData.r.find(x => x.id === editIds.r) : null; 
                 const d = { 
-                    nome: document.getElementById('r-nome').value.toUpperCase(), 
-                    metodo: document.getElementById('r-metodo').value, 
-                    origRatio: parseFloat(document.getElementById('r-ratio').value)||0, 
-                    origPo: parseFloat(document.getElementById('r-po').value)||0, 
-                    origTotal: parseInt(document.getElementById('r-total').value)||0, 
-                    origClicks: document.getElementById('r-clicks').value, 
-                    origTemp: document.getElementById('r-temp').value, 
-                    bloomMl: parseFloat(document.getElementById('r-bloom-ml').value)||0, 
-                    bloomSec: parseFloat(document.getElementById('r-bloom-sec').value)||0, 
-                    ataques: atks, 
-                    owner_uid: original ? original.owner_uid : currentUser.uid, 
-                    owner_nick: original ? original.owner_nick : userProfile.nick, 
-                    visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), 
-                    ts: firebase.firestore.FieldValue.serverTimestamp() 
+                    nome: document.getElementById('r-nome').value.toUpperCase(), metodo: document.getElementById('r-metodo').value, 
+                    origRatio: parseFloat(document.getElementById('r-ratio').value)||0, origPo: parseFloat(document.getElementById('r-po').value)||0, 
+                    origTotal: parseInt(document.getElementById('r-total').value)||0, origClicks: document.getElementById('r-clicks').value, 
+                    origTemp: document.getElementById('r-temp').value, bloomMl: parseFloat(document.getElementById('r-bloom-ml').value)||0, 
+                    bloomSec: parseFloat(document.getElementById('r-bloom-sec').value)||0, ataques: atks, 
+                    owner_uid: original ? original.owner_uid : currentUser.uid, owner_nick: original ? original.owner_nick : userProfile.nick, 
+                    visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp() 
                 }; 
                 if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); else await db.collection('receitas').add(d); cancelEdit('r'); loadR(); 
-            } catch(e) { alert("Erro ao salvar: " + e.message); }
+            } catch(e) { alert("Erro: " + e.message); }
         }
 
         function editG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; editIds.g = id; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-variedade').value = i.variedade; document.getElementById('g-processo').value = i.processo || ''; document.getElementById('g-torrefacao').value = i.torrefacao || ''; document.getElementById('g-torra').value = i.torra || ''; document.getElementById('g-altitude').value = i.altitude || ''; document.getElementById('g-data').value = i.data || ''; document.getElementById('g-notas').value = i.notas || ''; document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); window.scrollTo({top:0, behavior:'smooth'}); }
@@ -181,37 +173,25 @@
         function fecharDetalhes() { document.getElementById('modal-detalhes').classList.add('hidden'); }
         function toggleTimer() { if(timer) { clearInterval(timer); timer = null; document.getElementById('btn-timer-main').innerText="CONTINUAR"; } else { timer = setInterval(() => { seg++; document.getElementById('timer').innerText = `${Math.floor(seg/60).toString().padStart(2,'0')}:${(seg%60).toString().padStart(2,'0')}`; renderSteps(seg); }, 1000); document.getElementById('btn-timer-main').innerText="PAUSAR"; } }
         
-        // --- MELHORIA CRÍTICA: BLOQUEIA OS NOMES AO CLICAR EM FINALIZAR ---
         function abrirFeedback() { 
             if(timer){ clearInterval(timer); timer = null; }
             const g = document.getElementById('p-g'), r = document.getElementById('p-r');
-            lockedGrao = g.options[g.selectedIndex].text;
-            lockedReceita = r.options[r.selectedIndex].text;
+            finalG = g.options[g.selectedIndex].text;
+            finalR = r.options[r.selectedIndex].text;
             document.getElementById('modal-feedback').classList.remove('hidden'); 
         }
-
         function fecharFeedback() { document.getElementById('modal-feedback').classList.add('hidden'); seg=0; document.getElementById('timer').innerText="00:00"; setRating(0); }
         function setRating(n) { notaSelecionada = n; document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n)); }
         
         async function salvarFeedback() { 
-            // Usa os nomes travados na memória, ignorando se o menu resetar no fundo
-            if(lockedGrao === "SELECIONE O GRÃO" || lockedReceita === "SELECIONE A RECEITA") { 
-                alert("Selecione um Grão e uma Receita antes de finalizar!"); return; 
-            }
+            if(finalG === "SELECIONE O GRÃO" || finalR === "SELECIONE A RECEITA") { alert("Selecione um Grão e uma Receita antes de finalizar!"); return; }
             try {
                 await db.collection('logs').add({ 
-                    grao: lockedGrao, 
-                    receita: lockedReceita, 
-                    tempoTotal: document.getElementById('timer').innerText, 
-                    nota: notaSelecionada, 
-                    docura: document.getElementById('f-doce').value, 
-                    acidez: document.getElementById('f-acidez').value, 
-                    amargor: document.getElementById('f-amargor').value, 
-                    corpo: document.getElementById('f-corpo').value, 
-                    observacoes: (document.getElementById('f-obs').value||"").toUpperCase(), 
-                    data: new Date().toLocaleString(), 
-                    ts: firebase.firestore.FieldValue.serverTimestamp(), 
-                    owner_uid: currentUser.uid 
+                    grao: finalG, receita: finalR, tempoTotal: document.getElementById('timer').innerText, 
+                    nota: notaSelecionada, docura: document.getElementById('f-doce').value, 
+                    acidez: document.getElementById('f-acidez').value, amargor: document.getElementById('f-amargor').value, 
+                    corpo: document.getElementById('f-corpo').value, observacoes: (document.getElementById('f-obs').value||"").toUpperCase(), 
+                    data: new Date().toLocaleString(), ts: firebase.firestore.FieldValue.serverTimestamp(), owner_uid: currentUser.uid 
                 }); 
                 fecharFeedback(); showTab('diario');
             } catch(e) { alert("Erro ao salvar diário: " + e.message); }
@@ -227,23 +207,20 @@
         function closePix(){ document.getElementById('pix-modal').classList.add('hidden'); }
         function copyPix(){ navigator.clipboard.writeText("alanpocos@gmail.com"); alert('Pix copiado!'); }
 
-        // AUTO-UPDATE
         if ('serviceWorker' in navigator) {
             window.addEventListener('load', () => {
                 navigator.serviceWorker.register('./sw.js').then(reg => {
-                    reg.addEventListener('updatefound', () => {
+                    reg.onupdatefound = () => {
                         const newWorker = reg.installing;
-                        newWorker.addEventListener('statechange', () => {
+                        newWorker.onstatechange = () => {
                             if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
                                 window.location.reload();
                             }
-                        });
-                    });
+                        };
+                    };
                 });
             });
-            navigator.serviceWorker.addEventListener('controllerchange', () => {
-                window.location.reload();
-            });
+            navigator.serviceWorker.addEventListener('controllerchange', () => { window.location.reload(); });
         }
     </script>
 </body>
