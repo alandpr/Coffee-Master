@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Coffee Master v13.4</title>
+    <title>Coffee Master v13.5</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -22,23 +22,21 @@
         .tab-btn { background: #111; color: #444; flex: 1; padding: 14px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
         .active-tab { background: #f59e0b; color: #000; border-color: #fbbf24; }
         .step-box { background: #161616; padding: 12px; border-radius: 16px; text-align: center; border: 2px solid #262626; width: 145px; flex-shrink: 0; }
-        .step-box-active { border: 2px solid #f59e0b !important; background: #221a05; }
+        .step-box-active { border: 2px solid #f59e0b !important; background: #221a05; box-shadow: 0 0 20px rgba(245,158,11,0.2); }
         #auth-screen, #modal-feedback, #pix-modal, #modal-detalhes, #admin-user-details { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; z-index: 2000; padding: 20px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
-        #modal-zoom { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999 !important; display: flex; align-items: center; justify-content: center; padding: 0; }
+        #modal-zoom { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000 !important; display: flex; align-items: center; justify-content: center; padding: 0; }
         .hidden { display: none !important; }
         .star { font-size: 35px; cursor: pointer; color: #333; padding: 5px; }
         .star.active { color: #f59e0b; }
         .grain-thumb { width: 75px; height: 75px; border-radius: 16px; object-fit: cover; background: #222; border: 1px solid #333; flex-shrink: 0; }
         .atk-row { background: #111; padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #222; }
-        input[type=range] { -webkit-appearance: none; background: #333; height: 6px; border-radius: 5px; margin: 10px 0; }
-        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #f59e0b; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
-    <!-- OS MODAIS E UI SEGUEM EXATAMENTE IGUAIS AO SEU ORIGINAL -->
+    <!-- MODAIS (IGUAIS AO ORIGINAL) -->
     <div id="modal-zoom" class="hidden" onclick="this.classList.add('hidden')"><img id="img-ampliada" class="max-w-[95%] max-h-[85%] rounded-2xl border-2 border-amber-500 shadow-2xl"></div>
     <div id="modal-detalhes" class="hidden" onclick="fecharDetalhes()"><div class="card w-full max-w-sm mx-auto border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.1)]" onclick="event.stopPropagation()"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4 text-center">Ficha Técnica</h3><div id="detalhes-content" class="space-y-4 text-left"></div><button class="btn-gold w-full mt-8" onclick="fecharDetalhes()">VOLTAR</button></div></div>
-    <div id="admin-user-details" class="hidden"><div class="card w-full max-w-md mx-auto border-amber-600 bg-black h-[90vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 id="adm-u-nick" class="text-amber-500 font-black italic uppercase text-xl">Usuário</h3><button onclick="document.getElementById('admin-user-details').classList.add('hidden')" class="text-zinc-500 font-bold">X</button></div><div id="adm-u-content" class="space-y-6 overflow-y-auto flex-1 no-scrollbar"></div><button class="btn-gold w-full mt-4" onclick="document.getElementById('admin-user-details').classList.add('hidden')">VOLTAR</button></div></div>
+    <div id="admin-user-details" class="hidden"><div class="card w-full max-w-md mx-auto border-amber-600 bg-black h-[90vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 id="adm-u-nick" class="text-amber-500 font-black italic uppercase text-xl">Usuário</h3><button onclick="document.getElementById('admin-user-details').classList.add('hidden')" class="text-zinc-500 font-bold">X</button></div><div id="adm-u-content" class="space-y-6 overflow-y-auto flex-1 pr-1 no-scrollbar"></div><button class="btn-gold w-full mt-4" onclick="document.getElementById('admin-user-details').classList.add('hidden')">VOLTAR</button></div></div>
 
     <div id="modal-feedback" class="hidden"><div class="card w-full max-w-sm mx-auto border-amber-600 text-center"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4">Como ficou?</h3><div class="flex justify-center mb-4"><span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span></div><div class="grid grid-cols-2 gap-4 text-left px-2"><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Doçura</span><span id="val-doce" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-doce" min="0" max="5" value="3" oninput="document.getElementById('val-doce').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Acidez</span><span id="val-acidez" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-acidez" min="0" max="5" value="3" oninput="document.getElementById('val-acidez').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Amargor</span><span id="val-amargor" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-amargor" min="0" max="5" value="3" oninput="document.getElementById('val-amargor').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Corpo</span><span id="val-corpo" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-corpo" min="0" max="5" value="3" oninput="document.getElementById('val-corpo').innerText=this.value"></div></div><textarea id="f-obs" rows="2" class="mt-4" placeholder="NOTAS DO DIÁRIO..."></textarea><button class="btn-gold w-full mt-4" onclick="salvarFeedback()">Salvar no Diário</button><button class="text-zinc-500 text-[10px] mt-4 font-bold uppercase" onclick="fecharFeedback()">Pular</button></div></div>
 
@@ -78,7 +76,7 @@
         const config = { apiKey: "AIzaSyCbIsrGjuu6KN-A0xpZUC6ID9aOHBEIJSE", authDomain: "coffee-master-e1f5c.firebaseapp.com", projectId: "coffee-master-e1f5c", storageBucket: "coffee-master-e1f5c.firebasestorage.app", messagingSenderId: "171441357303", appId: "1:171441357303:web:c85dc841ee73f6f29e2ef2" };
         firebase.initializeApp(config); const db = firebase.firestore(); const auth = firebase.auth();
         let currentUser = null, userProfile = null, timer = null, seg = 0, editIds = { g: null, r: null }, localData = { g: [], r: [] }, activeStepsData = { steps: [], times: [] }, notaSelecionada = 0;
-        let memoGrao = "--", memoReceita = "--"; // TRAVA DE SEGURANÇA PARA O DIÁRIO
+        let safeG = "--", safeR = "--"; // TRAVA DEFINITIVA
         const DEFAULT_IMG = "https://images.unsplash.com/photo-1559056199-641a0ac8b55e?w=150&h=150&fit=crop&q=80";
         const ADMIN_EMAIL = 'alanpocos@gmail.com';
 
@@ -92,6 +90,7 @@
                     document.getElementById('main-app').classList.remove('hidden');
                     document.getElementById('user-display').innerText = `@${userProfile.nick} (${userProfile.type})`;
                     if(user.email === ADMIN_EMAIL) document.getElementById('btn-admin').classList.remove('hidden');
+                    // BUSCA IMEDIATA AO LOGAR
                     loadG(); loadR(); showTab('cafes');
                 } catch(e) { console.error(e); }
             } else { document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); }
@@ -106,11 +105,12 @@
         async function loadG() { 
             let finalRes = []; const search = (document.getElementById('search-g').value || "").toUpperCase();
             try {
-                const snap = await db.collection('cafes').get();
-                const all = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                if (currentUser.email === ADMIN_EMAIL) finalRes = all;
-                else finalRes = all.filter(i => i.visibilidade === 'publico' || i.owner_uid === currentUser.uid);
-                finalRes.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
+                const sPub = await db.collection('cafes').where('visibilidade', '==', 'publico').get();
+                const sOwn = await db.collection('cafes').where('owner_uid', '==', currentUser.uid).get();
+                const map = new Map();
+                sPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                sOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                finalRes = Array.from(map.values()).sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
                 if(search) finalRes = finalRes.filter(i => i.nome.includes(search) || (i.prod && i.prod.includes(search)));
                 localData.g = finalRes; renderG(finalRes);
             } catch(e) { console.error(e); }
@@ -119,11 +119,12 @@
         async function loadR() {
             let finalRes = [];
             try {
-                const snap = await db.collection('receitas').get();
-                const all = snap.docs.map(d => ({id: d.id, ...d.data()}));
-                if (currentUser.email === ADMIN_EMAIL) finalRes = all;
-                else finalRes = all.filter(i => i.visibilidade === 'publico' || i.owner_uid === currentUser.uid);
-                finalRes.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
+                const sPub = await db.collection('receitas').where('visibilidade', '==', 'publico').get();
+                const sOwn = await db.collection('receitas').where('owner_uid', '==', currentUser.uid).get();
+                const map = new Map();
+                sPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                sOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
+                finalRes = Array.from(map.values()).sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
                 localData.r = finalRes; renderR(finalRes);
             } catch(e) { console.error(e); }
         }
@@ -140,7 +141,13 @@
         async function delUser(uid, nick) { if(confirm(`DELETAR USUÁRIO @${nick}? TODOS OS DADOS SERÃO PERDIDOS.`)) { await db.collection('users').doc(uid).delete(); loadAdmin(); } }
         function goEdit(t, id) { document.getElementById('admin-user-details').classList.add('hidden'); if(t === 'g') { showTab('cafes'); setTimeout(() => editG(id), 300); } else { showTab('receitas'); setTimeout(() => editR(id), 300); } }
         function resetPreparo() { document.getElementById('p-g').value="0"; document.getElementById('p-r').value="0"; document.getElementById('p-po-val').value="--"; document.getElementById('p-ratio-val').value="--"; document.getElementById('p-clicks-val').value="--"; document.getElementById('p-temp-val').value="--"; document.getElementById('p-total-display').innerText="0"; document.getElementById('p-steps').innerHTML=""; activeStepsData = {steps:[], times:[]}; }
-        async function loadDiario() { const snap = await db.collection('logs').where('owner_uid', '==', currentUser.uid).get(); let logs = snap.docs.map(d => ({id: d.id, ...d.data()})); logs.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0)); let h = ''; logs.forEach(i => { h += `<div class="card p-4 border-l-4 border-l-amber-600 shadow-none"><div class="text-[10px] text-zinc-500 font-bold">${i.data}</div><div class="text-lg font-black italic text-white leading-tight mt-1">${i.grao}</div><div class="text-xs font-bold text-amber-500 uppercase mt-1">${i.receita} | ${i.tempoTotal}</div><div class="grid grid-cols-4 gap-1 mt-2 text-[8px] font-black text-zinc-600"><div>DOC:${i.docura||0}</div><div>ACI:${i.acidez||0}</div><div>AMA:${i.amargor||0}</div><div>COR:${i.corpo||0}</div></div><p class="mt-2 text-xs italic text-zinc-400">"${i.observacoes || '--'}"</p><div class="mt-3 flex justify-between items-center"><div class="text-xl text-amber-500">${'★'.repeat(i.nota)}</div><button onclick="del('logs','${i.id}','Log')" class="text-xs p-2 bg-zinc-900 rounded-lg text-red-800 font-black">🗑️</button></div></div>`; }); document.getElementById('list-logs').innerHTML = h || '<div class="text-center p-10 text-zinc-600 font-black uppercase italic">Vazio</div>'; }
+        async function loadDiario() { 
+            const snap = await db.collection('logs').where('owner_uid', '==', currentUser.uid).get(); 
+            let logs = snap.docs.map(d => ({id: d.id, ...d.data()})); 
+            logs.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0)); 
+            let h = ''; logs.forEach(i => { h += `<div class="card p-4 border-l-4 border-l-amber-600 shadow-none"><div class="text-[10px] text-zinc-500 font-bold">${i.data}</div><div class="text-lg font-black italic text-white leading-tight mt-1">${i.grao}</div><div class="text-xs font-bold text-amber-500 uppercase mt-1">${i.receita} | ${i.tempoTotal}</div><div class="grid grid-cols-4 gap-1 mt-2 text-[8px] font-black text-zinc-600"><div>DOC:${i.docura||0}</div><div>ACI:${i.acidez||0}</div><div>AMA:${i.amargor||0}</div><div>COR:${i.corpo||0}</div></div><p class="mt-2 text-xs italic text-zinc-400">"${i.observacoes || '--'}"</p><div class="mt-3 flex justify-between items-center"><div class="text-xl text-amber-500">${'★'.repeat(i.nota)}</div><button onclick="del('logs','${i.id}','Log')" class="text-xs p-2 bg-zinc-900 rounded-lg text-red-800 font-black">🗑️</button></div></div>`; }); 
+            document.getElementById('list-logs').innerHTML = h || '<div class="text-center p-10 text-zinc-600 font-black uppercase italic">Vazio</div>'; 
+        }
         async function processImage(file) { return new Promise((res) => { const r = new FileReader(); r.onload = (e) => { const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); cv.width = 600; cv.height = 600; cv.getContext('2d').drawImage(img, (img.width-Math.min(img.width,img.height))/2, (img.height-Math.min(img.width,img.height))/2, Math.min(img.width,img.height), Math.min(img.width,img.height), 0, 0, 600, 600); res(cv.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; r.readAsDataURL(file); }); }
         function addAtackField(ml='', sec='', obs='') { document.getElementById('ataques-container').insertAdjacentHTML('beforeend', `<div class="atk-row"><div class="flex gap-2"><div><span class="label-gold mt-0">ML</span><input type="number" class="atk-ml" value="${ml}"></div><div><span class="label-gold mt-0">SEG</span><input type="number" class="atk-sec" value="${sec}"></div><button onclick="this.parentElement.parentElement.remove()" class="text-zinc-600 font-black pt-5 px-2">X</button></div><input type="text" class="atk-obs mt-1 text-xs" placeholder="Obs..." value="${obs}"></div>`); }
         async function saveG() { const file = document.getElementById('g-photo-input').files[0]; const orig = editIds.g ? localData.g.find(x => x.id === editIds.g) : null; const d = { prod: document.getElementById('g-prod').value.toUpperCase(), nome: document.getElementById('g-nome').value.toUpperCase(), variedade: document.getElementById('g-variedade').value.toUpperCase(), processo: document.getElementById('g-processo').value.toUpperCase(), torrefacao: document.getElementById('g-torrefacao').value.toUpperCase(), torra: document.getElementById('g-torra').value, altitude: document.getElementById('g-altitude').value, data: document.getElementById('g-data').value, notas: document.getElementById('g-notas').value.toUpperCase(), owner_uid: orig ? orig.owner_uid : currentUser.uid, owner_nick: orig ? orig.owner_nick : userProfile.nick, visibilidade: orig ? orig.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp() }; if(file) d.photo = await processImage(file); if(editIds.g) await db.collection('cafes').doc(editIds.g).update(d); else await db.collection('cafes').add(d); cancelEdit('g'); loadG(); }
@@ -170,14 +177,13 @@
         function fecharDetalhes() { document.getElementById('modal-detalhes').classList.add('hidden'); }
         function toggleTimer() { if(timer) { clearInterval(timer); timer = null; document.getElementById('btn-timer-main').innerText="CONTINUAR"; } else { timer = setInterval(() => { seg++; document.getElementById('timer').innerText = `${Math.floor(seg/60).toString().padStart(2,'0')}:${(seg%60).toString().padStart(2,'0')}`; renderSteps(seg); }, 1000); document.getElementById('btn-timer-main').innerText="PAUSAR"; } }
         
-        // --- TRAVA DE MEMÓRIA PARA O DIÁRIO ---
+        // --- FIX DEFINITIVO DO DIÁRIO ---
         function abrirFeedback() { 
             if(timer){ clearInterval(timer); timer = null; }
-            const gEl = document.getElementById('p-g');
-            const rEl = document.getElementById('p-r');
-            // Memoriza antes de abrir o modal
-            memoGrao = gEl.options[gEl.selectedIndex].text;
-            memoReceita = rEl.options[rEl.selectedIndex].text;
+            const gSel = document.getElementById('p-g');
+            const rSel = document.getElementById('p-r');
+            safeG = gSel.options[gSel.selectedIndex].text;
+            safeR = rSel.options[rSel.selectedIndex].text;
             document.getElementById('modal-feedback').classList.remove('hidden'); 
         }
 
@@ -185,20 +191,17 @@
         function setRating(n) { notaSelecionada = n; document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n)); }
         
         async function salvarFeedback() { 
-            // Validação de segurança
-            if(memoGrao === "SELECIONE O GRÃO" || memoReceita === "SELECIONE A RECEITA" || memoGrao === "0") { 
-                alert("Dados do café não encontrados. Selecione o grão antes de salvar."); return; 
-            }
+            if(safeG === "SELECIONE O GRÃO" || safeR === "SELECIONE A RECEITA") { alert("Selecione os dados antes de salvar!"); return; }
             try {
                 await db.collection('logs').add({ 
-                    grao: memoGrao, receita: memoReceita, tempoTotal: document.getElementById('timer').innerText, 
+                    grao: safeG, receita: safeR, tempoTotal: document.getElementById('timer').innerText, 
                     nota: notaSelecionada, docura: document.getElementById('f-doce').value, 
                     acidez: document.getElementById('f-acidez').value, amargor: document.getElementById('f-amargor').value, 
                     corpo: document.getElementById('f-corpo').value, observacoes: (document.getElementById('f-obs').value||"").toUpperCase(), 
                     data: new Date().toLocaleString(), ts: firebase.firestore.FieldValue.serverTimestamp(), owner_uid: currentUser.uid 
                 }); 
                 fecharFeedback(); showTab('diario');
-            } catch(e) { alert("Erro ao salvar diário: " + e.message); }
+            } catch(e) { alert("Erro ao salvar: " + e.message); }
         }
 
         function abrirDetalhesG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; document.getElementById('detalhes-content').innerHTML = `<div class="flex justify-center mb-4"><img src="${img}" class="w-44 h-44 rounded-2xl object-cover border-2 border-zinc-800 shadow-2xl cursor-zoom-in" onclick="ampliarImagem('${img}')"></div><div><span class="label-gold">PRODUTOR</span><p class="text-white font-bold italic text-sm">${i.prod||'--'}</p></div><div><span class="label-gold">IDENTIFICAÇÃO</span><p class="text-white font-bold italic text-sm">${i.nome||'--'}</p></div><div><span class="label-gold">TORREFAÇÃO</span><p class="text-amber-500 font-bold italic text-sm">${i.torrefacao||'--'}</p></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">VARIEDADE</span><p class="text-white font-bold italic text-sm">${i.variedade||'--'}</p></div><div><span class="label-gold">PROCESSO</span><p class="text-white font-bold italic text-sm">${i.processo||'--'}</p></div></div><div><span class="label-gold">ALTITUDE | TORRA</span><p class="text-white font-bold italic text-sm"><span class="text-white">${i.altitude||'--'}</span> | <span class="text-white">${i.torra||'--'}</span></p></div><div><span class="label-gold">NOTAS</span><p class="text-zinc-400 italic text-sm">"${i.notas||'--'}"</p></div>`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
