@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cm-v13-auto-stable';
+const CACHE_NAME = 'cm-v14-auto-stable';
 const assets = [
   './',
   'index.html',
