@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Coffee Master v12.9</title>
+    <title>Coffee Master v12.9.1</title>
     <link rel="manifest" href="manifest.json">
     <meta name="theme-color" content="#f59e0b">
     <meta name="apple-mobile-web-app-capable" content="yes">
@@ -16,19 +16,28 @@
         body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding-bottom: 120px; zoom: 1.15; overflow-x: hidden; }
         .card { background: #161616; border-radius: 18px; padding: 14px; margin-bottom: 12px; border: 1px solid #262626; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
         .label-gold { color: #f59e0b; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-top: 20px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
-        input, select, textarea { background: #222; border: 2px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 4px; font-size: 16px; font-weight: 900; font-style: italic; }
+        .label-gold:first-child { margin-top: 0; }
+        input, select, textarea { background: #222; border: 2px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 4px; font-size: 16px; font-weight: 900; font-style: italic; -webkit-appearance: none; }
+        input:focus { border-color: #f59e0b; outline: none; }
         .btn-gold { background: #f59e0b; color: #000; font-weight: 900; padding: 18px; border-radius: 18px; width: 100%; text-transform: uppercase; font-size: 14px; margin-top: 15px; cursor: pointer; }
         .tab-btn { background: #111; color: #444; flex: 1; padding: 14px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
         .active-tab { background: #f59e0b; color: #000; border-color: #fbbf24; }
-        .step-box { background: #161616; padding: 12px; border-radius: 16px; text-align: center; border: 2px solid #262626; width: 145px; flex-shrink: 0; }
-        .step-box-active { border: 2px solid #f59e0b !important; background: #221a05; }
+        .step-box { background: #161616; padding: 12px; border-radius: 16px; text-align: center; border: 2px solid #262626; width: 145px; flex-shrink: 0; transition: all 0.4s; }
+        .step-box-active { border: 2px solid #f59e0b !important; background: #221a05; box-shadow: 0 0 20px rgba(245,158,11,0.2); }
+        
         #auth-screen, #modal-feedback, #pix-modal, #modal-detalhes, #admin-user-details { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; z-index: 2000; padding: 20px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+        
+        /* FIX DE CAMADAS */
         #modal-zoom { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 9999 !important; display: flex; align-items: center; justify-content: center; padding: 0; }
+        
         .hidden { display: none !important; }
         .star { font-size: 35px; cursor: pointer; color: #333; padding: 5px; }
         .star.active { color: #f59e0b; }
-        .grain-thumb { width: 75px; height: 75px; border-radius: 16px; object-fit: cover; background: #222; border: 1px solid #333; }
+        .grain-thumb { width: 75px; height: 75px; border-radius: 16px; object-fit: cover; background: #222; border: 1px solid #333; flex-shrink: 0; }
+        .no-scrollbar::-webkit-scrollbar { display: none; }
         .atk-row { background: #111; padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #222; }
+        input[type=range] { -webkit-appearance: none; background: #333; height: 6px; border-radius: 5px; margin: 10px 0; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 18px; width: 18px; border-radius: 50%; background: #f59e0b; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
@@ -39,10 +48,17 @@
 
     <div id="modal-feedback" class="hidden"><div class="card w-full max-w-sm mx-auto border-amber-600 text-center"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4">Como ficou?</h3><div class="flex justify-center mb-4"><span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span></div><div class="grid grid-cols-2 gap-4 text-left px-2"><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Doçura</span><span id="val-doce" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-doce" min="0" max="5" value="3" oninput="document.getElementById('val-doce').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Acidez</span><span id="val-acidez" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-acidez" min="0" max="5" value="3" oninput="document.getElementById('val-acidez').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Amargor</span><span id="val-amargor" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-amargor" min="0" max="5" value="3" oninput="document.getElementById('val-amargor').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Corpo</span><span id="val-corpo" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-corpo" min="0" max="5" value="3" oninput="document.getElementById('val-corpo').innerText=this.value"></div></div><textarea id="f-obs" rows="2" class="mt-4" placeholder="NOTAS DO DIÁRIO..."></textarea><button class="btn-gold w-full mt-4" onclick="salvarFeedback()">Salvar no Diário</button><button class="text-zinc-500 text-[10px] mt-4 font-bold uppercase" onclick="fecharFeedback()">Pular</button></div></div>
 
-    <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()"><h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2><div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div><button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button><button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button></div></div>
+    <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()">
+        <h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2>
+        <div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div>
+        <button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button>
+        <button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button>
+    </div></div>
 
+    <!-- LOGIN -->
     <div id="auth-screen"><div class="card w-full max-w-sm mx-auto text-center"><h1 class="text-3xl font-black text-amber-500 italic uppercase mb-8">COFFEE MASTER</h1><div id="login-form"><input type="email" id="login-email" placeholder="E-MAIL"><input type="password" id="login-pass" placeholder="SENHA"><button class="btn-gold w-full mt-6" onclick="handleLogin()">Entrar</button><p class="text-[10px] mt-6 uppercase text-zinc-500 underline" onclick="toggleAuth(false)">Criar agora</p></div><div id="signup-form" class="hidden text-left"><input type="text" id="sign-nick" placeholder="NICKNAME"><input type="email" id="sign-email" placeholder="E-MAIL"><input type="password" id="sign-pass" placeholder="SENHA"><select id="sign-type"><option value="pessoal">PESSOAL (PRIVADO)</option><option value="comunidade" selected>COMUNIDADE (PÚBLICO)</option></select><button class="btn-gold w-full mt-6" onclick="handleSignup()">Criar Conta</button><p class="text-[10px] mt-6 text-center uppercase text-zinc-500 underline" onclick="toggleAuth(true)">Já tenho conta</p></div></div></div>
 
+    <!-- MAIN APP -->
     <div id="main-app" class="hidden">
         <div class="flex justify-between items-center mb-5 sticky top-0 bg-black z-50 py-2">
             <div><h1 class="text-2xl font-black text-amber-500 italic uppercase leading-none">COFFEE MASTER</h1><span id="user-display" class="text-[8px] font-black text-zinc-600 uppercase"></span></div>
@@ -100,55 +116,52 @@
             if(t==='cafes') loadG(); if(t==='receitas') loadR(); if(t==='preparo') loadPrep(); if(t==='diario') loadDiario(); if(t==='admin') loadAdmin();
         }
 
-        // --- LÓGICA DE CARREGAMENTO v12.9 (FIX DE INDEX E COMUNIDADE) ---
         async function loadG() { 
-            let finalResults = []; const search = (document.getElementById('search-g').value || "").toUpperCase();
+            let final = []; const search = (document.getElementById('search-g').value || "").toUpperCase();
             try {
                 if (currentUser.email === ADMIN_EMAIL) {
                     const snap = await db.collection('cafes').get();
-                    finalResults = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                    final = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 } else {
                     const snapPub = await db.collection('cafes').where('visibilidade', '==', 'publico').get();
                     const snapOwn = await db.collection('cafes').where('owner_uid', '==', currentUser.uid).get();
                     const map = new Map();
                     snapPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
                     snapOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
-                    finalResults = Array.from(map.values());
+                    final = Array.from(map.values());
                 }
-                // Ordenação via Javascript (evita erro de índice no Firebase)
-                finalResults.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
-                if(search) finalResults = finalResults.filter(i => i.nome.includes(search) || (i.prod && i.prod.includes(search)));
-                localData.g = finalResults; renderG(finalResults);
-            } catch(e) { console.error("Erro loadG:", e); }
+                final.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
+                if(search) final = final.filter(i => i.nome.includes(search) || (i.prod && i.prod.includes(search)));
+                localData.g = final; renderG(final);
+            } catch(e) { console.error(e); }
         }
-
-        async function loadR() {
-            let finalResults = [];
+        function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div></div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
+        
+        async function loadR() { 
+            let final = []; 
             try {
                 if (currentUser.email === ADMIN_EMAIL) {
                     const snap = await db.collection('receitas').get();
-                    finalResults = snap.docs.map(d => ({id: d.id, ...d.data()}));
+                    final = snap.docs.map(d => ({id: d.id, ...d.data()}));
                 } else {
                     const snapPub = await db.collection('receitas').where('visibilidade', '==', 'publico').get();
                     const snapOwn = await db.collection('receitas').where('owner_uid', '==', currentUser.uid).get();
                     const map = new Map();
                     snapPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
                     snapOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
-                    finalResults = Array.from(map.values());
+                    final = Array.from(map.values());
                 }
-                // Ordenação via Javascript
-                finalResults.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
-                localData.r = finalResults; renderR(finalResults);
-            } catch(e) { console.error("Erro loadR:", e); }
+                final.sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
+                localData.r = final; renderR(final);
+            } catch(e) { console.error(e); }
         }
-
-        // --- FUNÇÕES COMPLEMENTARES ---
-        function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div></div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
         function renderR(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; h += `<div class="card p-3 flex justify-between items-center h-[85px]"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesR('${i.id}')"><div class="text-lg font-black italic uppercase text-amber-500 truncate">${i.nome}</div><div class="text-[8px] text-zinc-600 font-black uppercase mt-1">por @${i.owner_nick || 'Mestre'} | ${i.metodo || '--'}</div></div><div class="flex gap-2"> ${isOwner ? `<button onclick="editR('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('receitas','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''} <button onclick="showTab('preparo'); handleRecipeSelect('${i.id}')" class="text-xs font-black p-3 bg-amber-600 text-black rounded-lg italic uppercase">Preparar</button> </div></div>`; }); document.getElementById('list-r').innerHTML = h; }
+        
         async function loadPrep() { let gh = '<option value="0">SELECIONE O GRÃO</option>', rh = '<option value="0">SELECIONE A RECEITA</option>'; localData.g.forEach(i => gh += `<option value="${i.id}">${i.nome}</option>`); localData.r.forEach(i => rh += `<option value="${i.id}">${i.nome}</option>`); document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh; }
         function handleRecipeSelect(rid) { if(rid && typeof rid === 'string') document.getElementById('p-r').value = rid; const i = localData.r.find(x => x.id === document.getElementById('p-r').value); if(i) { document.getElementById('p-po-val').value = i.origPo; document.getElementById('p-ratio-val').value = i.origRatio; document.getElementById('p-clicks-val').value = i.origClicks || "--"; document.getElementById('p-temp-val').value = i.origTemp || "--"; upCalc(); } }
         function upCalc() { const p = parseFloat(document.getElementById('p-po-val').value) || 0, r = parseFloat(document.getElementById('p-ratio-val').value) || 0; const total = Math.round(p * r); document.getElementById('p-total-display').innerText = total; const i = localData.r.find(x => x.id === document.getElementById('p-r').value); if(!i) return; const ratioF = total / i.origTotal; activeStepsData = { steps: [], times: [] }; let sum = 0; if(i.bloomMl > 0) { let bN = Math.round(i.bloomMl * ratioF); sum += bN; activeStepsData.steps.push({ title: 'BLOOM', ml: bN, sum, sec: i.bloomSec }); activeStepsData.times.push(i.bloomSec); } (i.ataques || []).forEach((a, idx) => { let aN = Math.round(a.ml * ratioF); sum += aN; activeStepsData.steps.push({ title: `ATK ${idx+1}`, ml: aN, sum, sec: a.sec }); activeStepsData.times.push((activeStepsData.times.length > 0 ? activeStepsData.times[activeStepsData.times.length-1] : 0) + a.sec); }); renderSteps(0); }
         function renderSteps(segA) { let h = '', tIdx = 0; activeStepsData.times.forEach((t, i) => { if(segA >= t) tIdx = i + 1; }); activeStepsData.steps.forEach((s, idx) => { const act = idx === tIdx; h += `<div class="step-box ${act?'step-box-active':''}" id="p-step-${idx}"><div class="text-[9px] ${act?'text-amber-500':'text-zinc-600'} font-black uppercase">${s.title}</div><div class="text-xl font-black italic ${act?'text-white':'text-zinc-400'} mt-1">${s.ml}ml</div><div class="text-[10px] text-amber-600 font-bold uppercase mt-1">SOMA: ${s.sum}ml</div><div class="text-[8px] text-zinc-500 font-bold mt-1">TEMPO: ${s.sec}s</div></div>`; }); document.getElementById('p-steps').innerHTML = h; const activeEl = document.getElementById(`p-step-${tIdx}`); if(activeEl) activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }
+        
         async function loadAdmin() { if(currentUser.email !== ADMIN_EMAIL) return; const uSnap = await db.collection('users').get(), rSnap = await db.collection('receitas').get(); document.getElementById('admin-user-count').innerText = uSnap.size; document.getElementById('admin-total-receitas').innerText = rSnap.size; let h = ''; uSnap.forEach(d => { const u = d.data(); h += `<div class="card p-3 flex justify-between items-center cursor-pointer active:bg-zinc-900" onclick="verUsuarioAdmin('${u.uid}')"><div class="flex items-center gap-3"><span class="text-white font-bold italic">@${u.nick}</span><span class="text-[8px] text-zinc-500 font-black uppercase flex items-center gap-1">${u.type === 'pessoal' ? '🔒 PRIVADO' : '🌎 COMUNIDADE'}</span></div><div class="flex gap-2"><button onclick="event.stopPropagation(); auth.sendPasswordResetEmail('${u.email}'); alert('Reset enviado!')" class="text-[8px] font-black border border-amber-600 p-2 rounded text-amber-600 uppercase">Reset</button><button onclick="event.stopPropagation(); delUser('${u.uid}', '${u.nick}')" class="text-[8px] font-black border border-red-800 p-2 rounded text-red-600 uppercase">Delete</button></div></div>`; }); document.getElementById('admin-user-list').innerHTML = h; }
         async function verUsuarioAdmin(uid) { const user = (await db.collection('users').doc(uid).get()).data(); document.getElementById('adm-u-nick').innerText = `@${user.nick.toUpperCase()}`; const gs = await db.collection('cafes').where('owner_uid', '==', uid).get(); const rs = await db.collection('receitas').where('owner_uid', '==', uid).get(); const logs = await db.collection('logs').where('owner_uid', '==', uid).get(); let content = `<div class="mb-4"><span class="label-gold">GRÃOS (${gs.size})</span>`; gs.forEach(d => { const g = d.data(); content += `<div onclick="goEdit('g','${d.id}')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-xs truncate">${g.nome}</span><div class="flex gap-2"><button onclick="event.stopPropagation(); del('cafes','${d.id}','${g.nome}')" class="p-2 bg-black rounded text-xs">🗑️</button></div></div>`; }); content += `</div><div><span class="label-gold">RECEITAS (${rs.size})</span>`; rs.forEach(d => { const r = d.data(); content += `<div onclick="goEdit('r','${d.id}')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-xs truncate">${r.nome}</span><div class="flex gap-2"><button onclick="event.stopPropagation(); del('receitas','${d.id}','${r.nome}')" class="p-2 bg-black rounded text-xs">🗑️</button></div></div>`; }); content += `</div><div class="mt-4"><span class="label-gold">DIÁRIO (${logs.size})</span>`; logs.forEach(d => { const l = d.data(); content += `<div onclick="showTab('diario'); document.getElementById('admin-user-details').classList.add('hidden')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-[10px] truncate">${l.grao} (${l.tempoTotal})</span><button onclick="event.stopPropagation(); del('logs','${d.id}','Log')" class="p-2 bg-black rounded text-xs">🗑️</button></div>`; }); content += `</div>`; document.getElementById('adm-u-content').innerHTML = content; document.getElementById('admin-user-details').classList.remove('hidden'); }
         async function delUser(uid, nick) { if(confirm(`DELETAR USUÁRIO @${nick}? TODOS OS DADOS SERÃO PERDIDOS.`)) { await db.collection('users').doc(uid).delete(); loadAdmin(); } }
@@ -158,7 +171,31 @@
         async function processImage(file) { return new Promise((res) => { const r = new FileReader(); r.onload = (e) => { const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); cv.width = 600; cv.height = 600; cv.getContext('2d').drawImage(img, (img.width-Math.min(img.width,img.height))/2, (img.height-Math.min(img.width,img.height))/2, Math.min(img.width,img.height), Math.min(img.width,img.height), 0, 0, 600, 600); res(cv.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; r.readAsDataURL(file); }); }
         function addAtackField(ml='', sec='', obs='') { document.getElementById('ataques-container').insertAdjacentHTML('beforeend', `<div class="atk-row"><div class="flex gap-2"><div><span class="label-gold mt-0">ML</span><input type="number" class="atk-ml" value="${ml}"></div><div><span class="label-gold mt-0">SEG</span><input type="number" class="atk-sec" value="${sec}"></div><button onclick="this.parentElement.parentElement.remove()" class="text-zinc-600 font-black pt-5 px-2">X</button></div><input type="text" class="atk-obs mt-1 text-xs" placeholder="Obs..." value="${obs}"></div>`); }
         async function saveG() { const file = document.getElementById('g-photo-input').files[0]; const orig = editIds.g ? localData.g.find(x => x.id === editIds.g) : null; const d = { prod: document.getElementById('g-prod').value.toUpperCase(), nome: document.getElementById('g-nome').value.toUpperCase(), variedade: document.getElementById('g-variedade').value.toUpperCase(), processo: document.getElementById('g-processo').value.toUpperCase(), torrefacao: document.getElementById('g-torrefacao').value.toUpperCase(), torra: document.getElementById('g-torra').value, altitude: document.getElementById('g-altitude').value, data: document.getElementById('g-data').value, notas: document.getElementById('g-notas').value.toUpperCase(), owner_uid: orig ? orig.owner_uid : currentUser.uid, owner_nick: orig ? orig.owner_nick : userProfile.nick, visibilidade: orig ? orig.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp() }; if(file) d.photo = await processImage(file); if(editIds.g) await db.collection('cafes').doc(editIds.g).update(d); else await db.collection('cafes').add(d); cancelEdit('g'); loadG(); }
-        async function saveR() { try { const atks = []; document.querySelectorAll('.atk-row').forEach(row => { atks.push({ ml: parseFloat(row.querySelector('.atk-ml').value)||0, sec: parseFloat(row.querySelector('.atk-sec').value)||0, obs: row.querySelector('.atk-obs').value.toUpperCase() }); }); const original = editIds.r ? localData.r.find(x => x.id === editIds.r) : null; const d = { nome: document.getElementById('r-nome').value.toUpperCase(), metodo: document.getElementById('r-metodo').value, origRatio: parseFloat(document.getElementById('r-ratio').value)||0, origPo: parseFloat(document.getElementById('r-po').value)||0, origTotal: parseInt(document.getElementById('r-total').value)||0, origClicks: document.getElementById('r-clicks').value, origTemp: document.getElementById('r-temp').value, bloomMl: parseFloat(document.getElementById('r-bloom-ml').value)||0, bloomSec: parseFloat(document.getElementById('r-bloom-sec').value)||0, ataques: atks, owner_uid: original ? original.owner_uid : currentUser.uid, owner_nick: original ? original.owner_nick : userProfile.nick, visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp() }; if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); else await db.collection('receitas').add(d); cancelEdit('r'); loadR(); } catch(e) { alert("Erro ao salvar: " + e.message); } }
+        
+        async function saveR() { 
+            try {
+                const atks = []; document.querySelectorAll('.atk-row').forEach(row => { atks.push({ ml: parseFloat(row.querySelector('.atk-ml').value)||0, sec: parseFloat(row.querySelector('.atk-sec').value)||0, obs: row.querySelector('.atk-obs').value.toUpperCase() }); }); 
+                const original = editIds.r ? localData.r.find(x => x.id === editIds.r) : null; 
+                const d = { 
+                    nome: document.getElementById('r-nome').value.toUpperCase(), 
+                    metodo: document.getElementById('r-metodo').value, 
+                    origRatio: parseFloat(document.getElementById('r-ratio').value)||0, 
+                    origPo: parseFloat(document.getElementById('r-po').value)||0, 
+                    origTotal: parseInt(document.getElementById('r-total').value)||0, 
+                    origClicks: document.getElementById('r-clicks').value, 
+                    origTemp: document.getElementById('r-temp').value, 
+                    bloomMl: parseFloat(document.getElementById('r-bloom-ml').value)||0, 
+                    bloomSec: parseFloat(document.getElementById('r-bloom-sec').value)||0, 
+                    ataques: atks, 
+                    owner_uid: original ? original.owner_uid : currentUser.uid, 
+                    owner_nick: original ? original.owner_nick : userProfile.nick, 
+                    visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), 
+                    ts: firebase.firestore.FieldValue.serverTimestamp() 
+                }; 
+                if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); else await db.collection('receitas').add(d); cancelEdit('r'); loadR(); 
+            } catch(e) { alert("Erro: " + e.message); }
+        }
+
         function editG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; editIds.g = id; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-variedade').value = i.variedade; document.getElementById('g-processo').value = i.processo || ''; document.getElementById('g-torrefacao').value = i.torrefacao || ''; document.getElementById('g-torra').value = i.torra || ''; document.getElementById('g-altitude').value = i.altitude || ''; document.getElementById('g-data').value = i.data || ''; document.getElementById('g-notas').value = i.notas || ''; document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); window.scrollTo({top:0, behavior:'smooth'}); }
         function editR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = i.metodo || ''; document.getElementById('r-ratio').value = i.origRatio; document.getElementById('r-po').value = i.origPo; document.getElementById('r-total').value = i.origTotal; document.getElementById('r-clicks').value = i.origClicks || ''; document.getElementById('r-temp').value = i.origTemp || ''; document.getElementById('r-bloom-ml').value = i.bloomMl || ''; document.getElementById('r-bloom-sec').value = i.bloomSec || ''; document.getElementById('ataques-container').innerHTML = ''; (i.ataques || []).forEach(a => addAtackField(a.ml, a.sec, a.obs)); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); window.scrollTo({top:0, behavior:'smooth'}); }
         function cancelEdit(t) { editIds[t] = null; document.getElementById(t+'-edit-actions').classList.add('hidden'); document.getElementById(t+'-btn-main').classList.remove('hidden'); document.querySelectorAll('#tab-'+(t==='g'?'cafes':'receitas')+' input, select, textarea').forEach(el => el.value = ""); document.getElementById('ataques-container').innerHTML = ''; }
@@ -170,7 +207,29 @@
         function abrirFeedback() { if(timer){ clearInterval(timer); timer = null; } document.getElementById('modal-feedback').classList.remove('hidden'); }
         function fecharFeedback() { document.getElementById('modal-feedback').classList.add('hidden'); seg=0; document.getElementById('timer').innerText="00:00"; setRating(0); }
         function setRating(n) { notaSelecionada = n; document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n)); }
-        async function salvarFeedback() { const g = document.getElementById('p-g'), r = document.getElementById('p-r'); await db.collection('logs').add({ grao: g.options[g.selectedIndex].text, receita: r.options[r.selectedIndex].text, tempoTotal: document.getElementById('timer').innerText, nota: notaSelecionada, docura: document.getElementById('f-doce').value, acidez: document.getElementById('f-acidez').value, amargor: document.getElementById('f-amargor').value, corpo: document.getElementById('f-corpo').value, observacoes: (document.getElementById('f-obs').value||"").toUpperCase(), data: new Date().toLocaleString(), ts: firebase.firestore.FieldValue.serverTimestamp(), owner_uid: currentUser.uid }); fecharFeedback(); showTab('diario'); }
+        
+        async function salvarFeedback() { 
+            const g = document.getElementById('p-g'), r = document.getElementById('p-r');
+            if(g.value === "0" || r.value === "0") { alert("Selecione um Grão e uma Receita antes de salvar!"); return; }
+            try {
+                await db.collection('logs').add({ 
+                    grao: g.options[g.selectedIndex].text, 
+                    receita: r.options[r.selectedIndex].text, 
+                    tempoTotal: document.getElementById('timer').innerText, 
+                    nota: notaSelecionada, 
+                    docura: document.getElementById('f-doce').value, 
+                    acidez: document.getElementById('f-acidez').value, 
+                    amargor: document.getElementById('f-amargor').value, 
+                    corpo: document.getElementById('f-corpo').value, 
+                    observacoes: (document.getElementById('f-obs').value||"").toUpperCase(), 
+                    data: new Date().toLocaleString(), 
+                    ts: firebase.firestore.FieldValue.serverTimestamp(), 
+                    owner_uid: currentUser.uid 
+                }); 
+                fecharFeedback(); showTab('diario');
+            } catch(e) { alert("Erro ao salvar diário: " + e.message); }
+        }
+
         function abrirDetalhesG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; document.getElementById('detalhes-content').innerHTML = `<div class="flex justify-center mb-4"><img src="${img}" class="w-44 h-44 rounded-2xl object-cover border-2 border-zinc-800 shadow-2xl cursor-zoom-in" onclick="ampliarImagem('${img}')"></div><div><span class="label-gold">PRODUTOR</span><p class="text-white font-bold italic text-sm">${i.prod||'--'}</p></div><div><span class="label-gold">IDENTIFICAÇÃO</span><p class="text-white font-bold italic text-sm">${i.nome||'--'}</p></div><div><span class="label-gold">TORREFAÇÃO</span><p class="text-amber-500 font-bold italic text-sm">${i.torrefacao||'--'}</p></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">VARIEDADE</span><p class="text-white font-bold italic text-sm">${i.variedade||'--'}</p></div><div><span class="label-gold">PROCESSO</span><p class="text-white font-bold italic text-sm">${i.processo||'--'}</p></div></div><div><span class="label-gold">ALTITUDE | TORRA</span><p class="text-white font-bold italic text-sm"><span class="text-white">${i.altitude||'--'}</span> | <span class="text-white">${i.torra||'--'}</span></p></div><div><span class="label-gold">NOTAS</span><p class="text-zinc-400 italic text-sm">"${i.notas||'--'}"</p></div>`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
         function abrirDetalhesR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; let atkH = (i.ataques || []).map((a, idx) => `<p class="text-zinc-500 text-[10px]">Atk ${idx+1}: ${a.ml}ml em ${a.sec}s</p>`).join(''); document.getElementById('detalhes-content').innerHTML = `<div><span class="label-gold">RECEITA</span><p class="text-white font-bold italic text-sm">${i.nome}</p></div><div class="grid grid-cols-3 gap-2"><div><span class="label-gold">RATIO</span><p class="text-white text-sm">1:${i.origRatio}</p></div><div><span class="label-gold">PÓ</span><p class="text-white text-sm">${i.origPo}g</p></div><div><span class="label-gold">TOTAL</span><p class="text-amber-500 text-sm">${i.origTotal}ml</p></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">CLICKS</span><p class="text-white text-sm">${i.origClicks||'--'}</p></div><div><span class="label-gold">TEMP</span><p class="text-white text-sm">${i.origTemp||'--'}°</p></div></div>${atkH ? `<div><span class="label-gold">ATAQUES</span>${atkH}</div>` : ''}`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
         function ampliarImagem(src) { document.getElementById('img-ampliada').src = src; document.getElementById('modal-zoom').classList.remove('hidden'); }
