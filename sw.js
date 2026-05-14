@@ -1,4 +1,4 @@
-const CACHE_NAME = 'cm-v25-final-manual';
+const CACHE_NAME = 'cm-v25-final-manua';
 const assets = ['./', 'index.html', 'manifest.json'];
 
 self.addEventListener('install', event => {
