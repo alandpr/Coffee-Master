@@ -13,26 +13,62 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-auth-compat.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
-        body { background: #0a0a0a; color: #fff; font-family: sans-serif; padding-bottom: 120px; zoom: 1.15; overflow-x: hidden; }
-        .card { background: #161616; border-radius: 18px; padding: 14px; margin-bottom: 12px; border: 1px solid #262626; box-shadow: 0 10px 40px rgba(0,0,0,0.6); }
-        .label-gold { color: #f59e0b; font-size: 9px; font-weight: 900; text-transform: uppercase; margin-top: 20px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
+        :root {
+            --bg: #FAF9F7; --card: #EAE5DE; --card-2: #F4F0EA;
+            --line: #DDD6CC; --line-2: #CFC6B9;
+            --text: #1C1917; --muted: #78716C;
+            --brand: #7F3F1F; --brand-soft: #F1E1D2; --input: #FAF9F7;
+        }
+        body { background: var(--bg); color: var(--text); font-family: sans-serif; padding-bottom: 120px; overflow-x: hidden; }
+        .card { background: var(--card); border-radius: 22px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(60,40,20,0.06); }
+        .label-gold { color: var(--brand); font-size: 11px; font-weight: 900; text-transform: uppercase; margin-top: 20px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
         .label-gold:first-child { margin-top: 0; }
-        input, select, textarea { background: #222; border: 2px solid #333; color: #fff; padding: 12px; border-radius: 12px; width: 100%; margin-bottom: 4px; font-size: 16px; font-weight: 900; font-style: italic; -webkit-appearance: none; }
-        .btn-gold { background: #f59e0b; color: #000; font-weight: 900; padding: 18px; border-radius: 18px; width: 100%; text-transform: uppercase; font-size: 14px; margin-top: 15px; cursor: pointer; }
-        .tab-btn { background: #111; color: #444; flex: 1; padding: 14px 5px; border-radius: 14px; font-size: 10px; font-weight: 900; margin: 3px; border: 1px solid #222; }
-        .active-tab { background: #f59e0b; color: #000; border-color: #fbbf24; }
-        .step-box { background: #161616; padding: 12px; border-radius: 16px; text-align: center; border: 2px solid #262626; width: 145px; flex-shrink: 0; }
-        .step-box-active { border: 2px solid #f59e0b !important; background: #221a05; box-shadow: 0 0 20px rgba(245,158,11,0.2); }
-        #auth-screen, #modal-feedback, #pix-modal, #modal-detalhes, #admin-user-details { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #0a0a0a; z-index: 2000; padding: 20px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
+        input, select, textarea { background: var(--input); border: 2px solid var(--line); color: var(--text); padding: 12px; border-radius: 14px; width: 100%; margin-bottom: 4px; font-size: 16px; font-weight: 900; font-style: normal; -webkit-appearance: none; }
+        .btn-gold { background: var(--brand); color: #fff; font-weight: 900; padding: 18px; border-radius: 20px; width: 100%; text-transform: uppercase; font-size: 14px; margin-top: 15px; cursor: pointer; }
+        .tab-btn { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 3px; flex: 1; padding: 8px 4px; border-radius: 18px; font-size: 11px; font-weight: 700; color: var(--muted); background: transparent; border: none; margin: 0; }
+        .tab-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+        .active-tab { background: var(--brand); color: #fff; }
+        #tabs-container { background: var(--card-2); box-shadow: 0 4px 20px rgba(60,40,20,0.14); }
+        .step-box { background: var(--card); padding: 12px; border-radius: 18px; text-align: center; border: 2px solid var(--line); width: 145px; flex-shrink: 0; }
+        .step-box-active { border: 2px solid var(--brand) !important; background: var(--brand-soft); box-shadow: 0 2px 10px rgba(127,63,31,0.15); }
+        #auth-screen, #modal-feedback, #pix-modal, #modal-detalhes, #admin-user-details { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; padding: 20px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
         #modal-zoom { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000 !important; display: flex; align-items: center; justify-content: center; padding: 0; }
         .hidden { display: none !important; }
-        .star { font-size: 35px; cursor: pointer; color: #333; padding: 5px; }
+        .star { font-size: 35px; cursor: pointer; color: #D6D0C8; padding: 5px; }
         .star.active { color: #f59e0b; }
-        .grain-thumb { width: 75px; height: 75px; border-radius: 16px; object-fit: cover; background: #222; border: 1px solid #333; flex-shrink: 0; }
-        .atk-row { background: #111; padding: 10px; border-radius: 12px; margin-bottom: 8px; border: 1px solid #222; }
-        .bar-bg { background: #222; height: 4px; border-radius: 2px; width: 100%; overflow: hidden; margin-top: 2px; }
-        .bar-fill { background: #f59e0b; height: 100%; transition: width 0.3s; }
+        .grain-thumb { width: 75px; height: 75px; border-radius: 18px; object-fit: cover; background: var(--line); border: 1px solid var(--line-2); flex-shrink: 0; }
+        .atk-row { background: var(--card-2); padding: 10px; border-radius: 14px; margin-bottom: 8px; border: 1px solid var(--line); }
+        .bar-bg { background: #D9D2C7; height: 4px; border-radius: 2px; width: 100%; overflow: hidden; margin-top: 2px; }
+        .bar-fill { background: var(--brand); height: 100%; transition: width 0.3s; }
         .log-card { min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; }
+
+        /* ===== TEMA CLARO: remapeia as classes do tema escuro antigo (sem mexer na lógica) ===== */
+        .text-white { color: var(--text) !important; }
+        .bg-green-700.text-white { color: #fff !important; }
+        .bg-amber-600.text-black { color: #fff !important; }
+        .text-amber-500, .text-amber-600 { color: var(--brand) !important; }
+        span.text-xl.text-amber-500 { color: #d97706 !important; }
+        .text-zinc-400, .text-zinc-500, .text-zinc-600 { color: var(--muted) !important; }
+        .text-zinc-800 { color: #D6D0C8 !important; }
+        .bg-black { background-color: var(--bg) !important; }
+        .card.bg-black { background-color: var(--card) !important; }
+        .bg-zinc-900, .bg-zinc-900\/50 { background-color: var(--card-2) !important; }
+        .bg-zinc-800 { background-color: var(--line) !important; }
+        .bg-amber-600 { background-color: var(--brand) !important; }
+        .border-zinc-800 { border-color: var(--line) !important; }
+        .border-zinc-700 { border-color: var(--line-2) !important; }
+        .border-amber-500, .border-amber-600 { border-color: var(--brand) !important; }
+        .border-amber-900 { border-color: #C9A58A !important; }
+        .border-l-amber-600 { border-left-color: var(--brand) !important; }
+        .active\:bg-zinc-900:active { background-color: var(--card-2) !important; }
+        .active\:bg-zinc-800:active { background-color: var(--line) !important; }
+        #search-g, #search-logs { background-color: var(--card) !important; }
+
+        /* fontes mínimas maiores (o zoom de 1.15 foi removido) */
+        .text-\[7px\] { font-size: 10px !important; }
+        .text-\[8px\] { font-size: 11px !important; }
+        .text-\[9px\] { font-size: 12px !important; }
+        .text-\[10px\] { font-size: 12px !important; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
@@ -55,13 +91,13 @@
                 <button onclick="auth.signOut()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-zinc-700 text-zinc-500">Sair</button>
             </div>
         </div>
-        <div id="tabs-container" class="flex mb-6 bg-black p-1 rounded-2xl sticky top-[55px] z-50 border border-zinc-800 shadow-2xl overflow-x-auto no-scrollbar">
-            <button id="btn-cafes" class="tab-btn active-tab" onclick="showTab('cafes')">GRÃOS</button>
-            <button id="btn-receitas" class="tab-btn" onclick="showTab('receitas')">RECEITAS</button>
-            <button id="btn-preparo" class="tab-btn" onclick="showTab('preparo')">PREPARAR</button>
-            <button id="btn-diario" class="tab-btn" onclick="showTab('diario')">DIÁRIO</button>
-            <button id="btn-admin" class="tab-btn hidden" onclick="showTab('admin')">ADMIN</button>
-        </div>
+        <nav id="tabs-container" class="fixed bottom-3 left-3 right-3 z-50 flex max-w-lg mx-auto p-1.5 rounded-3xl border border-zinc-800">
+            <button id="btn-cafes" class="tab-btn active-tab" onclick="showTab('cafes')"><svg viewBox="0 0 24 24"><ellipse cx="12" cy="12" rx="6" ry="9" transform="rotate(35 12 12)"/><path d="M8.6 17.4c3.2-1.6 3.2-8.6 6.8-10.8"/></svg><span>Grãos</span></button>
+            <button id="btn-receitas" class="tab-btn" onclick="showTab('receitas')"><svg viewBox="0 0 24 24"><path d="M4 9h12v5a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5V9z"/><path d="M16 11h2a2 2 0 0 1 0 4h-2"/><path d="M8 3v2M12 3v2"/></svg><span>Receitas</span></button>
+            <button id="btn-preparo" class="tab-btn" onclick="showTab('preparo')"><svg viewBox="0 0 24 24"><path d="M12 3s6 6.5 6 11a6 6 0 0 1-12 0c0-4.5 6-11 6-11z"/></svg><span>Preparar</span></button>
+            <button id="btn-diario" class="tab-btn" onclick="showTab('diario')"><svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg><span>Diário</span></button>
+            <button id="btn-admin" class="tab-btn hidden" onclick="showTab('admin')"><svg viewBox="0 0 24 24"><path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6l8-3z"/></svg><span>Admin</span></button>
+        </nav>
 
         <div id="tab-cafes">
             <div class="card p-4"><span class="label-gold mt-0">Produtor</span><input type="text" id="g-prod"><span class="label-gold">Grão</span><input type="text" id="g-nome"><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Variedade</span><input type="text" id="g-variedade"></div><div class="flex-1"><span class="label-gold">Processo</span><input type="text" id="g-processo"></div></div><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Torrefação</span><input type="text" id="g-torrefacao"></div><div class="flex-1"><span class="label-gold">Altitude</span><input type="text" id="g-altitude"></div></div><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Torra</span><select id="g-torra"><option value=""></option><option>CLARA</option><option>MÉDIA</option><option>ESCURA</option></select></div><div class="flex-1"><span class="label-gold">DATA TORRA</span><input type="date" id="g-data"></div></div><span class="label-gold">Notas Sensoriais</span><textarea id="g-notas" rows="2"></textarea><span class="label-gold">Foto</span><input type="file" id="g-photo-input" accept="image/*" class="text-[10px] bg-transparent border-dashed border-zinc-700 p-2"><div id="g-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveG()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('g')">X</button></div><button class="btn-gold w-full mt-4" onclick="saveG()" id="g-btn-main">Salvar Grão</button></div>
