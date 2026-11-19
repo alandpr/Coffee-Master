@@ -76,6 +76,42 @@
         .btn-novo { background: var(--brand); color: #fff; font-weight: 800; font-size: 13px; padding: 12px 16px; border-radius: 16px; white-space: nowrap; cursor: pointer; }
         .btn-voltar { width: 44px; height: 44px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
         .btn-voltar svg { width: 22px; height: 22px; fill: none; stroke: var(--text); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+
+        /* ===== PASSO C: preparo (configuração, execução e avaliação) ===== */
+        .stepper { display: flex; align-items: center; justify-content: space-between; gap: 4px; margin-top: 6px; }
+        .stepper button { width: 42px; height: 42px; border-radius: 14px; font-size: 26px; font-weight: 800; color: var(--brand); background: transparent; flex-shrink: 0; }
+        .stepper input { border: none; background: transparent; text-align: center; font-size: 34px; font-weight: 900; padding: 0; margin: 0; min-width: 0; width: 100%; }
+        .stepper.sm input { font-size: 28px; }
+        .prep-un { text-align: center; color: var(--muted); font-weight: 700; font-size: 13px; margin-top: -2px; }
+        .prep-duo { padding: 0; display: grid; grid-template-columns: 1fr 1fr; overflow: hidden; }
+        .prep-cell { padding: 14px; }
+        .prep-sep { border-left: 1px solid var(--line); }
+        .btn-mini { width: 30px; height: 30px; border-radius: 10px; background: var(--card-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; }
+        .btn-mini svg, .lockico svg { width: 18px; height: 18px; fill: none; stroke: var(--brand); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .lockico { display: flex; }
+        .ratio-ro { width: 76px; border: none; background: transparent; padding: 0; margin: 0; font-size: 24px; font-weight: 900; text-align: left; }
+        .step-num { width: 34px; height: 34px; border-radius: 50%; background: var(--card); display: flex; align-items: center; justify-content: center; font-weight: 900; flex-shrink: 0; }
+        .x-big { font-size: 46px; font-weight: 900; line-height: 1.1; text-align: center; }
+        .x-big small { font-size: 20px; color: var(--muted); margin-left: 3px; font-weight: 700; }
+        .x-btn { display: flex; align-items: center; justify-content: center; gap: 8px; height: 58px; border-radius: 18px; font-weight: 800; font-size: 17px; padding: 0 18px; cursor: pointer; }
+        .x-btn svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .x-btn-main { background: var(--brand); color: #fff; }
+        .x-btn-main.run { background: #B8532A; }
+        .x-btn-sec { background: var(--card); color: var(--brand); border: 1px solid var(--line); }
+        .xbar { position: relative; width: 100%; border-radius: 12px 12px 0 0; background: #CFC8BE; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .xbar-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: var(--brand); }
+        .xbar-txt { position: relative; font-size: 12px; font-weight: 800; color: var(--text); }
+        .xbar.on .xbar-txt { color: #fff; }
+        .xb-lab.x-cur, .xb-num.x-cur { color: var(--brand) !important; font-weight: 800; }
+        @keyframes waveMove { from { transform: translateX(0); } to { transform: translateX(-70px); } }
+        @keyframes waveMove2 { from { transform: translateX(-70px); } to { transform: translateX(0); } }
+        @keyframes streamFlow { to { stroke-dashoffset: -28; } }
+        @keyframes splashPulse { 0%, 100% { transform: scale(0.7); opacity: 0.9; } 50% { transform: scale(1.25); opacity: 0.4; } }
+        .wave-anim { animation: waveMove 1.8s linear infinite; }
+        .wave-anim2 { animation: waveMove2 2.6s linear infinite; }
+        .stream-dash { animation: streamFlow 0.5s linear infinite; }
+        .splash { transform-box: fill-box; transform-origin: center; animation: splashPulse 0.5s ease-in-out infinite; }
+        @media (prefers-reduced-motion: reduce) { .wave-anim, .wave-anim2, .stream-dash, .splash { animation: none; } }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
@@ -84,7 +120,7 @@
     <div id="modal-detalhes" class="hidden" onclick="fecharDetalhes()"><div class="card w-full max-w-sm mx-auto border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.1)]" onclick="event.stopPropagation()"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4 text-center">Ficha Técnica</h3><div id="detalhes-content" class="space-y-4 text-left"></div><button class="btn-gold w-full mt-8" onclick="fecharDetalhes()">VOLTAR</button></div></div>
     <div id="admin-user-details" class="hidden"><div class="card w-full max-w-md mx-auto border-amber-600 bg-black h-[90vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 id="adm-u-nick" class="text-amber-500 font-black italic uppercase text-xl">Usuário</h3><button onclick="document.getElementById('admin-user-details').classList.add('hidden')" class="text-zinc-500 font-bold">X</button></div><div id="adm-u-content" class="space-y-6 overflow-y-auto flex-1 pr-1 no-scrollbar"></div><button class="btn-gold w-full mt-4" onclick="document.getElementById('admin-user-details').classList.add('hidden')">VOLTAR</button></div></div>
 
-    <div id="modal-feedback" class="hidden"><div class="card w-full max-w-sm mx-auto border-amber-600 text-center"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4">Como ficou?</h3><div class="flex justify-center mb-4"><span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span></div><div class="grid grid-cols-2 gap-4 text-left px-2"><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Doçura</span><span id="val-doce" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-doce" min="0" max="5" value="3" oninput="document.getElementById('val-doce').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Acidez</span><span id="val-acidez" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-acidez" min="0" max="5" value="3" oninput="document.getElementById('val-acidez').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Amargor</span><span id="val-amargor" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-amargor" min="0" max="5" value="3" oninput="document.getElementById('val-amargor').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Corpo</span><span id="val-corpo" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-corpo" min="0" max="5" value="3" oninput="document.getElementById('val-corpo').innerText=this.value"></div></div><textarea id="f-obs" rows="2" class="mt-4" placeholder="NOTAS DO DIÁRIO..."></textarea><button class="btn-gold w-full mt-4" onclick="salvarFeedback()">Salvar no Diário</button><button class="text-zinc-500 text-[10px] mt-4 font-bold uppercase" onclick="fecharFeedback()">Pular</button></div></div>
+    <div id="modal-feedback" class="hidden"><div class="card w-full max-w-sm mx-auto border-amber-600 text-center"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-2">Como ficou?</h3><p id="f-resumo" class="text-xs text-zinc-500 mb-4 text-center"></p><div class="flex justify-center mb-4"><span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span></div><div class="grid grid-cols-2 gap-4 text-left px-2"><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Doçura</span><span id="val-doce" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-doce" min="0" max="5" value="3" oninput="document.getElementById('val-doce').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Acidez</span><span id="val-acidez" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-acidez" min="0" max="5" value="3" oninput="document.getElementById('val-acidez').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Amargor</span><span id="val-amargor" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-amargor" min="0" max="5" value="3" oninput="document.getElementById('val-amargor').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Corpo</span><span id="val-corpo" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-corpo" min="0" max="5" value="3" oninput="document.getElementById('val-corpo').innerText=this.value"></div></div><textarea id="f-obs" rows="2" class="mt-4" placeholder="NOTAS DO DIÁRIO..."></textarea><button class="btn-gold w-full mt-4" onclick="salvarFeedback()">Salvar no Diário</button><button class="text-zinc-500 text-[10px] mt-4 font-bold uppercase" onclick="fecharFeedback()">Sair sem salvar</button></div></div>
 
     <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()"><h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2><div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div><button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button><button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button></div></div>
 
@@ -115,7 +151,70 @@
 
         <div id="tab-receitas" class="hidden"><button class="btn-novo w-full mb-4" onclick="abrirForm('r')">+ Nova receita</button><div id="list-r" class="space-y-3"></div><div id="form-r" class="form-screen hidden"><div class="max-w-lg mx-auto"><div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="cancelEdit('r')" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="form-r-titulo" class="text-lg font-black">Nova receita</h2></div><div class="card p-4"><span class="label-gold mt-0">Nome</span><input type="text" id="r-nome"><span class="label-gold">Método</span><select id="r-metodo"><option value=""></option><option>V60</option><option>AEROPRESS</option><option>KOAR</option><option>OUTROS</option></select><div class="grid grid-cols-3 gap-2 mt-2"><div><span class="label-gold mt-0">Ratio</span><input type="number" id="r-ratio" step="0.1" oninput="calcTotalR()"></div><div><span class="label-gold mt-0">Pó(g)</span><input type="number" id="r-po" oninput="calcTotalR()"></div><div><span class="label-gold mt-0">Total</span><input type="number" id="r-total" readonly class="text-amber-500 font-bold bg-transparent border-none"></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold mt-0">Clicks</span><input type="number" id="r-clicks"></div><div><span class="label-gold mt-0">Temp</span><input type="number" id="r-temp"></div></div><div class="grid grid-cols-2 gap-2 mt-2 border-t border-zinc-800 pt-2"><div><span class="label-gold mt-0">Bloom(ml)</span><input type="number" id="r-bloom-ml"></div><div><span class="label-gold mt-0">Tempo(s)</span><input type="number" id="r-bloom-sec"></div></div><div id="ataques-container" class="mt-2"></div><button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase">+ ADD ATAQUE</button><div id="r-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveR()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('r')">X</button></div><button class="btn-gold w-full mt-4" onclick="saveR()" id="r-btn-main">Salvar Receita</button></div></div></div></div>
 
-        <div id="tab-preparo" class="hidden"><div class="card border-amber-600 bg-black p-5"><select id="p-g" onchange="upCalc()"></select><select id="p-r" onchange="handleRecipeSelect()"></select><div class="grid grid-cols-4 gap-1 mt-4 text-center"><div><span class="label-gold mt-0 text-[8px]">Pó(g)</span><input type="text" id="p-po-val" value="--" onfocus="handleFocus(this)" oninput="upCalc()" class="text-center text-sm text-amber-500 font-black bg-transparent border-none"></div><div><span class="label-gold mt-0 text-[8px]">Ratio</span><input type="text" id="p-ratio-val" value="--" onfocus="handleFocus(this)" oninput="upCalc()" class="text-center text-sm text-white font-black bg-transparent border-none"></div><div><span class="label-gold mt-0 text-[8px]">Clicks</span><input type="text" id="p-clicks-val" value="--" onfocus="handleFocus(this)" class="text-center text-sm text-zinc-500 font-black bg-transparent border-none"></div><div><span class="label-gold mt-0 text-[8px]">Temp</span><input type="text" id="p-temp-val" value="--" onfocus="handleFocus(this)" class="text-center text-sm text-zinc-500 font-black bg-transparent border-none"></div></div><div class="bg-zinc-900 rounded-2xl py-4 px-5 mt-6 border border-zinc-800 flex justify-between items-center shadow-inner"><span class="text-[10px] font-black text-zinc-500 uppercase italic">Água</span><div class="text-4xl font-black text-white italic"><span id="p-total-display">0</span>ml</div></div><div id="p-steps" class="flex gap-3 mt-6 overflow-x-auto pb-4 scroll-smooth no-scrollbar flex-nowrap"></div><div id="timer" class="text-6xl font-black my-6 text-center italic">00:00</div><button id="btn-timer-main" onclick="toggleTimer()" class="bg-green-700 text-white font-black py-4 rounded-xl w-full uppercase">Iniciar</button><button onclick="abrirFeedback()" class="bg-amber-600 text-black font-black py-4 rounded-xl w-full mt-3 text-sm uppercase italic">Finalizar</button></div></div>
+        <div id="tab-preparo" class="hidden">
+            <div class="card p-4"><span class="label-gold mt-0">Café</span><select id="p-g" onchange="upCalc()"></select><span class="label-gold">Receita</span><select id="p-r" onchange="handleRecipeSelect()"></select></div>
+            <div class="card prep-duo">
+                <div class="prep-cell"><div class="flex items-center justify-between"><span class="label-gold mt-0 ml-0">Dose</span><button id="p-reset" class="btn-mini hidden" onclick="resetarDoseAgua()" aria-label="Voltar ao original"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button></div><div class="stepper"><button onclick="ajustar('po',-1)">−</button><input type="text" inputmode="decimal" id="p-po-val" value="--" onfocus="handleFocus(this)" oninput="upCalc()"><button onclick="ajustar('po',1)">+</button></div><div class="prep-un">g</div></div>
+                <div class="prep-cell prep-sep"><span class="label-gold mt-0 ml-0">Água</span><div class="stepper"><button onclick="ajustar('agua',-5)">−</button><input type="text" inputmode="decimal" id="p-agua-val" value="--" onfocus="handleFocus(this)" oninput="upCalc()"><button onclick="ajustar('agua',5)">+</button></div><div class="prep-un">ml</div></div>
+            </div>
+            <div class="card flex items-center justify-between"><span class="label-gold mt-0 ml-0">Proporção</span><div class="flex items-center gap-2"><span id="p-lock" class="lockico"></span><span class="text-2xl font-black">1:</span><input type="text" id="p-ratio-val" value="--" readonly class="ratio-ro"></div></div>
+            <div class="grid grid-cols-2 gap-3 mb-3">
+                <div class="card" style="margin-bottom:0"><span class="label-gold mt-0 ml-0">Moagem (cliques)</span><div class="stepper sm"><button onclick="ajustar('clicks',-1)">−</button><input type="text" inputmode="decimal" id="p-clicks-val" value="--" onfocus="handleFocus(this)"><button onclick="ajustar('clicks',1)">+</button></div></div>
+                <div class="card" style="margin-bottom:0"><span class="label-gold mt-0 ml-0">Temperatura (°C)</span><div class="stepper sm"><button onclick="ajustar('temp',-1)">−</button><input type="text" inputmode="decimal" id="p-temp-val" value="--" onfocus="handleFocus(this)"><button onclick="ajustar('temp',1)">+</button></div></div>
+            </div>
+            <div class="card"><div class="flex justify-between items-center mb-2"><span class="label-gold mt-0 ml-0">Despejos</span><span id="p-steps-count" class="text-xs text-zinc-500 font-bold">0 etapas</span></div><div id="p-steps"></div></div>
+            <button class="btn-gold" onclick="abrirExec()">Iniciar preparo</button>
+        </div>
+        <div id="exec-screen" class="form-screen hidden">
+            <div class="max-w-lg mx-auto">
+                <div class="flex items-center gap-3 mb-2">
+                    <button class="btn-voltar" onclick="fecharExec()" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+                    <div class="min-w-0 flex-1"><div id="x-titulo" class="font-black text-base truncate"></div><div id="x-sub" class="text-xs text-zinc-500 truncate"></div></div>
+                </div>
+                <svg id="x-svg" viewBox="0 0 360 340" class="w-full" style="display:block;max-width:360px;margin:0 auto">
+                    <defs><clipPath id="x-clip"><circle cx="180" cy="190" r="125"/></clipPath></defs>
+                    <circle cx="180" cy="190" r="140" fill="none" stroke="#C7BFB2" stroke-width="14"/>
+                    <circle cx="180" cy="190" r="125" style="fill:var(--bg)"/>
+                    <g clip-path="url(#x-clip)"><g id="x-water" transform="translate(0 315)">
+                        <g class="wave-anim2"><path d="M-70 2 q17.5 6 35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 L455 300 L-70 300 Z" fill="#A9C9DA" opacity=".7"/></g>
+                        <g class="wave-anim"><path d="M-70 0 q17.5 -7 35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 L455 300 L-70 300 Z" fill="#8DB6CC"/></g>
+                    </g></g>
+                    <circle id="x-ring" cx="180" cy="190" r="140" fill="none" stroke="#7F3F1F" stroke-width="14" stroke-linecap="round" stroke-dasharray="879.65 879.65" stroke-dashoffset="879.65" transform="rotate(-90 180 190)"/>
+                    <line id="x-stream" x1="232" y1="41" x2="232" y2="200" stroke="#8DB6CC" stroke-width="3.5" stroke-linecap="round" style="display:none"/>
+                    <line id="x-stream2" x1="232" y1="41" x2="232" y2="200" stroke="#fff" stroke-opacity=".6" stroke-width="1.5" stroke-dasharray="5 9" class="stream-dash" style="display:none"/>
+                    <ellipse id="x-splash" class="splash" cx="232" cy="200" rx="11" ry="3" fill="#fff" fill-opacity=".55" style="display:none"/>
+                    <text id="x-time" x="180" y="208" text-anchor="middle" font-size="60" font-weight="900" style="fill:var(--text);font-variant-numeric:tabular-nums">00:00</text>
+                    <text id="x-grams" x="180" y="244" text-anchor="middle" font-size="22" font-weight="700" style="fill:var(--muted)"></text>
+                    <text id="x-flow" x="358" y="312" text-anchor="end" font-size="24" font-weight="800" style="fill:var(--brand)"></text>
+                    <text id="x-flow-lab" x="358" y="330" text-anchor="end" font-size="11" font-weight="700" letter-spacing="1.5" style="fill:var(--muted)">ESTIMADO</text>
+                    <g transform="translate(232 8)"><g id="x-kettle" style="transform-origin:80px 58px;transition:transform .35s ease">
+                <path d="M52 50 C38 50 36 30 28 22 C22 16 10 14 4 22" fill="none" stroke="#2F3133" stroke-width="5" stroke-linecap="round"/>
+                <path d="M108 22 Q124 22 124 36 Q124 50 108 52" fill="none" stroke="#2F3133" stroke-width="5" stroke-linecap="round"/>
+                <path d="M60 14 H100 Q108 14 108 22 V50 Q108 58 100 58 H60 Q52 58 52 50 V22 Q52 14 60 14 Z" fill="#2F3133"/>
+                <rect x="52" y="40" width="56" height="5" fill="#7F3F1F"/>
+                <path d="M58 14 Q58 6 80 6 Q102 6 102 14 Z" fill="#3E4246"/>
+                <circle cx="80" cy="4" r="3.2" fill="#7F3F1F"/>
+                <rect x="58" y="20" width="4" height="17" rx="2" fill="#fff" opacity=".14"/>
+            </g></g>
+                </svg>
+                <div id="x-run-panel">
+                    <div class="grid grid-cols-2 gap-3 mb-3">
+                        <div class="card" style="margin-bottom:0;text-align:center"><div class="label-gold mt-0" style="margin-left:0">Despeje até</div><div class="x-big"><span id="x-alvo">0</span><small>g</small></div></div>
+                        <div class="card" style="margin-bottom:0;text-align:center"><div id="x-prox-lab" class="label-gold mt-0" style="margin-left:0">Próximo</div><div class="x-big" style="color:var(--muted)"><span id="x-prox">—</span><small id="x-prox-un">g</small></div><div id="x-prox-sub" class="text-xs text-zinc-500"></div></div>
+                    </div>
+                    <div class="card"><div class="label-gold mt-0">Todos os passos</div><div id="x-bars" class="flex items-end gap-2" style="height:170px"></div></div>
+                    <div class="flex gap-3">
+                        <button class="x-btn x-btn-sec" onclick="reiniciarExec()" aria-label="Reiniciar"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
+                        <button id="x-main" class="x-btn x-btn-main flex-1" onclick="iniciarPausar()"></button>
+                        <button id="x-next" class="x-btn x-btn-sec flex-1" onclick="proximoPasso()"><svg viewBox="0 0 24 24"><path d="M5 5l10 7-10 7z"/><path d="M19 5v14"/></svg>Próximo</button>
+                    </div>
+                </div>
+                <div id="x-drain-panel" class="hidden">
+                    <div class="card text-center" onclick="alternarDrenagem()" style="cursor:pointer;padding:24px 14px"><div class="label-gold mt-0" style="margin-left:0">Drenagem adicional</div><div id="x-drain" class="font-black" style="font-size:52px;color:var(--brand)">+00:00</div><div id="x-drain-sub" class="text-sm text-zinc-500 mt-2">Toque para somar ao tempo final</div></div>
+                    <button id="x-final" class="btn-gold" onclick="finalizarExec()">Finalizar</button>
+                </div>
+            </div>
+        </div>
         <div id="tab-diario" class="hidden">
             <input type="text" id="search-logs" oninput="filterLogs()" class="bg-black border border-zinc-800 p-3 rounded-xl w-full mb-4 text-xs uppercase" placeholder="BUSCAR POR GRÃO, DATA OU NOTA (Ex: 4)...">
             <div id="list-logs" class="space-y-3"></div>
@@ -147,7 +246,7 @@
         });
 
         function showTab(t){ 
-            if(t !== 'preparo') { clearInterval(timer); timer = null; seg = 0; document.getElementById('timer').innerText = "00:00"; document.getElementById('btn-timer-main').innerText = "INICIAR"; resetPreparo(); }
+            if(t !== 'preparo') { pararExec(); resetPreparo(); }
             ['cafes','receitas','preparo','diario','admin'].forEach(i=>{ const el = document.getElementById('tab-'+i); if(el) el.classList.toggle('hidden', i!==t); const btn = document.getElementById('btn-'+i); if(btn) btn.classList.toggle('active-tab', i===t); }); 
             if(t==='cafes') loadG(); if(t==='receitas') loadR(); if(t==='preparo') loadPrep(); if(t==='diario') loadDiario(); if(t==='admin') loadAdmin();
         }
@@ -195,15 +294,15 @@
         function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div></div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
         function renderR(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; h += `<div class="card p-3 flex justify-between items-center h-[85px]"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesR('${i.id}')"><div class="text-lg font-black italic uppercase text-amber-500 truncate">${i.nome}</div><div class="text-[8px] text-zinc-600 font-black uppercase mt-1">por @${i.owner_nick || 'Mestre'} | ${i.metodo || '--'}</div></div><div class="flex gap-2"> ${isOwner ? `<button onclick="editR('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('receitas','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''} <button onclick="showTab('preparo'); handleRecipeSelect('${i.id}')" class="text-xs font-black p-3 bg-amber-600 text-black rounded-lg italic uppercase">Preparar</button> </div></div>`; }); document.getElementById('list-r').innerHTML = h; }
         async function loadPrep() { let gh = '<option value="0">SELECIONE O GRÃO</option>', rh = '<option value="0">SELECIONE A RECEITA</option>'; localData.g.forEach(i => gh += `<option value="${i.id}">${i.nome}</option>`); localData.r.forEach(i => rh += `<option value="${i.id}">${i.nome}</option>`); document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh; }
-        function handleRecipeSelect(rid) { if(rid && typeof rid === 'string') document.getElementById('p-r').value = rid; const i = localData.r.find(x => x.id === document.getElementById('p-r').value); if(i) { document.getElementById('p-po-val').value = i.origPo; document.getElementById('p-ratio-val').value = i.origRatio; document.getElementById('p-clicks-val').value = i.origClicks || "--"; document.getElementById('p-temp-val').value = i.origTemp || "--"; upCalc(); } }
-        function upCalc() { const p = parseFloat(document.getElementById('p-po-val').value) || 0, r = parseFloat(document.getElementById('p-ratio-val').value) || 0; const total = Math.round(p * r); document.getElementById('p-total-display').innerText = total; const i = localData.r.find(x => x.id === document.getElementById('p-r').value); if(!i) return; const ratioF = total / i.origTotal; activeStepsData = { steps: [], times: [] }; let sum = 0; if(i.bloomMl > 0) { let bN = Math.round(i.bloomMl * ratioF); sum += bN; activeStepsData.steps.push({ title: 'BLOOM', ml: bN, sum, sec: i.bloomSec }); activeStepsData.times.push(i.bloomSec); } (i.ataques || []).forEach((a, idx) => { let aN = Math.round(a.ml * ratioF); sum += aN; activeStepsData.steps.push({ title: `ATK ${idx+1}`, ml: aN, sum, sec: a.sec }); activeStepsData.times.push((activeStepsData.times.length > 0 ? activeStepsData.times[activeStepsData.times.length-1] : 0) + a.sec); }); renderSteps(0); }
-        function renderSteps(segA) { let h = '', tIdx = 0; activeStepsData.times.forEach((t, i) => { if(segA >= t) tIdx = i + 1; }); activeStepsData.steps.forEach((s, idx) => { const act = idx === tIdx; h += `<div class="step-box ${act?'step-box-active':''}" id="p-step-${idx}"><div class="text-[9px] ${act?'text-amber-500':'text-zinc-600'} font-black uppercase">${s.title}</div><div class="text-xl font-black italic ${act?'text-white':'text-zinc-400'} mt-1">${s.ml}ml</div><div class="text-[10px] text-amber-600 font-bold uppercase mt-1">SOMA: ${s.sum}ml</div><div class="text-[8px] text-zinc-500 font-bold mt-1">TEMPO: ${s.sec}s</div></div>`; }); document.getElementById('p-steps').innerHTML = h; const activeEl = document.getElementById(`p-step-${tIdx}`); if(activeEl) activeEl.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' }); }
+
+
+
         
         async function loadAdmin() { if(currentUser.email !== ADMIN_EMAIL) return; const uSnap = await db.collection('users').get(), rSnap = await db.collection('receitas').get(); document.getElementById('admin-user-count').innerText = uSnap.size; document.getElementById('admin-total-receitas').innerText = rSnap.size; let h = ''; uSnap.forEach(d => { const u = d.data(); h += `<div class="card p-3 flex justify-between items-center cursor-pointer active:bg-zinc-900" onclick="verUsuarioAdmin('${u.uid}')"><div class="flex items-center gap-3"><span class="text-white font-bold italic">@${u.nick}</span><span class="text-[8px] text-zinc-500 font-black uppercase flex items-center gap-1">${u.type === 'pessoal' ? '🔒 PRIVADO' : '🌎 COMUNIDADE'}</span></div><div class="flex gap-2"><button onclick="event.stopPropagation(); auth.sendPasswordResetEmail('${u.email}'); alert('Reset enviado!')" class="text-[8px] font-black border border-amber-600 p-2 rounded text-amber-600 uppercase">Reset</button><button onclick="event.stopPropagation(); delUser('${u.uid}', '${u.nick}')" class="text-[8px] font-black border border-red-800 p-2 rounded text-red-600 uppercase">Delete</button></div></div>`; }); document.getElementById('admin-user-list').innerHTML = h; }
         async function verUsuarioAdmin(uid) { const user = (await db.collection('users').doc(uid).get()).data(); document.getElementById('adm-u-nick').innerText = `@${user.nick.toUpperCase()}`; const gs = await db.collection('cafes').where('owner_uid', '==', uid).get(); const rs = await db.collection('receitas').where('owner_uid', '==', uid).get(); const logs = await db.collection('logs').where('owner_uid', '==', uid).get(); let content = `<div class="mb-4"><span class="label-gold">GRÃOS (${gs.size})</span>`; gs.forEach(d => { const g = d.data(); content += `<div onclick="goEdit('g','${d.id}')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-xs truncate">${g.nome}</span><div class="flex gap-2"><button onclick="event.stopPropagation(); del('cafes','${d.id}','${g.nome}')" class="p-2 bg-black rounded text-xs">🗑️</button></div></div>`; }); content += `</div><div><span class="label-gold">RECEITAS (${rs.size})</span>`; rs.forEach(d => { const r = d.data(); content += `<div onclick="goEdit('r','${d.id}')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-xs truncate">${r.nome}</span><div class="flex gap-2"><button onclick="event.stopPropagation(); del('receitas','${d.id}','${r.nome}')" class="p-2 bg-black rounded text-xs">🗑️</button></div></div>`; }); content += `</div><div class="mt-4"><span class="label-gold">DIÁRIO (${logs.size})</span>`; logs.forEach(d => { const l = d.data(); content += `<div onclick="showTab('diario'); document.getElementById('admin-user-details').classList.add('hidden')" class="bg-zinc-900 p-3 rounded-xl mb-2 flex justify-between items-center active:bg-zinc-800"><span class="text-white font-bold text-[10px] truncate">${l.grao} (${l.tempoTotal})</span><button onclick="event.stopPropagation(); del('logs','${d.id}','Log')" class="p-2 bg-black rounded text-xs">🗑️</button></div>`; }); content += `</div>`; document.getElementById('adm-u-content').innerHTML = content; document.getElementById('admin-user-details').classList.remove('hidden'); }
         async function delUser(uid, nick) { if(confirm(`DELETAR USUÁRIO @${nick}? TODOS OS DADOS SERÃO PERDIDOS.`)) { await db.collection('users').doc(uid).delete(); loadAdmin(); } }
         function goEdit(t, id) { document.getElementById('admin-user-details').classList.add('hidden'); if(t === 'g') { showTab('cafes'); setTimeout(() => editG(id), 300); } else { showTab('receitas'); setTimeout(() => editR(id), 300); } }
-        function resetPreparo() { document.getElementById('p-g').value="0"; document.getElementById('p-r').value="0"; document.getElementById('p-po-val').value="--"; document.getElementById('p-ratio-val').value="--"; document.getElementById('p-clicks-val').value="--"; document.getElementById('p-temp-val').value="--"; document.getElementById('p-total-display').innerText="0"; document.getElementById('p-steps').innerHTML=""; activeStepsData = {steps:[], times:[]}; }
+
         
         async function loadDiario() { 
             const snap = await db.collection('logs').where('owner_uid', '==', currentUser.uid).get(); 
@@ -300,25 +399,289 @@
         function calcTotalR() { const r = parseFloat(document.getElementById('r-ratio').value)||0, p = parseFloat(document.getElementById('r-po').value)||0; document.getElementById('r-total').value = Math.round(r*p); }
         function handleFocus(el) { if(el.value === "--") el.value = ""; el.select(); }
         function fecharDetalhes() { document.getElementById('modal-detalhes').classList.add('hidden'); }
-        function toggleTimer() { if(timer) { clearInterval(timer); timer = null; document.getElementById('btn-timer-main').innerText="CONTINUAR"; } else { timer = setInterval(() => { seg++; document.getElementById('timer').innerText = `${Math.floor(seg/60).toString().padStart(2,'0')}:${(seg%60).toString().padStart(2,'0')}`; renderSteps(seg); }, 1000); document.getElementById('btn-timer-main').innerText="PAUSAR"; } }
+        /* ===== PASSO C: configuração e execução do preparo ===== */
+        let ex = null, wakeLock = null, audioCtx = null, tempoFinalTxt = "00:00";
+        const ICO_LOCK = '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 8 0v3"/></svg>';
+        const ICO_UNLOCK = '<svg viewBox="0 0 24 24"><rect x="5" y="11" width="14" height="9" rx="2"/><path d="M8 11V8a4 4 0 0 1 7.5-2"/></svg>';
+        const ICO_PLAY = '<svg viewBox="0 0 24 24"><path d="M7 4l13 8-13 8z"/></svg>';
+        const ICO_PAUSE = '<svg viewBox="0 0 24 24"><path d="M8 5v14M16 5v14"/></svg>';
+        const $x = id => document.getElementById(id);
+
+        function fmt(sec, curto) { sec = Math.max(0, Math.floor(sec || 0)); const m = Math.floor(sec / 60), s = sec % 60; return (curto ? String(m) : String(m).padStart(2, '0')) + ':' + String(s).padStart(2, '0'); }
+        function numVal(id) { const v = parseFloat(String($x(id).value).replace(',', '.')); return isNaN(v) ? 0 : v; }
+        function aguaOrig(i) { return i.origTotal || Math.round((i.origPo || 0) * (i.origRatio || 0)); }
+        function rotuloFluxo(f) { return f < 3 ? 'Fluxo lento' : (f < 6 ? 'Fluxo moderado' : 'Fluxo rápido'); }
+
+        function ajustar(c, d) {
+            const ids = { po: 'p-po-val', agua: 'p-agua-val', clicks: 'p-clicks-val', temp: 'p-temp-val' };
+            const el = $x(ids[c]);
+            let v = numVal(ids[c]);
+            v = Math.max(0, Math.round((v + d) * 10) / 10);
+            el.value = v;
+            upCalc();
+        }
+        function resetarDoseAgua() {
+            const i = localData.r.find(x => x.id === $x('p-r').value);
+            if(!i) return;
+            $x('p-po-val').value = i.origPo;
+            $x('p-agua-val').value = aguaOrig(i);
+            upCalc();
+        }
+        function handleRecipeSelect(rid) {
+            if(rid && typeof rid === 'string') $x('p-r').value = rid;
+            const i = localData.r.find(x => x.id === $x('p-r').value);
+            if(i) {
+                $x('p-po-val').value = i.origPo;
+                $x('p-agua-val').value = aguaOrig(i);
+                $x('p-clicks-val').value = i.origClicks || "--";
+                $x('p-temp-val').value = i.origTemp || "--";
+                upCalc();
+            }
+        }
+        function upCalc() {
+            const p = numVal('p-po-val'), total = Math.round(numVal('p-agua-val'));
+            const ratio = p > 0 ? total / p : 0;
+            $x('p-ratio-val').value = ratio > 0 ? String(Math.round(ratio * 10) / 10) : '--';
+            const i = localData.r.find(x => x.id === $x('p-r').value);
+            if(!i) { $x('p-lock').innerHTML = ICO_LOCK; $x('p-reset').classList.add('hidden'); activeStepsData = { steps: [], times: [] }; renderStepsList(); return; }
+            $x('p-lock').innerHTML = Math.abs(ratio - (i.origRatio || 0)) < 0.05 ? ICO_LOCK : ICO_UNLOCK;
+            $x('p-reset').classList.toggle('hidden', p === i.origPo && total === aguaOrig(i));
+            const ratioF = i.origTotal > 0 ? total / i.origTotal : 1;
+            activeStepsData = { steps: [], times: [] }; let sum = 0;
+            if(i.bloomMl > 0) { let bN = Math.round(i.bloomMl * ratioF); sum += bN; activeStepsData.steps.push({ title: 'BLOOM', ml: bN, sum, sec: i.bloomSec }); activeStepsData.times.push(i.bloomSec); }
+            (i.ataques || []).forEach((a, idx) => { let aN = Math.round(a.ml * ratioF); sum += aN; activeStepsData.steps.push({ title: `ATK ${idx+1}`, ml: aN, sum, sec: a.sec }); activeStepsData.times.push((activeStepsData.times.length > 0 ? activeStepsData.times[activeStepsData.times.length-1] : 0) + a.sec); });
+            renderStepsList();
+        }
+        function renderStepsList() {
+            const st = activeStepsData.steps, tm = activeStepsData.times;
+            $x('p-steps-count').textContent = st.length + (st.length === 1 ? ' etapa' : ' etapas');
+            if(!st.length) { $x('p-steps').innerHTML = '<div class="text-xs text-zinc-500 text-center p-3">Selecione uma receita</div>'; return; }
+            let h = '';
+            st.forEach((s, i) => {
+                const nome = s.title === 'BLOOM' ? 'Bloom' : s.title.replace('ATK', 'Ataque');
+                h += '<div class="atk-row flex items-center gap-3"><div class="step-num">' + (i + 1) + '</div><div class="flex-1 grid grid-cols-3 gap-1 text-center">' +
+                    '<div><span class="block text-[9px] text-zinc-500 font-black uppercase">' + nome + '</span><span class="font-black">+' + s.ml + ' g</span></div>' +
+                    '<div><span class="block text-[9px] text-zinc-500 font-black uppercase">Acumulado</span><span class="font-black">' + s.sum + ' g</span></div>' +
+                    '<div><span class="block text-[9px] text-zinc-500 font-black uppercase">Aos</span><span class="font-black">' + fmt(tm[i], true) + '</span></div></div></div>';
+            });
+            $x('p-steps').innerHTML = h;
+        }
+        function resetPreparo() {
+            $x('p-g').value = "0"; $x('p-r').value = "0";
+            ['p-po-val', 'p-agua-val', 'p-ratio-val', 'p-clicks-val', 'p-temp-val'].forEach(id => $x(id).value = "--");
+            activeStepsData = { steps: [], times: [] };
+            $x('p-lock').innerHTML = ICO_LOCK; $x('p-reset').classList.add('hidden');
+            renderStepsList();
+        }
+
+        /* ---- som, vibração e tela ligada ---- */
+        function prepararAudio() { try { const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return; if(!audioCtx) audioCtx = new AC(); if(audioCtx.state === 'suspended') audioCtx.resume(); } catch(e) {} }
+        function bip(freq, dur, vol) { try { if(!audioCtx) return; const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime; o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur); o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + dur + 0.02); } catch(e) {} }
+        function vib(p) { try { if(navigator.vibrate) navigator.vibrate(p); } catch(e) {} }
+        async function pedirTela() { try { if('wakeLock' in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch(e) {} }
+        function soltarTela() { try { if(wakeLock) wakeLock.release(); } catch(e) {} wakeLock = null; }
+        document.addEventListener('visibilitychange', () => { if(document.visibilityState === 'visible' && ex) pedirTela(); });
+
+        /* ---- execução do preparo ---- */
+        function construirPlano() {
+            const plan = []; let start = 0;
+            activeStepsData.steps.forEach((s, i) => {
+                const end = activeStepsData.times[i];
+                const dur = Math.max(0, end - start);
+                const pour = Math.min(dur, s.ml / 4);
+                plan.push({ title: s.title, ml: s.ml, cumStart: s.sum - s.ml, cumEnd: s.sum, start, end, dur, pour, flow: pour > 0 ? s.ml / pour : 0 });
+                start = end;
+            });
+            return plan;
+        }
+        function construirBarras() {
+            const maxMl = Math.max.apply(null, ex.plan.map(p => p.ml)) || 1;
+            let h = '';
+            ex.plan.forEach((p, i) => {
+                const alt = Math.max(34, Math.round(p.ml / maxMl * 110));
+                h += '<div class="flex-1 flex flex-col items-center min-w-0"><div id="xb-lab-' + i + '" class="xb-lab text-xs text-zinc-500 mb-1">' + p.cumEnd + 'g</div>' +
+                    '<div class="xbar" style="height:' + alt + 'px"><div id="xb-fill-' + i + '" class="xbar-fill"></div><span class="xbar-txt">' + p.ml + '</span></div>' +
+                    '<div id="xb-num-' + i + '" class="xb-num text-xs text-zinc-500 mt-1">' + (i + 1) + '</div></div>';
+            });
+            $x('x-bars').innerHTML = h;
+        }
+        function abrirExec() {
+            upCalc();
+            const r = localData.r.find(x => x.id === $x('p-r').value);
+            if(!r) { alert('Selecione a receita antes de iniciar.'); return; }
+            if(!activeStepsData.steps.length) { alert('Esta receita não tem despejos. Edite a receita e adicione o bloom ou os ataques.'); return; }
+            const plan = construirPlano();
+            const total = plan[plan.length - 1].end;
+            if(total <= 0) { alert('Os despejos desta receita estão sem tempo. Defina os segundos de cada etapa na receita.'); return; }
+            if($x('p-g').value === '0' && !confirm('Nenhum café selecionado. Sem ele o preparo não poderá ser salvo no diário. Iniciar mesmo assim?')) return;
+            prepararAudio();
+            ex = { plan, total, totalMl: plan[plan.length - 1].cumEnd, ms: 0, base: 0, t0: 0, running: false, phase: 'run', lastStep: -1, cdKey: '', drainT0: 0, drainSec: 0, drainAdd: false, drainFrozen: 0 };
+            const gSel = $x('p-g');
+            $x('x-titulo').textContent = r.nome;
+            $x('x-sub').textContent = gSel.value !== '0' ? gSel.options[gSel.selectedIndex].text : 'Sem café selecionado';
+            construirBarras();
+            $x('x-run-panel').classList.remove('hidden');
+            $x('x-drain-panel').classList.add('hidden');
+            $x('exec-screen').classList.remove('hidden');
+            $x('exec-screen').scrollTop = 0;
+            $x('x-main').dataset.k = '';
+            pedirTela();
+            renderExec();
+        }
+        function pararExec() {
+            clearInterval(timer); timer = null; soltarTela(); ex = null;
+            const el = $x('exec-screen'); if(el) el.classList.add('hidden');
+        }
+        function fecharExec() {
+            if(ex && (ex.ms > 0 || ex.phase === 'drain') && !confirm('Sair do preparo? O progresso será perdido.')) return;
+            pararExec();
+        }
+        function iniciarPausar() {
+            if(!ex || ex.phase !== 'run') return;
+            prepararAudio();
+            if(ex.running) { ex.ms = ex.base + (Date.now() - ex.t0); ex.base = ex.ms; ex.running = false; clearInterval(timer); timer = null; }
+            else { ex.t0 = Date.now(); ex.running = true; clearInterval(timer); timer = setInterval(tickExec, 100); }
+            renderExec();
+        }
+        function proximoPasso() {
+            if(!ex || ex.phase !== 'run') return;
+            const t = ex.ms / 1000;
+            const cur = ex.plan.findIndex(x => t < x.end);
+            if(cur < 0) return;
+            if(cur >= ex.plan.length - 1) { ex.ms = ex.total * 1000; ex.base = ex.ms; entrarDrenagem(); }
+            else { const ns = ex.plan[cur + 1].start * 1000; ex.ms = ns; ex.base = ns; ex.t0 = Date.now(); }
+            renderExec();
+        }
+        function reiniciarExec() {
+            if(!ex) return;
+            clearInterval(timer); timer = null;
+            ex.ms = 0; ex.base = 0; ex.running = false; ex.phase = 'run'; ex.lastStep = -1; ex.cdKey = ''; ex.drainAdd = false; ex.drainFrozen = 0;
+            $x('x-run-panel').classList.remove('hidden'); $x('x-drain-panel').classList.add('hidden');
+            renderExec();
+        }
+        function entrarDrenagem() {
+            ex.phase = 'drain'; ex.drainT0 = Date.now(); ex.drainSec = 0; ex.drainAdd = false; ex.drainFrozen = 0; ex.running = true;
+            if(!timer) timer = setInterval(tickExec, 100);
+            bip(880, 0.15, 0.3); setTimeout(() => bip(1175, 0.3, 0.3), 200); vib([200, 100, 200]);
+            $x('x-run-panel').classList.add('hidden'); $x('x-drain-panel').classList.remove('hidden');
+        }
+        function alternarDrenagem() {
+            if(!ex || ex.phase !== 'drain') return;
+            ex.drainAdd = !ex.drainAdd;
+            if(ex.drainAdd) ex.drainFrozen = ex.drainSec;
+            renderExec();
+        }
+        function finalizarExec() {
+            if(!ex) return;
+            tempoFinalTxt = fmt(ex.total + (ex.drainAdd ? ex.drainFrozen : 0));
+            clearInterval(timer); timer = null; soltarTela(); ex = null;
+            $x('exec-screen').classList.add('hidden');
+            abrirFeedback();
+        }
+        function somVibra() {
+            if(!ex || ex.phase !== 'run') return;
+            const t = ex.ms / 1000;
+            let cur = ex.plan.findIndex(x => t < x.end);
+            if(cur < 0) cur = ex.plan.length - 1;
+            if(cur !== ex.lastStep) { ex.lastStep = cur; ex.cdKey = ''; bip(990, 0.18, 0.25); vib(150); }
+            else if(cur < ex.plan.length - 1) {
+                const rem = Math.ceil(ex.plan[cur].end - t);
+                if(rem >= 1 && rem <= 3) { const k = cur + ':' + rem; if(k !== ex.cdKey) { ex.cdKey = k; bip(660, 0.08, 0.15); } }
+            }
+        }
+        function tickExec() {
+            if(!ex) return;
+            const now = Date.now();
+            if(ex.phase === 'run') {
+                ex.ms = ex.base + (now - ex.t0);
+                if(ex.ms >= ex.total * 1000) { ex.ms = ex.total * 1000; entrarDrenagem(); }
+                else somVibra();
+            } else { ex.drainSec = Math.floor((now - ex.drainT0) / 1000); }
+            renderExec();
+        }
+        function renderExec() {
+            if(!ex) return;
+            const t = ex.ms / 1000, p = ex.plan, n = p.length;
+            let cur = p.findIndex(x => t < x.end);
+            const fim = cur < 0; if(fim) cur = n - 1;
+            const s = p[cur];
+            const emDren = ex.phase === 'drain';
+            let g = 0;
+            for(const x of p) { if(t >= x.start + x.pour) g = x.cumEnd; else { g = (t > x.start && x.pour > 0) ? x.cumStart + (t - x.start) / x.pour * x.ml : x.cumStart; break; } }
+            const pouring = !emDren && ex.running && t >= s.start && t < s.start + s.pour && s.ml > 0;
+            const frac = emDren ? 0 : (s.ml > 0 ? Math.min(1, Math.max(0, (g - s.cumStart) / s.ml)) : 0);
+            const prog = emDren ? 1 : (s.dur > 0 ? Math.min(1, Math.max(0, (t - s.start) / s.dur)) : 1);
+            let op = 1;
+            if(!emDren && frac >= 0.999 && !pouring && s.dur > s.pour) op = 1 - 0.55 * Math.min(1, Math.max(0, (t - (s.start + s.pour)) / (s.dur - s.pour)));
+            const surf = 315 - frac * 252;
+
+            $x('x-time').textContent = fmt(emDren ? ex.total : t);
+            $x('x-time').style.fill = emDren ? '#8A6A12' : 'var(--text)';
+            $x('x-grams').textContent = emDren ? '' : ((ex.ms > 0 ? '≈' + Math.round(g) : '0') + ' / ' + s.cumEnd + 'g');
+            $x('x-ring').setAttribute('stroke-dashoffset', (879.65 * (1 - prog)).toFixed(1));
+            $x('x-water').setAttribute('transform', 'translate(0 ' + surf.toFixed(1) + ')');
+            $x('x-water').setAttribute('opacity', op.toFixed(2));
+            const st = $x('x-stream'), st2 = $x('x-stream2'), sp = $x('x-splash');
+            if(pouring) {
+                const y2 = Math.max(surf, 64).toFixed(1), w = Math.min(5, Math.max(2.4, 1.6 + s.flow * 0.4));
+                st.setAttribute('y2', y2); st2.setAttribute('y2', y2); sp.setAttribute('cy', y2);
+                st.setAttribute('stroke-width', w.toFixed(1)); st2.setAttribute('stroke-width', (w * 0.45).toFixed(1));
+                st.style.display = ''; st2.style.display = ''; sp.style.display = '';
+            } else { st.style.display = 'none'; st2.style.display = 'none'; sp.style.display = 'none'; }
+            $x('x-kettle').style.transform = pouring ? 'rotate(-7deg)' : 'rotate(0deg)';
+            $x('x-flow').textContent = emDren ? '' : s.flow.toFixed(1) + ' g/s';
+            $x('x-flow-lab').style.display = emDren ? 'none' : '';
+
+            if(!emDren) {
+                $x('x-alvo').textContent = s.cumEnd;
+                const nx = p[cur + 1];
+                if(nx) { $x('x-prox-lab').textContent = 'Próximo'; $x('x-prox').textContent = nx.cumEnd; $x('x-prox-un').textContent = 'g'; $x('x-prox-sub').textContent = rotuloFluxo(nx.flow); }
+                else { $x('x-prox-lab').textContent = 'Final'; $x('x-prox').textContent = fmt(ex.total); $x('x-prox-un').textContent = ''; $x('x-prox-sub').textContent = 'tempo da receita'; }
+                p.forEach((x, i) => {
+                    const f = (i < cur || (i === cur && fim)) ? 1 : (i === cur ? frac : 0);
+                    const fill = $x('xb-fill-' + i);
+                    fill.style.height = (f * 100).toFixed(0) + '%';
+                    fill.parentNode.classList.toggle('on', f >= 0.5);
+                    $x('xb-lab-' + i).classList.toggle('x-cur', i === cur);
+                    $x('xb-num-' + i).classList.toggle('x-cur', i === cur);
+                });
+                const mb = $x('x-main'), k = (ex.running ? 'p' : (ex.ms > 0 ? 'c' : 'i'));
+                if(mb.dataset.k !== k) {
+                    mb.dataset.k = k;
+                    mb.innerHTML = ex.running ? ICO_PAUSE + 'Pausar' : ICO_PLAY + (ex.ms > 0 ? 'Continuar' : 'Iniciar');
+                    mb.classList.toggle('run', ex.running);
+                }
+                $x('x-next').style.opacity = (ex.running || ex.ms > 0) ? '1' : '0.5';
+            } else {
+                const extra = ex.drainAdd ? ex.drainFrozen : ex.drainSec;
+                $x('x-drain').textContent = '+' + fmt(extra);
+                $x('x-drain-sub').textContent = ex.drainAdd ? 'Somado ao tempo final · toque para desfazer' : 'Toque para somar ao tempo final';
+                $x('x-final').textContent = 'Finalizar (' + fmt(ex.total + (ex.drainAdd ? ex.drainFrozen : 0)) + ')';
+            }
+        }
         
-        function abrirFeedback() { 
+        function abrirFeedback() {
             if(timer){ clearInterval(timer); timer = null; }
             const gSel = document.getElementById('p-g');
             const rSel = document.getElementById('p-r');
             safeG = gSel.options[gSel.selectedIndex].text;
             safeR = rSel.options[rSel.selectedIndex].text;
-            document.getElementById('modal-feedback').classList.remove('hidden'); 
+            const d = $x('p-po-val').value, a = $x('p-agua-val').value, r = $x('p-ratio-val').value, c = $x('p-clicks-val').value, tp = $x('p-temp-val').value;
+            let res = d + 'g · ' + a + 'ml · 1:' + r + ' · ' + tempoFinalTxt;
+            if(c && c !== '--') res += ' · ' + c + ' clicks';
+            if(tp && tp !== '--') res += ' · ' + tp + '°C';
+            $x('f-resumo').textContent = res;
+            document.getElementById('modal-feedback').classList.remove('hidden');
         }
 
-        function fecharFeedback() { document.getElementById('modal-feedback').classList.add('hidden'); seg=0; document.getElementById('timer').innerText="00:00"; setRating(0); }
+        function fecharFeedback() { document.getElementById('modal-feedback').classList.add('hidden'); setRating(0); }
         function setRating(n) { notaSelecionada = n; document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n)); }
         
         async function salvarFeedback() { 
             if(safeG === "SELECIONE O GRÃO" || safeR === "SELECIONE A RECEITA") { alert("Selecione os dados antes de salvar!"); return; }
             try {
                 await db.collection('logs').add({ 
-                    grao: safeG, receita: safeR, tempoTotal: document.getElementById('timer').innerText, 
+                    grao: safeG, receita: safeR, tempoTotal: tempoFinalTxt, 
                     nota: notaSelecionada, docura: document.getElementById('f-doce').value, 
                     acidez: document.getElementById('f-acidez').value, amargor: document.getElementById('f-amargor').value, 
                     corpo: document.getElementById('f-corpo').value,
