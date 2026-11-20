@@ -112,6 +112,45 @@
         .stream-dash { animation: streamFlow 0.5s linear infinite; }
         .splash { transform-box: fill-box; transform-origin: center; animation: splashPulse 0.5s ease-in-out infinite; }
         @media (prefers-reduced-motion: reduce) { .wave-anim, .wave-anim2, .stream-dash, .splash { animation: none; } }
+
+        /* ===== PASSO D: equipamentos, métodos de preparo e ilustrações ===== */
+        #search-r { background-color: var(--card) !important; }
+        .mi { width: 28px; height: 28px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; flex-shrink: 0; }
+        .mi .f { fill: currentColor; fill-opacity: 0.12; stroke: none; }
+        .mi .g { fill: currentColor; fill-opacity: 0.38; stroke: none; }
+        .mi .l { fill: none; }
+        .mi-sm { width: 22px; height: 22px; }
+        .mi-md { width: 40px; height: 40px; }
+        .metodo-ico { width: 44px; height: 44px; border-radius: 14px; background: var(--card-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--brand); flex-shrink: 0; }
+        .metodo-ico .mi { width: 34px; height: 34px; }
+        .mcat { font-size: 11px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--muted); margin: 14px 4px 6px; }
+        .mgrid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+        .mtile { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 4px; padding: 10px 4px; border-radius: 16px; background: var(--card-2); border: 2px solid var(--line); color: var(--brand); min-height: 88px; }
+        .mtile .mi { width: 40px; height: 40px; }
+        .mtile span { font-size: 11px; font-weight: 800; color: var(--text); text-align: center; line-height: 1.15; }
+        .mtile.on { border-color: var(--brand); background: var(--brand-soft); }
+        .mtile.novo { width: 100%; flex-direction: row; gap: 8px; min-height: 54px; margin-top: 10px; border-style: dashed; }
+        .mtile.novo .mi { width: 24px; height: 24px; }
+        .pill { padding: 8px 12px; border-radius: 999px; font-size: 12px; font-weight: 800; background: var(--card); border: 1px solid var(--line); color: var(--text); }
+        .pill.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+        .chips-row { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 8px; margin-bottom: 8px; }
+        .chip { flex-shrink: 0; display: flex; align-items: center; gap: 6px; padding: 8px 12px; border-radius: 999px; background: var(--card); border: 1px solid var(--line); font-size: 12px; font-weight: 800; color: var(--text); white-space: nowrap; }
+        .chip .mi { width: 20px; height: 20px; color: var(--brand); }
+        .chip.on { background: var(--brand); border-color: var(--brand); color: #fff; }
+        .chip.on .mi { color: #fff; }
+        .switch { width: 46px; height: 26px; border-radius: 999px; background: #CFC8BE; position: relative; flex-shrink: 0; transition: background 0.2s; }
+        .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left 0.2s; }
+        .switch.on { background: var(--brand); }
+        .switch.on::after { left: 23px; }
+        .avatar-btn { width: 38px; height: 38px; border-radius: 50%; background: var(--brand); color: #fff; font-weight: 900; font-size: 16px; display: flex; align-items: center; justify-content: center; }
+        .menu-pop { position: absolute; right: 0; top: 46px; min-width: 190px; background: var(--card-2); border: 1px solid var(--line); border-radius: 16px; box-shadow: 0 8px 24px rgba(60,40,20,0.18); padding: 6px; z-index: 70; }
+        .menu-pop button { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; padding: 12px; border-radius: 12px; font-weight: 800; font-size: 14px; color: var(--text); }
+        .menu-pop button svg { width: 20px; height: 20px; fill: none; stroke: var(--brand); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .eq-row { display: flex; align-items: center; gap: 10px; background: var(--card-2); border: 1px solid var(--line); border-radius: 14px; padding: 8px 10px; margin-bottom: 8px; color: var(--brand); }
+        .eq-row .nm { color: var(--text); font-weight: 900; }
+        .badge-pr { font-size: 10px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--brand); }
+        .link-btn { font-size: 12px; font-weight: 800; color: var(--brand); text-decoration: underline; }
+        .sel-sm { font-size: 14px; padding: 8px 10px; border-radius: 12px; margin-top: 6px; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
@@ -120,7 +159,7 @@
     <div id="modal-detalhes" class="hidden" onclick="fecharDetalhes()"><div class="card w-full max-w-sm mx-auto border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.1)]" onclick="event.stopPropagation()"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4 text-center">Ficha Técnica</h3><div id="detalhes-content" class="space-y-4 text-left"></div><button class="btn-gold w-full mt-8" onclick="fecharDetalhes()">VOLTAR</button></div></div>
     <div id="admin-user-details" class="hidden"><div class="card w-full max-w-md mx-auto border-amber-600 bg-black h-[90vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 id="adm-u-nick" class="text-amber-500 font-black italic uppercase text-xl">Usuário</h3><button onclick="document.getElementById('admin-user-details').classList.add('hidden')" class="text-zinc-500 font-bold">X</button></div><div id="adm-u-content" class="space-y-6 overflow-y-auto flex-1 pr-1 no-scrollbar"></div><button class="btn-gold w-full mt-4" onclick="document.getElementById('admin-user-details').classList.add('hidden')">VOLTAR</button></div></div>
 
-    <div id="modal-feedback" class="hidden"><div class="card w-full max-w-sm mx-auto border-amber-600 text-center"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-2">Como ficou?</h3><p id="f-resumo" class="text-xs text-zinc-500 mb-4 text-center"></p><div class="flex justify-center mb-4"><span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span></div><div class="grid grid-cols-2 gap-4 text-left px-2"><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Doçura</span><span id="val-doce" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-doce" min="0" max="5" value="3" oninput="document.getElementById('val-doce').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Acidez</span><span id="val-acidez" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-acidez" min="0" max="5" value="3" oninput="document.getElementById('val-acidez').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Amargor</span><span id="val-amargor" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-amargor" min="0" max="5" value="3" oninput="document.getElementById('val-amargor').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Corpo</span><span id="val-corpo" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-corpo" min="0" max="5" value="3" oninput="document.getElementById('val-corpo').innerText=this.value"></div></div><textarea id="f-obs" rows="2" class="mt-4" placeholder="NOTAS DO DIÁRIO..."></textarea><button class="btn-gold w-full mt-4" onclick="salvarFeedback()">Salvar no Diário</button><button class="text-zinc-500 text-[10px] mt-4 font-bold uppercase" onclick="fecharFeedback()">Sair sem salvar</button></div></div>
+    <div id="modal-feedback" class="hidden"><div class="card w-full max-w-sm mx-auto border-amber-600 text-center"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-2">Como ficou?</h3><p id="f-resumo" class="text-xs text-zinc-500 mb-4 text-center"></p><div class="flex justify-center mb-4"><span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span></div><div class="grid grid-cols-2 gap-4 text-left px-2"><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Doçura</span><span id="val-doce" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-doce" min="0" max="5" value="3" oninput="document.getElementById('val-doce').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Acidez</span><span id="val-acidez" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-acidez" min="0" max="5" value="3" oninput="document.getElementById('val-acidez').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Amargor</span><span id="val-amargor" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-amargor" min="0" max="5" value="3" oninput="document.getElementById('val-amargor').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Corpo</span><span id="val-corpo" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-corpo" min="0" max="5" value="3" oninput="document.getElementById('val-corpo').innerText=this.value"></div></div><textarea id="f-obs" rows="2" class="mt-4" placeholder="NOTAS DO DIÁRIO..."></textarea><div id="f-moagem-row" class="hidden flex items-center justify-between gap-3 mt-4 text-left"><span class="text-xs font-bold text-zinc-500">Atualizar moagem padrão desta receita?</span><button type="button" id="f-atualiza-moagem" class="switch" onclick="this.classList.toggle('on')" aria-label="Atualizar moagem padrão"></button></div><button class="btn-gold w-full mt-4" onclick="salvarFeedback()">Salvar no Diário</button><button class="text-zinc-500 text-[10px] mt-4 font-bold uppercase" onclick="fecharFeedback()">Sair sem salvar</button></div></div>
 
     <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()"><h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2><div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div><button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button><button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button></div></div>
 
@@ -131,7 +170,13 @@
             <div><h1 class="text-2xl font-black text-amber-500 italic uppercase leading-none">COFFEE MASTER</h1><span id="user-display" class="text-[8px] font-black text-zinc-600 uppercase"></span></div>
             <div class="flex gap-2">
                 <button onclick="openPix()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-amber-600 text-amber-500 italic uppercase">Pagar um café ☕</button>
-                <button onclick="auth.signOut()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-zinc-700 text-zinc-500">Sair</button>
+                <div class="relative self-center">
+                    <button id="btn-avatar" class="avatar-btn" onclick="toggleMenu()" aria-label="Menu">?</button>
+                    <div id="menu-user" class="menu-pop hidden">
+                        <button onclick="menuEquip()"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2-2z"/></svg>Equipamentos</button>
+                        <button onclick="auth.signOut()"><svg viewBox="0 0 24 24"><path d="M10 4H5v16h5"/><path d="M15 8l4 4-4 4"/><path d="M9 12h10"/></svg>Sair</button>
+                    </div>
+                </div>
             </div>
         </div>
         <nav id="tabs-container" class="fixed bottom-3 left-3 right-3 z-50 flex max-w-lg mx-auto p-1.5 rounded-3xl border border-zinc-800">
@@ -149,7 +194,7 @@
             <div id="form-g" class="form-screen hidden"><div class="max-w-lg mx-auto"><div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="cancelEdit('g')" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="form-g-titulo" class="text-lg font-black">Novo grão</h2></div><div class="card p-4"><span class="label-gold mt-0">Produtor</span><input type="text" id="g-prod"><span class="label-gold">Grão</span><input type="text" id="g-nome"><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Variedade</span><input type="text" id="g-variedade"></div><div class="flex-1"><span class="label-gold">Processo</span><input type="text" id="g-processo"></div></div><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Torrefação</span><input type="text" id="g-torrefacao"></div><div class="flex-1"><span class="label-gold">Altitude</span><input type="text" id="g-altitude"></div></div><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Torra</span><select id="g-torra"><option value=""></option><option>CLARA</option><option>MÉDIA</option><option>ESCURA</option></select></div><div class="flex-1"><span class="label-gold">DATA TORRA</span><input type="date" id="g-data"></div></div><span class="label-gold">Notas Sensoriais</span><textarea id="g-notas" rows="2"></textarea><span class="label-gold">Foto</span><input type="file" id="g-photo-input" accept="image/*" class="text-[10px] bg-transparent border-dashed border-zinc-700 p-2"><div id="g-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveG()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('g')">X</button></div><button class="btn-gold w-full mt-4" onclick="saveG()" id="g-btn-main">Salvar Grão</button></div></div></div>
         </div>
 
-        <div id="tab-receitas" class="hidden"><button class="btn-novo w-full mb-4" onclick="abrirForm('r')">+ Nova receita</button><div id="list-r" class="space-y-3"></div><div id="form-r" class="form-screen hidden"><div class="max-w-lg mx-auto"><div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="cancelEdit('r')" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="form-r-titulo" class="text-lg font-black">Nova receita</h2></div><div class="card p-4"><span class="label-gold mt-0">Nome</span><input type="text" id="r-nome"><span class="label-gold">Método</span><select id="r-metodo"><option value=""></option><option>V60</option><option>AEROPRESS</option><option>KOAR</option><option>OUTROS</option></select><div class="grid grid-cols-3 gap-2 mt-2"><div><span class="label-gold mt-0">Ratio</span><input type="number" id="r-ratio" step="0.1" oninput="calcTotalR()"></div><div><span class="label-gold mt-0">Pó(g)</span><input type="number" id="r-po" oninput="calcTotalR()"></div><div><span class="label-gold mt-0">Total</span><input type="number" id="r-total" readonly class="text-amber-500 font-bold bg-transparent border-none"></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold mt-0">Clicks</span><input type="number" id="r-clicks"></div><div><span class="label-gold mt-0">Temp</span><input type="number" id="r-temp"></div></div><div class="grid grid-cols-2 gap-2 mt-2 border-t border-zinc-800 pt-2"><div><span class="label-gold mt-0">Bloom(ml)</span><input type="number" id="r-bloom-ml"></div><div><span class="label-gold mt-0">Tempo(s)</span><input type="number" id="r-bloom-sec"></div></div><div id="ataques-container" class="mt-2"></div><button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase">+ ADD ATAQUE</button><div id="r-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveR()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('r')">X</button></div><button class="btn-gold w-full mt-4" onclick="saveR()" id="r-btn-main">Salvar Receita</button></div></div></div></div>
+        <div id="tab-receitas" class="hidden"><div class="flex gap-2 items-center mb-3"><input type="text" id="search-r" oninput="filtrarR()" class="bg-black border border-zinc-800 p-3 rounded-xl flex-1 min-w-0 text-xs uppercase" style="margin-bottom:0" placeholder="BUSCAR POR NOME, MÉTODO OU AUTOR..."><button class="btn-novo" onclick="abrirForm('r')">+ Nova</button></div><div id="chips-metodo" class="chips-row" onclick="chipClick(event)"></div><div id="list-r" class="space-y-3"></div><div id="form-r" class="form-screen hidden"><div class="max-w-lg mx-auto"><div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="cancelEdit('r')" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="form-r-titulo" class="text-lg font-black">Nova receita</h2></div><div class="card p-4"><span class="label-gold mt-0">Nome</span><input type="text" id="r-nome"><div class="flex items-center justify-between"><span class="label-gold">Método</span><button type="button" class="link-btn" onclick="abrirEquip()">Gerenciar</button></div><input type="hidden" id="r-metodo" value=""><div id="r-metodo-grid" onclick="metodoClick(event)"></div><div id="r-metodo-novo-box" class="hidden atk-row mt-3"><input type="text" id="r-metodo-novo" placeholder="NOME DO NOVO MÉTODO"><div id="r-novo-cats" class="flex flex-wrap gap-2 mt-2"></div><div class="flex gap-2 mt-3"><button type="button" class="btn-novo flex-1" onclick="adicionarMetodo('form')">Adicionar</button><button type="button" class="btn-mini" style="width:44px;height:44px" onclick="ocultarNovoMetodo()">✕</button></div></div><div class="grid grid-cols-3 gap-2 mt-2"><div><span class="label-gold mt-0">Ratio</span><input type="number" id="r-ratio" step="0.1" oninput="calcTotalR()"></div><div><span class="label-gold mt-0">Pó(g)</span><input type="number" id="r-po" oninput="calcTotalR()"></div><div><span class="label-gold mt-0">Total</span><input type="number" id="r-total" readonly class="text-amber-500 font-bold bg-transparent border-none"></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold mt-0">Clicks</span><input type="number" id="r-clicks"></div><div><span class="label-gold mt-0">Temp</span><input type="number" id="r-temp"></div></div><div class="grid grid-cols-2 gap-2 mt-2 border-t border-zinc-800 pt-2"><div><span class="label-gold mt-0">Bloom(ml)</span><input type="number" id="r-bloom-ml"></div><div><span class="label-gold mt-0">Tempo(s)</span><input type="number" id="r-bloom-sec"></div></div><div id="ataques-container" class="mt-2"></div><button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase">+ ADD ATAQUE</button><div id="r-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveR()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('r')">X</button></div><button class="btn-gold w-full mt-4" onclick="saveR()" id="r-btn-main">Salvar Receita</button></div></div></div></div>
 
         <div id="tab-preparo" class="hidden">
             <div class="card p-4"><span class="label-gold mt-0">Café</span><select id="p-g" onchange="upCalc()"></select><span class="label-gold">Receita</span><select id="p-r" onchange="handleRecipeSelect()"></select></div>
@@ -159,7 +204,7 @@
             </div>
             <div class="card flex items-center justify-between"><span class="label-gold mt-0 ml-0">Proporção</span><div class="flex items-center gap-2"><span id="p-lock" class="lockico"></span><span class="text-2xl font-black">1:</span><input type="text" id="p-ratio-val" value="--" readonly class="ratio-ro"></div></div>
             <div class="grid grid-cols-2 gap-3 mb-3">
-                <div class="card" style="margin-bottom:0"><span class="label-gold mt-0 ml-0">Moagem (cliques)</span><div class="stepper sm"><button onclick="ajustar('clicks',-1)">−</button><input type="text" inputmode="decimal" id="p-clicks-val" value="--" onfocus="handleFocus(this)"><button onclick="ajustar('clicks',1)">+</button></div></div>
+                <div class="card" style="margin-bottom:0"><div class="flex items-center justify-between"><span class="label-gold mt-0 ml-0">Moagem</span><button class="link-btn" onclick="abrirEquip()">Gerenciar</button></div><select id="p-moedor" class="sel-sm"></select><div class="stepper sm"><button onclick="ajustar('clicks',-1)">−</button><input type="text" inputmode="decimal" id="p-clicks-val" value="--" onfocus="handleFocus(this)"><button onclick="ajustar('clicks',1)">+</button></div><div class="prep-un">cliques</div></div>
                 <div class="card" style="margin-bottom:0"><span class="label-gold mt-0 ml-0">Temperatura (°C)</span><div class="stepper sm"><button onclick="ajustar('temp',-1)">−</button><input type="text" inputmode="decimal" id="p-temp-val" value="--" onfocus="handleFocus(this)"><button onclick="ajustar('temp',1)">+</button></div></div>
             </div>
             <div class="card"><div class="flex justify-between items-center mb-2"><span class="label-gold mt-0 ml-0">Despejos</span><span id="p-steps-count" class="text-xs text-zinc-500 font-bold">0 etapas</span></div><div id="p-steps"></div></div>
@@ -169,7 +214,7 @@
             <div class="max-w-lg mx-auto">
                 <div class="flex items-center gap-3 mb-2">
                     <button class="btn-voltar" onclick="fecharExec()" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-                    <div class="min-w-0 flex-1"><div id="x-titulo" class="font-black text-base truncate"></div><div id="x-sub" class="text-xs text-zinc-500 truncate"></div></div>
+                    <div id="x-ico" class="metodo-ico"></div><div class="min-w-0 flex-1"><div id="x-titulo" class="font-black text-base truncate"></div><div id="x-sub" class="text-xs text-zinc-500 truncate"></div></div>
                 </div>
                 <svg id="x-svg" viewBox="0 0 360 340" class="w-full" style="display:block;max-width:360px;margin:0 auto">
                     <defs><clipPath id="x-clip"><circle cx="180" cy="190" r="125"/></clipPath></defs>
@@ -219,6 +264,24 @@
             <input type="text" id="search-logs" oninput="filterLogs()" class="bg-black border border-zinc-800 p-3 rounded-xl w-full mb-4 text-xs uppercase" placeholder="BUSCAR POR GRÃO, DATA OU NOTA (Ex: 4)...">
             <div id="list-logs" class="space-y-3"></div>
         </div>
+        <div id="equip-screen" class="form-screen hidden">
+            <div class="max-w-lg mx-auto">
+                <div class="flex items-center gap-3 mb-4">
+                    <button class="btn-voltar" onclick="fecharEquip()" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
+                    <h2 class="text-lg font-black">Equipamentos</h2>
+                </div>
+                <div class="card">
+                    <div class="flex justify-between items-center mb-3"><span class="label-gold mt-0 ml-0">Moedores</span><span id="eq-cnt-moedor" class="text-xs text-zinc-500 font-bold"></span></div>
+                    <div id="eq-lista-moedor"></div>
+                    <div class="flex gap-2 mt-3 items-center"><input type="text" id="eq-nome-moedor" placeholder="Ex: Timemore C3 ESP" style="margin-bottom:0"><button id="eq-btn-moedor" class="btn-novo" onclick="salvarMoedor()">Adicionar</button><button id="eq-cancel-moedor" class="btn-mini hidden" style="width:44px;height:44px;flex-shrink:0" onclick="cancelarEdicaoMoedor()">✕</button></div>
+                </div>
+                <div class="card">
+                    <div class="flex justify-between items-center mb-1"><span class="label-gold mt-0 ml-0">Métodos de preparo</span><span id="eq-cnt-metodo" class="text-xs text-zinc-500 font-bold"></span></div>
+                    <div id="eq-lista-metodo"></div>
+                    <div class="mt-3"><input type="text" id="eq-nome-metodo" placeholder="Ex: Hario Switch" style="margin-bottom:0"><div id="eq-novo-cats" class="flex flex-wrap gap-2 mt-2"></div><button class="btn-novo w-full mt-3" onclick="adicionarMetodo('eq')">Adicionar método</button></div>
+                </div>
+            </div>
+        </div>
         <div id="tab-admin" class="hidden text-center"><h2 class="text-amber-500 font-black italic uppercase text-lg mb-4">Painel Admin</h2><div class="grid grid-cols-2 gap-2 mb-6"><div class="card p-4"><span class="label-gold mt-0">Usuários</span><div id="admin-user-count" class="text-3xl font-black italic">0</div></div><div class="card p-4"><span class="label-gold mt-0">Receitas</span><div id="admin-total-receitas" class="text-3xl font-black italic">0</div></div></div><div id="admin-user-list" class="space-y-2"></div></div>
     </div>
 
@@ -239,8 +302,9 @@
                     document.getElementById('auth-screen').classList.add('hidden');
                     document.getElementById('main-app').classList.remove('hidden');
                     document.getElementById('user-display').innerText = `@${userProfile.nick} (${userProfile.type})`;
+                    document.getElementById('btn-avatar').innerText = (userProfile.nick || '?').charAt(0).toUpperCase();
                     if(user.email === ADMIN_EMAIL) document.getElementById('btn-admin').classList.remove('hidden');
-                    loadG(); loadR(); showTab('cafes');
+                    loadG(); loadR(); loadEq(); showTab('cafes');
                 } catch(e) { console.error(e); }
             } else { document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); }
         });
@@ -287,13 +351,13 @@
                 sPub.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
                 sOwn.forEach(d => map.set(d.id, {id: d.id, ...d.data()}));
                 finalRes = Array.from(map.values()).sort((a,b) => (b.ts?b.ts.seconds:0) - (a.ts?a.ts.seconds:0));
-                localData.r = finalRes; renderR(finalRes);
+                localData.r = finalRes; filtrarR();
             } catch(e) { console.error(e); }
         }
 
         function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div></div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
-        function renderR(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; h += `<div class="card p-3 flex justify-between items-center h-[85px]"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesR('${i.id}')"><div class="text-lg font-black italic uppercase text-amber-500 truncate">${i.nome}</div><div class="text-[8px] text-zinc-600 font-black uppercase mt-1">por @${i.owner_nick || 'Mestre'} | ${i.metodo || '--'}</div></div><div class="flex gap-2"> ${isOwner ? `<button onclick="editR('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('receitas','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''} <button onclick="showTab('preparo'); handleRecipeSelect('${i.id}')" class="text-xs font-black p-3 bg-amber-600 text-black rounded-lg italic uppercase">Preparar</button> </div></div>`; }); document.getElementById('list-r').innerHTML = h; }
-        async function loadPrep() { let gh = '<option value="0">SELECIONE O GRÃO</option>', rh = '<option value="0">SELECIONE A RECEITA</option>'; localData.g.forEach(i => gh += `<option value="${i.id}">${i.nome}</option>`); localData.r.forEach(i => rh += `<option value="${i.id}">${i.nome}</option>`); document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh; }
+        function renderR(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; h += `<div class="card p-3 flex items-center h-[85px] gap-3"><div class="metodo-ico">${svgMetodo(i.metodo, catDoMetodo(i.metodo))}</div><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesR('${i.id}')"><div class="text-lg font-black italic uppercase text-amber-500 truncate">${i.nome}</div><div class="text-[8px] text-zinc-600 font-black uppercase mt-1">por @${i.owner_nick || 'Mestre'} | ${i.metodo || '--'}</div></div><div class="flex gap-2"> ${isOwner ? `<button onclick="editR('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('receitas','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''} <button onclick="showTab('preparo'); handleRecipeSelect('${i.id}')" class="text-xs font-black p-3 bg-amber-600 text-black rounded-lg italic uppercase">Preparar</button> </div></div>`; }); document.getElementById('list-r').innerHTML = h; }
+        async function loadPrep() { let gh = '<option value="0">SELECIONE O GRÃO</option>', rh = '<option value="0">SELECIONE A RECEITA</option>'; localData.g.forEach(i => gh += `<option value="${i.id}">${i.nome}</option>`); localData.r.forEach(i => rh += `<option value="${i.id}">${i.nome}</option>`); document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh; document.getElementById('p-moedor').innerHTML = optsMoedores(''); }
 
 
 
@@ -330,7 +394,7 @@
                     <div>
                         <div class="text-[10px] text-zinc-500 font-bold">${i.data}</div>
                         <div class="text-lg font-black italic text-white leading-tight mt-1 uppercase">${i.grao}</div>
-                        <div class="text-xs font-bold text-amber-500 uppercase mt-1">${i.receita} | ${i.tempoTotal}</div>
+                        <div class="text-xs font-bold text-amber-500 uppercase mt-1 flex items-center gap-2">${i.metodo ? svgMetodo(i.metodo, catDoMetodo(i.metodo), 'mi-sm') : ''}<span>${i.receita} | ${i.tempoTotal}</span></div>${i.moedor ? '<div class="text-[11px] text-zinc-500 font-bold mt-1">' + escH(i.moedor) + ((i.clicks && i.clicks !== '--') ? ' @ ' + i.clicks + ' clicks' : '') + '</div>' : ''}
                         
                         <div class="grid grid-cols-4 gap-1 mt-3 bg-zinc-900/50 p-2 rounded-lg border border-zinc-800 text-center">
                             <div><span class="block text-[7px] text-zinc-500 font-black uppercase">Pó</span><span class="text-[10px] text-white font-bold">${i.po||'--'}g</span></div>
@@ -391,9 +455,9 @@
         }
 
         function editG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; editIds.g = id; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-variedade').value = i.variedade; document.getElementById('g-processo').value = i.processo || ''; document.getElementById('g-torrefacao').value = i.torrefacao || ''; document.getElementById('g-torra').value = i.torra || ''; document.getElementById('g-altitude').value = i.altitude || ''; document.getElementById('g-data').value = i.data || ''; document.getElementById('g-notas').value = i.notas || ''; document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); abrirForm('g', true); }
-        function editR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; editIds.r = id; document.getElementById('r-nome').value = i.nome; document.getElementById('r-metodo').value = i.metodo || ''; document.getElementById('r-ratio').value = i.origRatio; document.getElementById('r-po').value = i.origPo; document.getElementById('r-total').value = i.origTotal; document.getElementById('r-clicks').value = i.origClicks || ''; document.getElementById('r-temp').value = i.origTemp || ''; document.getElementById('r-bloom-ml').value = i.bloomMl || ''; document.getElementById('r-bloom-sec').value = i.bloomSec || ''; document.getElementById('ataques-container').innerHTML = ''; (i.ataques || []).forEach(a => addAtackField(a.ml, a.sec, a.obs)); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); abrirForm('r', true); }
-        function cancelEdit(t) { editIds[t] = null; fecharForm(t); document.getElementById(t+'-edit-actions').classList.add('hidden'); document.getElementById(t+'-btn-main').classList.remove('hidden'); document.querySelectorAll('#tab-'+(t==='g'?'cafes':'receitas')+' input, select, textarea').forEach(el => el.value = ""); document.getElementById('ataques-container').innerHTML = ''; }
-        function abrirForm(t, editando) { const f = document.getElementById('form-' + t); f.classList.remove('hidden'); f.scrollTop = 0; document.getElementById('form-' + t + '-titulo').innerText = (t === 'g' ? (editando ? 'Editar grão' : 'Novo grão') : (editando ? 'Editar receita' : 'Nova receita')); }
+        function editR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; editIds.r = id; document.getElementById('r-nome').value = i.nome; setMetodoForm(i.metodo || ''); document.getElementById('r-ratio').value = i.origRatio; document.getElementById('r-po').value = i.origPo; document.getElementById('r-total').value = i.origTotal; document.getElementById('r-clicks').value = i.origClicks || ''; document.getElementById('r-temp').value = i.origTemp || ''; document.getElementById('r-bloom-ml').value = i.bloomMl || ''; document.getElementById('r-bloom-sec').value = i.bloomSec || ''; document.getElementById('ataques-container').innerHTML = ''; (i.ataques || []).forEach(a => addAtackField(a.ml, a.sec, a.obs)); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); abrirForm('r', true); }
+        function cancelEdit(t) { editIds[t] = null; fecharForm(t); document.getElementById(t+'-edit-actions').classList.add('hidden'); document.getElementById(t+'-btn-main').classList.remove('hidden'); document.querySelectorAll('#form-'+t+' input, #form-'+t+' select, #form-'+t+' textarea').forEach(el => el.value = ""); document.getElementById('ataques-container').innerHTML = ''; }
+        function abrirForm(t, editando) { const f = document.getElementById('form-' + t); f.classList.remove('hidden'); f.scrollTop = 0; document.getElementById('form-' + t + '-titulo').innerText = (t === 'g' ? (editando ? 'Editar grão' : 'Novo grão') : (editando ? 'Editar receita' : 'Nova receita')); if(t === 'r' && !editando) setMetodoForm(''); }
         function fecharForm(t) { document.getElementById('form-' + t).classList.add('hidden'); }
         async function del(c, id, n) { if(confirm(`Excluir ${n}?`)) { await db.collection(c).doc(id).delete(); loadG(); loadR(); loadDiario(); if(!document.getElementById('admin-user-details').classList.contains('hidden')) { loadAdmin(); document.getElementById('admin-user-details').classList.add('hidden'); } } }
         function calcTotalR() { const r = parseFloat(document.getElementById('r-ratio').value)||0, p = parseFloat(document.getElementById('r-po').value)||0; document.getElementById('r-total').value = Math.round(r*p); }
@@ -517,8 +581,8 @@
             prepararAudio();
             ex = { plan, total, totalMl: plan[plan.length - 1].cumEnd, ms: 0, base: 0, t0: 0, running: false, phase: 'run', lastStep: -1, cdKey: '', drainT0: 0, drainSec: 0, drainAdd: false, drainFrozen: 0 };
             const gSel = $x('p-g');
-            $x('x-titulo').textContent = r.nome;
-            $x('x-sub').textContent = gSel.value !== '0' ? gSel.options[gSel.selectedIndex].text : 'Sem café selecionado';
+            $x('x-titulo').textContent = r.nome; $x('x-ico').innerHTML = r.metodo ? svgMetodo(r.metodo, catDoMetodo(r.metodo)) : '';
+            const mSelX = $x('p-moedor'); $x('x-sub').textContent = (gSel.value !== '0' ? gSel.options[gSel.selectedIndex].text : 'Sem café selecionado') + ((mSelX && mSelX.value) ? ' · ' + mSelX.options[mSelX.selectedIndex].text : '');
             construirBarras();
             $x('x-run-panel').classList.remove('hidden');
             $x('x-drain-panel').classList.add('hidden');
@@ -660,17 +724,236 @@
             }
         }
         
+        /* ===== PASSO D: equipamentos, métodos de preparo e ilustrações ===== */
+        localData.eq = localData.eq || [];
+        let safeM = '', safeMId = '', safeMetodo = '';
+        let filtroMetodo = '', novoCatForm = 'percolacao', novoCatEq = 'percolacao', eqEditMoedor = null, semeando = false;
+        const CATEGORIAS = [{ id: 'percolacao', nome: 'Percolação' }, { id: 'imersao', nome: 'Imersão' }, { id: 'pressao', nome: 'Pressão & híbridos' }];
+        const METODOS_PADRAO = [{ nome: 'V60', cat: 'percolacao' }, { nome: 'MELITTA', cat: 'percolacao' }, { nome: 'KALITA WAVE', cat: 'percolacao' }, { nome: 'CHEMEX', cat: 'percolacao' }, { nome: 'KOAR', cat: 'percolacao' }, { nome: 'FLUIRE', cat: 'percolacao' }, { nome: 'PRENSA FRANCESA', cat: 'imersao' }, { nome: 'PRESSCA', cat: 'imersao' }, { nome: 'AEROPRESS', cat: 'pressao' }, { nome: 'FLAIR', cat: 'pressao' }];
+        const ICONES = {"xicara": "<path class=\"f\" d=\"M10 20 H32 V30 Q32 38 24 38 H18 Q10 38 10 30 Z\"/><path class=\"l\" d=\"M10 20 H32 V30 Q32 38 24 38 H18 Q10 38 10 30 Z\"/><path class=\"l\" d=\"M32 22 H35 Q39 22 39 26 Q39 30 35 30 H32\"/><path class=\"l\" d=\"M7 43 H35\"/><path class=\"l\" d=\"M16 8 Q13 12 16 15\"/><path class=\"l\" d=\"M23 8 Q20 12 23 15\"/>", "conico": "<path class=\"f\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M19 26 V29 H29 V26\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "v60": "<path class=\"f\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M19 26 V29 H29 V26\"/><path class=\"l\" d=\"M40 12 Q46 12 46 16 Q46 20 38 19\"/><path class=\"l\" d=\"M15 14 L21 24\"/><path class=\"l\" d=\"M24 14 V25\"/><path class=\"l\" d=\"M33 14 L27 24\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "koar": "<path class=\"f\" d=\"M9 10 H39 L29 27 H19 Z\"/><path class=\"l\" d=\"M9 10 H39 L29 27 H19 Z\"/><path class=\"l\" d=\"M19 27 V29 H29 V27\"/><path class=\"l\" d=\"M14 16 H34\"/><path class=\"l\" d=\"M18 22 H30\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "melitta": "<path class=\"f\" d=\"M8 10 H40 L34 27 H14 Z\"/><path class=\"l\" d=\"M8 10 H40 L34 27 H14 Z\"/><path class=\"l\" d=\"M21 27 V30 H27 V27\"/><path class=\"l\" d=\"M16 14 L19 24\"/><path class=\"l\" d=\"M32 14 L29 24\"/><path class=\"l\" d=\"M8 10 L5 13\"/><path class=\"l\" d=\"M24 32 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "kalita": "<path class=\"f\" d=\"M8 11 H40 L36 26 H12 Z\"/><path class=\"l\" d=\"M8 11 H40 L36 26 H12 Z\"/><path class=\"l\" d=\"M8 11 L11 7 L15 11 L19 7 L23 11 L27 7 L31 11 L35 7 L39 11\"/><path class=\"g\" d=\"M19.3 23 C19.3 23.7 18.7 24.3 18 24.3 C17.3 24.3 16.7 23.7 16.7 23 C16.7 22.3 17.3 21.7 18 21.7 C18.7 21.7 19.3 22.3 19.3 23 Z\"/><path class=\"g\" d=\"M25.3 23 C25.3 23.7 24.7 24.3 24 24.3 C23.3 24.3 22.7 23.7 22.7 23 C22.7 22.3 23.3 21.7 24 21.7 C24.7 21.7 25.3 22.3 25.3 23 Z\"/><path class=\"g\" d=\"M31.3 23 C31.3 23.7 30.7 24.3 30 24.3 C29.3 24.3 28.7 23.7 28.7 23 C28.7 22.3 29.3 21.7 30 21.7 C30.7 21.7 31.3 22.3 31.3 23 Z\"/><path class=\"l\" d=\"M12 26 V29 H36 V26\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "chemex": "<path class=\"f\" d=\"M13 5 H35 L27 23 L37 42 H11 L21 23 Z\"/><path class=\"l\" d=\"M13 5 H35 L27 23 L37 42 H11 L21 23 Z\"/><path class=\"g\" d=\"M14.5 36 H33.5 L37 42 H11 Z\"/><path class=\"g\" d=\"M19.5 20 H28.5 V27 H19.5 Z\"/><path class=\"l\" d=\"M19.5 20 H28.5 V27 H19.5 Z\"/><path class=\"l\" d=\"M34 6 L38 4\"/>", "fluire": "<path class=\"f\" d=\"M10 7 H38 L29 21 H19 Z\"/><path class=\"l\" d=\"M10 7 H38 L29 21 H19 Z\"/><path class=\"l\" d=\"M17 10 L21 18\"/><path class=\"l\" d=\"M24 10 V19\"/><path class=\"l\" d=\"M31 10 L27 18\"/><path class=\"l\" d=\"M20 21 V24\"/><path class=\"l\" d=\"M28 21 V24\"/><path class=\"f\" d=\"M13 24 H35 V40 Q35 44 31 44 H17 Q13 44 13 40 Z\"/><path class=\"l\" d=\"M13 24 H35 V40 Q35 44 31 44 H17 Q13 44 13 40 Z\"/><path class=\"g\" d=\"M13 34 H35 V40 Q35 44 31 44 H17 Q13 44 13 40 Z\"/><path class=\"l\" d=\"M35 28 Q43 28 43 34 Q43 40 35 40\"/>", "prensa": "<path class=\"f\" d=\"M13 17 H35 V40 Q35 43 32 43 H16 Q13 43 13 40 Z\"/><path class=\"l\" d=\"M13 17 H35 V40 Q35 43 32 43 H16 Q13 43 13 40 Z\"/><path class=\"g\" d=\"M13 31 H35 V40 Q35 43 32 43 H16 Q13 43 13 40 Z\"/><path class=\"l\" d=\"M11 17 H37\"/><path class=\"l\" d=\"M24 8 V17\"/><path class=\"g\" d=\"M26.6 6 C26.6 7.4 25.4 8.6 24 8.6 C22.6 8.6 21.4 7.4 21.4 6 C21.4 4.6 22.6 3.4 24 3.4 C25.4 3.4 26.6 4.6 26.6 6 Z\"/><path class=\"l\" d=\"M26.6 6 C26.6 7.4 25.4 8.6 24 8.6 C22.6 8.6 21.4 7.4 21.4 6 C21.4 4.6 22.6 3.4 24 3.4 C25.4 3.4 26.6 4.6 26.6 6 Z\"/><path class=\"l\" d=\"M15 31 H33\"/><path class=\"l\" d=\"M35 21 Q43 21 43 29 Q43 37 35 37\"/>", "pressca": "<path class=\"f\" d=\"M14 19 H34 L32 41 Q32 44 29 44 H19 Q16 44 16 41 Z\"/><path class=\"l\" d=\"M14 19 H34 L32 41 Q32 44 29 44 H19 Q16 44 16 41 Z\"/><path class=\"g\" d=\"M15 32 H33 L32 41 Q32 44 29 44 H19 Q16 44 16 41 Z\"/><path class=\"g\" d=\"M13 14 H35 V19 H13 Z\"/><path class=\"l\" d=\"M13 14 H35 V19 H13 Z\"/><path class=\"l\" d=\"M24 6 V14\"/><path class=\"l\" d=\"M19 6 H29\"/><path class=\"l\" d=\"M29 16.5 H32\"/>", "aeropress": "<path class=\"g\" d=\"M13 5 H35 V9 H13 Z\"/><path class=\"l\" d=\"M13 5 H35 V9 H13 Z\"/><path class=\"l\" d=\"M20 9 V17\"/><path class=\"l\" d=\"M28 9 V17\"/><path class=\"f\" d=\"M17 17 H31 V34 H17 Z\"/><path class=\"l\" d=\"M17 17 H31 V34 H17 Z\"/><path class=\"l\" d=\"M17 22 H20.5\"/><path class=\"l\" d=\"M17 26 H20.5\"/><path class=\"l\" d=\"M17 30 H20.5\"/><path class=\"l\" d=\"M13 34 H35\"/><path class=\"f\" d=\"M15 36 H33 L31 43 H17 Z\"/><path class=\"l\" d=\"M15 36 H33 L31 43 H17 Z\"/>", "flair": "<path class=\"l\" d=\"M7 44 H37\"/><path class=\"l\" d=\"M12 44 V16\"/><path class=\"l\" d=\"M12 16 L40 8\"/><path class=\"g\" d=\"M44.2 7.5 C44.2 9.3 42.8 10.7 41 10.7 C39.2 10.7 37.8 9.3 37.8 7.5 C37.8 5.7 39.2 4.3 41 4.3 C42.8 4.3 44.2 5.7 44.2 7.5 Z\"/><path class=\"l\" d=\"M44.2 7.5 C44.2 9.3 42.8 10.7 41 10.7 C39.2 10.7 37.8 9.3 37.8 7.5 C37.8 5.7 39.2 4.3 41 4.3 C42.8 4.3 44.2 5.7 44.2 7.5 Z\"/><path class=\"l\" d=\"M24 13 V21\"/><path class=\"f\" d=\"M17 21 H31 V34 H17 Z\"/><path class=\"l\" d=\"M17 21 H31 V34 H17 Z\"/><path class=\"l\" d=\"M24 34 V37\"/><path class=\"f\" d=\"M17 38 H31 V44 H17 Z\"/><path class=\"l\" d=\"M17 38 H31 V44 H17 Z\"/>", "moedor": "<path class=\"g\" d=\"M14 17 H34 V22 H14 Z\"/><path class=\"l\" d=\"M14 17 H34 V22 H14 Z\"/><path class=\"f\" d=\"M16 22 H32 V40 Q32 43 29 43 H19 Q16 43 16 40 Z\"/><path class=\"l\" d=\"M16 22 H32 V40 Q32 43 29 43 H19 Q16 43 16 40 Z\"/><path class=\"l\" d=\"M16 29 H32\"/><path class=\"l\" d=\"M24 17 V9\"/><path class=\"l\" d=\"M24 9 H37\"/><path class=\"l\" d=\"M37 9 V16\"/><path class=\"g\" d=\"M39.6 18 C39.6 19.4 38.4 20.6 37 20.6 C35.6 20.6 34.4 19.4 34.4 18 C34.4 16.6 35.6 15.4 37 15.4 C38.4 15.4 39.6 16.6 39.6 18 Z\"/><path class=\"l\" d=\"M39.6 18 C39.6 19.4 38.4 20.6 37 20.6 C35.6 20.6 34.4 19.4 34.4 18 C34.4 16.6 35.6 15.4 37 15.4 C38.4 15.4 39.6 16.6 39.6 18 Z\"/>"};
+
+        function escH(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
+        function normN(s) { return String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/\s+/g, ' ').trim(); }
+        function nomeLimpo(s) { return String(s == null ? '' : s).trim().replace(/\s+/g, ' ').toUpperCase(); }
+        function chaveIcone(nome, cat) {
+            const n = normN(nome);
+            if(/V60|HARIO|ORIGAMI/.test(n)) return 'v60';
+            if(/MELITTA|MELLITA|MELITA/.test(n)) return 'melitta';
+            if(/KALITA/.test(n)) return 'kalita';
+            if(/CHEMEX/.test(n)) return 'chemex';
+            if(/KOAR|COAR/.test(n)) return 'koar';
+            if(/FLUIRE|FLUIRY/.test(n)) return 'fluire';
+            if(/PRESSCA/.test(n)) return 'pressca';
+            if(/PRENSA|FRENCH/.test(n)) return 'prensa';
+            if(/AEROPRESS|AERO PRESS/.test(n)) return 'aeropress';
+            if(/FLAIR/.test(n)) return 'flair';
+            return cat === 'percolacao' ? 'conico' : (cat === 'imersao' ? 'prensa' : (cat === 'pressao' ? 'aeropress' : 'xicara'));
+        }
+        function svgIcone(key, cls) { return '<svg class="mi ' + (cls || '') + '" viewBox="0 0 48 48" aria-hidden="true">' + (ICONES[key] || ICONES.xicara) + '</svg>'; }
+        function svgMetodo(nome, cat, cls) { return svgIcone(chaveIcone(nome, cat), cls); }
+        function catPadrao(nome) { const p = METODOS_PADRAO.find(m => normN(m.nome) === normN(nome)); return p ? p.cat : ''; }
+        function catDoMetodo(nome) {
+            const n = normN(nome);
+            const mine = localData.eq.find(e => e.tipo === 'metodo' && normN(e.nome) === n);
+            return (mine && mine.categoria) ? mine.categoria : catPadrao(nome);
+        }
+        function ordemCat(id) { const i = CATEGORIAS.findIndex(c => c.id === id); return i < 0 ? 9 : i; }
+        function listaMetodos() {
+            const mine = localData.eq.filter(e => e.tipo === 'metodo');
+            const base = mine.length ? mine.map(e => ({ id: e.id, nome: e.nome, cat: e.categoria || catPadrao(e.nome) || 'percolacao' })) : METODOS_PADRAO.map(m => ({ id: null, nome: m.nome, cat: m.cat }));
+            return base.sort((a, b) => ordemCat(a.cat) - ordemCat(b.cat) || String(a.nome).localeCompare(String(b.nome)));
+        }
+
+        /* ---- dados: carregar e semear ---- */
+        async function loadEq() {
+            if(!currentUser) return;
+            try {
+                const s = await db.collection('equipamentos').where('owner_uid', '==', currentUser.uid).get();
+                localData.eq = s.docs.map(d => ({ id: d.id, ...d.data() }));
+                await semearMetodos();
+            } catch(e) { console.error('equipamentos:', e); }
+            atualizarSelMoedor(); renderEquip(); renderMetodoGrid(); renderPills(); filtrarR();
+        }
+        async function semearMetodos() {
+            if(semeando || localData.eq.some(e => e.tipo === 'metodo')) return;
+            const chave = 'cm_metodos_semeados_' + currentUser.uid;
+            try { if(localStorage.getItem(chave)) return; } catch(e) {}
+            semeando = true;
+            try {
+                const batch = db.batch();
+                METODOS_PADRAO.forEach(m => batch.set(db.collection('equipamentos').doc(), { owner_uid: currentUser.uid, tipo: 'metodo', nome: m.nome, categoria: m.cat, ts: firebase.firestore.FieldValue.serverTimestamp() }));
+                await batch.commit();
+                try { localStorage.setItem(chave, '1'); } catch(e) {}
+                const s = await db.collection('equipamentos').where('owner_uid', '==', currentUser.uid).get();
+                localData.eq = s.docs.map(d => ({ id: d.id, ...d.data() }));
+            } catch(e) { console.error('semear métodos:', e); }
+            semeando = false;
+        }
+        function erroEquip(e) { console.error(e); alert('Não foi possível salvar. Se o erro for de permissão, é preciso liberar a coleção "equipamentos" nas regras do Firestore.'); }
+
+        /* ---- moedores ---- */
+        function moedores() { return localData.eq.filter(e => e.tipo === 'moedor').sort((a, b) => (b.principal ? 1 : 0) - (a.principal ? 1 : 0) || String(a.nome).localeCompare(String(b.nome))); }
+        function optsMoedores(sel) {
+            let h = '<option value="">— sem moedor —</option>';
+            moedores().forEach(m => { h += '<option value="' + m.id + '"' + ((sel ? m.id === sel : m.principal) ? ' selected' : '') + '>' + escH(m.nome) + '</option>'; });
+            return h;
+        }
+        function atualizarSelMoedor() {
+            const el = $x('p-moedor'); if(!el) return;
+            const atual = el.value;
+            el.innerHTML = optsMoedores(atual && moedores().some(m => m.id === atual) ? atual : '');
+        }
+        async function salvarMoedor() {
+            const nome = $x('eq-nome-moedor').value.trim().replace(/\s+/g, ' ');
+            if(!nome) { alert('Digite o nome do moedor.'); return; }
+            try {
+                if(eqEditMoedor) {
+                    await db.collection('equipamentos').doc(eqEditMoedor).update({ nome });
+                    const e = localData.eq.find(x => x.id === eqEditMoedor); if(e) e.nome = nome;
+                } else {
+                    const primeiro = moedores().length === 0;
+                    const ref = await db.collection('equipamentos').add({ owner_uid: currentUser.uid, tipo: 'moedor', nome, principal: primeiro, ts: firebase.firestore.FieldValue.serverTimestamp() });
+                    localData.eq.push({ id: ref.id, owner_uid: currentUser.uid, tipo: 'moedor', nome, principal: primeiro });
+                }
+                cancelarEdicaoMoedor(); renderEquip(); atualizarSelMoedor();
+            } catch(e) { erroEquip(e); }
+        }
+        function editarMoedor(id) {
+            const e = localData.eq.find(x => x.id === id); if(!e) return;
+            eqEditMoedor = id; $x('eq-nome-moedor').value = e.nome; $x('eq-btn-moedor').textContent = 'Salvar'; $x('eq-cancel-moedor').classList.remove('hidden'); $x('eq-nome-moedor').focus();
+        }
+        function cancelarEdicaoMoedor() { eqEditMoedor = null; $x('eq-nome-moedor').value = ''; $x('eq-btn-moedor').textContent = 'Adicionar'; $x('eq-cancel-moedor').classList.add('hidden'); }
+        async function tornarPrincipal(id) {
+            try {
+                const batch = db.batch();
+                moedores().forEach(m => { if(m.principal && m.id !== id) batch.update(db.collection('equipamentos').doc(m.id), { principal: false }); });
+                batch.update(db.collection('equipamentos').doc(id), { principal: true });
+                await batch.commit();
+                localData.eq.forEach(e => { if(e.tipo === 'moedor') e.principal = (e.id === id); });
+                renderEquip(); atualizarSelMoedor();
+            } catch(e) { erroEquip(e); }
+        }
+        async function excluirEq(id) {
+            const e = localData.eq.find(x => x.id === id); if(!e) return;
+            if(!confirm('Excluir ' + e.nome + '?')) return;
+            try {
+                await db.collection('equipamentos').doc(id).delete();
+                localData.eq = localData.eq.filter(x => x.id !== id);
+                if(e.tipo === 'moedor' && e.principal) { const p = moedores()[0]; if(p) { await db.collection('equipamentos').doc(p.id).update({ principal: true }); p.principal = true; } }
+                if(eqEditMoedor === id) cancelarEdicaoMoedor();
+                renderEquip(); atualizarSelMoedor(); renderMetodoGrid(); filtrarR();
+            } catch(err) { erroEquip(err); }
+        }
+
+        /* ---- métodos de preparo ---- */
+        function renderPills() {
+            [['form', novoCatForm, 'r-novo-cats'], ['eq', novoCatEq, 'eq-novo-cats']].forEach(a => {
+                const el = $x(a[2]); if(!el) return;
+                el.innerHTML = CATEGORIAS.map(c => `<button type="button" class="pill${c.id === a[1] ? ' on' : ''}" onclick="pickCat('${a[0]}','${c.id}')">${c.nome}</button>`).join('');
+            });
+        }
+        function pickCat(origem, c) { if(origem === 'form') novoCatForm = c; else novoCatEq = c; renderPills(); }
+        function setMetodoForm(v) { $x('r-metodo').value = v || ''; renderMetodoGrid(); ocultarNovoMetodo(); }
+        function renderMetodoGrid() {
+            const grid = $x('r-metodo-grid'); if(!grid) return;
+            const atual = $x('r-metodo').value, atualN = normN(atual), lista = listaMetodos();
+            const tile = (nome, cat) => '<button type="button" class="mtile' + (normN(nome) === atualN ? ' on' : '') + '" data-m="' + escH(nome) + '">' + svgMetodo(nome, cat) + '<span>' + escH(nome) + '</span></button>';
+            let h = '';
+            CATEGORIAS.forEach(c => {
+                const ms = lista.filter(m => m.cat === c.id); if(!ms.length) return;
+                h += '<div class="mcat">' + c.nome + '</div><div class="mgrid">' + ms.map(m => tile(m.nome, m.cat)).join('') + '</div>';
+            });
+            if(atual && !lista.some(m => normN(m.nome) === atualN)) h += '<div class="mcat">Outros</div><div class="mgrid">' + tile(atual, catDoMetodo(atual)) + '</div>';
+            h += '<button type="button" class="mtile novo" data-novo="1"><svg class="mi" viewBox="0 0 48 48"><path class="l" d="M24 12 V36 M12 24 H36"/></svg><span>Novo método</span></button>';
+            grid.innerHTML = h;
+        }
+        function metodoClick(ev) {
+            const b = ev.target.closest('button'); if(!b) return;
+            if(b.dataset.novo) { mostrarNovoMetodo(); return; }
+            const m = b.dataset.m; if(m === undefined) return;
+            $x('r-metodo').value = (normN($x('r-metodo').value) === normN(m)) ? '' : m;
+            renderMetodoGrid();
+        }
+        function mostrarNovoMetodo() { renderPills(); $x('r-metodo-novo-box').classList.remove('hidden'); $x('r-metodo-novo').focus(); }
+        function ocultarNovoMetodo() { const b = $x('r-metodo-novo-box'); if(b) b.classList.add('hidden'); }
+        async function adicionarMetodo(origem) {
+            const inp = $x(origem === 'form' ? 'r-metodo-novo' : 'eq-nome-metodo');
+            const nome = nomeLimpo(inp.value), cat = origem === 'form' ? novoCatForm : novoCatEq;
+            if(!nome) { alert('Digite o nome do método.'); return; }
+            await semearMetodos();
+            const existe = listaMetodos().find(m => normN(m.nome) === normN(nome));
+            if(!existe) {
+                try {
+                    const ref = await db.collection('equipamentos').add({ owner_uid: currentUser.uid, tipo: 'metodo', nome, categoria: cat, ts: firebase.firestore.FieldValue.serverTimestamp() });
+                    localData.eq.push({ id: ref.id, owner_uid: currentUser.uid, tipo: 'metodo', nome, categoria: cat });
+                } catch(e) { erroEquip(e); return; }
+            }
+            inp.value = '';
+            if(origem === 'form') setMetodoForm(existe ? existe.nome : nome);
+            renderEquip(); renderMetodoGrid(); filtrarR();
+        }
+
+        /* ---- tela de equipamentos ---- */
+        function renderEquip() {
+            const lm = $x('eq-lista-moedor'); if(!lm) return;
+            const ms = moedores();
+            $x('eq-cnt-moedor').textContent = ms.length + (ms.length === 1 ? ' cadastrado' : ' cadastrados');
+            lm.innerHTML = ms.length ? ms.map(m => `<div class="eq-row">${svgIcone('moedor', 'mi-md')}<div class="flex-1 min-w-0"><div class="nm truncate">${escH(m.nome)}</div>${m.principal ? '<div class="badge-pr">Principal</div>' : `<button class="link-btn" onclick="tornarPrincipal('${m.id}')">Tornar principal</button>`}</div><button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="editarMoedor('${m.id}')">✏️</button><button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="excluirEq('${m.id}')">🗑️</button></div>`).join('') : '<div class="text-xs text-zinc-500 text-center p-3">Nenhum moedor cadastrado</div>';
+            const lst = listaMetodos();
+            $x('eq-cnt-metodo').textContent = lst.length + (lst.length === 1 ? ' método' : ' métodos');
+            let h = '';
+            CATEGORIAS.forEach(c => {
+                const it = lst.filter(m => m.cat === c.id); if(!it.length) return;
+                h += '<div class="mcat">' + c.nome + '</div>' + it.map(m => `<div class="eq-row">${svgMetodo(m.nome, m.cat, 'mi-md')}<div class="nm flex-1 min-w-0 truncate">${escH(m.nome)}</div>${m.id ? `<button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="excluirEq('${m.id}')">🗑️</button>` : ''}</div>`).join('');
+            });
+            $x('eq-lista-metodo').innerHTML = h || '<div class="text-xs text-zinc-500 text-center p-3">Nenhum método cadastrado</div>';
+        }
+        function abrirEquip() { renderEquip(); renderPills(); const s = $x('equip-screen'); s.classList.remove('hidden'); s.scrollTop = 0; }
+        function fecharEquip() { cancelarEdicaoMoedor(); $x('equip-screen').classList.add('hidden'); atualizarSelMoedor(); renderMetodoGrid(); }
+        function toggleMenu() { $x('menu-user').classList.toggle('hidden'); }
+        function menuEquip() { $x('menu-user').classList.add('hidden'); abrirEquip(); }
+        document.addEventListener('click', e => { const m = $x('menu-user'); if(m && !e.target.closest('#btn-avatar') && !e.target.closest('#menu-user')) m.classList.add('hidden'); });
+
+        /* ---- receitas: busca e filtro por método ---- */
+        function renderChips() {
+            const cont = {}, nomes = {};
+            localData.r.forEach(i => { const k = normN(i.metodo); if(k) { cont[k] = (cont[k] || 0) + 1; if(!nomes[k]) nomes[k] = i.metodo; } });
+            if(filtroMetodo && !cont[filtroMetodo]) filtroMetodo = '';
+            const keys = Object.keys(cont).sort((a, b) => ordemCat(catDoMetodo(nomes[a])) - ordemCat(catDoMetodo(nomes[b])) || a.localeCompare(b));
+            let h = '<button class="chip' + (!filtroMetodo ? ' on' : '') + '" data-m="">Todos (' + localData.r.length + ')</button>';
+            keys.forEach(k => { h += '<button class="chip' + (filtroMetodo === k ? ' on' : '') + '" data-m="' + escH(k) + '">' + svgMetodo(nomes[k], catDoMetodo(nomes[k])) + escH(nomes[k]) + ' (' + cont[k] + ')</button>'; });
+            $x('chips-metodo').innerHTML = h;
+        }
+        function chipClick(ev) { const b = ev.target.closest('button'); if(!b || b.dataset.m === undefined) return; filtroMetodo = b.dataset.m; filtrarR(); }
+        function filtrarR() {
+            if(!$x('list-r')) return;
+            renderChips();
+            const q = normN($x('search-r').value);
+            const lista = localData.r.filter(i => (!filtroMetodo || normN(i.metodo) === filtroMetodo) && (!q || [i.nome, i.metodo, i.owner_nick].some(v => v && normN(v).includes(q))));
+            renderR(lista);
+            if(!lista.length) $x('list-r').innerHTML = '<div class="text-center p-10 text-zinc-500 font-black uppercase italic">Nenhuma receita encontrada</div>';
+        }
+        renderPills();
+
         function abrirFeedback() {
             if(timer){ clearInterval(timer); timer = null; }
             const gSel = document.getElementById('p-g');
             const rSel = document.getElementById('p-r');
             safeG = gSel.options[gSel.selectedIndex].text;
             safeR = rSel.options[rSel.selectedIndex].text;
+            const mSel = $x('p-moedor');
+            safeMId = (mSel && mSel.value) ? mSel.value : '';
+            safeM = safeMId ? mSel.options[mSel.selectedIndex].text : '';
+            const rec = localData.r.find(x => x.id === rSel.value);
+            safeMetodo = rec ? (rec.metodo || '') : '';
             const d = $x('p-po-val').value, a = $x('p-agua-val').value, r = $x('p-ratio-val').value, c = $x('p-clicks-val').value, tp = $x('p-temp-val').value;
             let res = d + 'g · ' + a + 'ml · 1:' + r + ' · ' + tempoFinalTxt;
-            if(c && c !== '--') res += ' · ' + c + ' clicks';
+            if(safeM) res += ' · ' + safeM + ((c && c !== '--') ? ' @ ' + c + ' clicks' : '');
+            else if(c && c !== '--') res += ' · ' + c + ' clicks';
             if(tp && tp !== '--') res += ' · ' + tp + '°C';
             $x('f-resumo').textContent = res;
+            $x('f-atualiza-moagem').classList.remove('on');
+            $x('f-moagem-row').classList.toggle('hidden', !(rec && currentUser && rec.owner_uid === currentUser.uid && c && c !== '--'));
             document.getElementById('modal-feedback').classList.remove('hidden');
         }
 
@@ -689,15 +972,23 @@
                     ratio: document.getElementById('p-ratio-val').value,
                     clicks: document.getElementById('p-clicks-val').value,
                     temp: document.getElementById('p-temp-val').value,
+                    moedor: safeM, moedorId: safeMId, metodo: safeMetodo,
                     observacoes: (document.getElementById('f-obs').value||"").toUpperCase(), 
                     data: new Date().toLocaleString(), ts: firebase.firestore.FieldValue.serverTimestamp(), owner_uid: currentUser.uid 
                 }); 
+                if(document.getElementById('f-atualiza-moagem').classList.contains('on')) {
+                    try {
+                        const rid = document.getElementById('p-r').value, cl = document.getElementById('p-clicks-val').value;
+                        const rec = localData.r.find(x => x.id === rid);
+                        if(rec && rec.owner_uid === currentUser.uid && cl && cl !== '--') { await db.collection('receitas').doc(rid).update({ origClicks: cl }); rec.origClicks = cl; }
+                    } catch(e) { console.error(e); }
+                }
                 fecharFeedback(); showTab('diario');
             } catch(e) { alert("Erro ao salvar: " + e.message); }
         }
 
         function abrirDetalhesG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; document.getElementById('detalhes-content').innerHTML = `<div class="flex justify-center mb-4"><img src="${img}" class="w-44 h-44 rounded-2xl object-cover border-2 border-zinc-800 shadow-2xl cursor-zoom-in" onclick="ampliarImagem('${img}')"></div><div><span class="label-gold">PRODUTOR</span><p class="text-white font-bold italic text-sm">${i.prod||'--'}</p></div><div><span class="label-gold">IDENTIFICAÇÃO</span><p class="text-white font-bold italic text-sm">${i.nome||'--'}</p></div><div><span class="label-gold">TORREFAÇÃO</span><p class="text-amber-500 font-bold italic text-sm">${i.torrefacao||'--'}</p></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">VARIEDADE</span><p class="text-white font-bold italic text-sm">${i.variedade||'--'}</p></div><div><span class="label-gold">PROCESSO</span><p class="text-white font-bold italic text-sm">${i.processo||'--'}</p></div></div><div><span class="label-gold">ALTITUDE | TORRA</span><p class="text-white font-bold italic text-sm"><span class="text-white">${i.altitude||'--'}</span> | <span class="text-white">${i.torra||'--'}</span></p></div><div><span class="label-gold">NOTAS</span><p class="text-zinc-400 italic text-sm">"${i.notas||'--'}"</p></div>`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
-        function abrirDetalhesR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; let atkH = (i.ataques || []).map((a, idx) => `<p class="text-zinc-500 text-[10px]">Atk ${idx+1}: ${a.ml}ml em ${a.sec}s</p>`).join(''); document.getElementById('detalhes-content').innerHTML = `<div><span class="label-gold">RECEITA</span><p class="text-white font-bold italic text-sm">${i.nome}</p></div><div class="grid grid-cols-3 gap-2"><div><span class="label-gold">RATIO</span><p class="text-white text-sm">1:${i.origRatio}</p></div><div><span class="label-gold">PÓ</span><p class="text-white text-sm">${i.origPo}g</p></div><div><span class="label-gold">TOTAL</span><p class="text-amber-500 text-sm">${i.origTotal}ml</p></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">CLICKS</span><p class="text-white text-sm">${i.origClicks||'--'}</p></div><div><span class="label-gold">TEMP</span><p class="text-white text-sm">${i.origTemp||'--'}°</p></div></div>${atkH ? `<div><span class="label-gold">ATAQUES</span>${atkH}</div>` : ''}`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
+        function abrirDetalhesR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; let atkH = (i.ataques || []).map((a, idx) => `<p class="text-zinc-500 text-[10px]">Atk ${idx+1}: ${a.ml}ml em ${a.sec}s</p>`).join(''); document.getElementById('detalhes-content').innerHTML = `<div><span class="label-gold">RECEITA</span><p class="text-white font-bold italic text-sm">${i.nome}</p></div>${i.metodo ? '<div class="flex items-center gap-2 mt-3">' + svgMetodo(i.metodo, catDoMetodo(i.metodo), 'mi-md') + '<span class="font-black text-sm">' + escH(i.metodo) + '</span></div>' : ''}<div class="grid grid-cols-3 gap-2"><div><span class="label-gold">RATIO</span><p class="text-white text-sm">1:${i.origRatio}</p></div><div><span class="label-gold">PÓ</span><p class="text-white text-sm">${i.origPo}g</p></div><div><span class="label-gold">TOTAL</span><p class="text-amber-500 text-sm">${i.origTotal}ml</p></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">CLICKS</span><p class="text-white text-sm">${i.origClicks||'--'}</p></div><div><span class="label-gold">TEMP</span><p class="text-white text-sm">${i.origTemp||'--'}°</p></div></div>${atkH ? `<div><span class="label-gold">ATAQUES</span>${atkH}</div>` : ''}`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
         function ampliarImagem(src) { document.getElementById('img-ampliada').src = src; document.getElementById('modal-zoom').classList.remove('hidden'); }
         function toggleAuth(l) { document.getElementById('login-form').classList.toggle('hidden', !l); document.getElementById('signup-form').classList.toggle('hidden', l); }
         async function handleLogin() { try { await auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value); } catch(e) { alert(e.message); } }
