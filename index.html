@@ -5,7 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Coffee Master v13.9</title>
     <link rel="manifest" href="manifest.json">
-    <meta name="theme-color" content="#f59e0b">
+    <meta name="theme-color" id="meta-tema" content="#14100D">
+    <script>try { document.documentElement.setAttribute('data-tema', localStorage.getItem('cm_tema') || 'escuro'); } catch(e) { document.documentElement.setAttribute('data-tema', 'escuro'); }</script>
+    <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,600;9..144,800&display=swap" rel="stylesheet">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <script src="https://cdn.tailwindcss.com"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.10/firebase-app-compat.js"></script>
@@ -14,11 +17,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
     <style>
         :root {
+            color-scheme: dark;
+            --bg: #14100D; --card: #1E1814; --card-2: #271F19;
+            --line: #372D25; --line-2: #4A3C31;
+            --text: #F2E8DA; --muted: #A89888;
+            --brand: #C8692B; --brand-soft: #34200F; --input: #2B231D;
+            --ring: #3A2F27; --track: #3A2F27; --star-off: #3A2F27; --gold: #D9A93B;
+            --kettle: #D9CBB8; --kettle-2: #B9AA97; --water: #2F6F8F; --water-2: #3C85A8;
+        }
+        :root[data-tema="claro"] {
+            color-scheme: light;
             --bg: #FAF9F7; --card: #EAE5DE; --card-2: #F4F0EA;
             --line: #DDD6CC; --line-2: #CFC6B9;
             --text: #1C1917; --muted: #78716C;
             --brand: #7F3F1F; --brand-soft: #F1E1D2; --input: #FAF9F7;
+            --ring: #C7BFB2; --track: #D9D2C7; --star-off: #D6D0C8; --gold: #8A6A12;
+            --kettle: #2F3133; --kettle-2: #3E4246; --water: #8DB6CC; --water-2: #A9C9DA;
         }
+        html { background: var(--bg); }
         body { background: var(--bg); color: var(--text); font-family: sans-serif; padding-bottom: 120px; overflow-x: hidden; }
         .card { background: var(--card); border-radius: 22px; padding: 14px; margin-bottom: 12px; border: 1px solid var(--line); box-shadow: 0 1px 2px rgba(60,40,20,0.06); }
         .label-gold { color: var(--brand); font-size: 11px; font-weight: 900; text-transform: uppercase; margin-top: 20px; margin-bottom: 4px; margin-left: 6px; letter-spacing: 1px; display: block; }
@@ -34,11 +50,11 @@
         #auth-screen, #modal-feedback, #pix-modal, #modal-detalhes, #admin-user-details { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: var(--bg); z-index: 2000; padding: 20px; display: flex; flex-direction: column; justify-content: center; overflow-y: auto; }
         #modal-zoom { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.98); z-index: 10000 !important; display: flex; align-items: center; justify-content: center; padding: 0; }
         .hidden { display: none !important; }
-        .star { font-size: 35px; cursor: pointer; color: #D6D0C8; padding: 5px; }
+        .star { font-size: 35px; cursor: pointer; color: var(--star-off); padding: 5px; }
         .star.active { color: #f59e0b; }
         .grain-thumb { width: 75px; height: 75px; border-radius: 18px; object-fit: cover; background: var(--line); border: 1px solid var(--line-2); flex-shrink: 0; }
         .atk-row { background: var(--card-2); padding: 10px; border-radius: 14px; margin-bottom: 8px; border: 1px solid var(--line); }
-        .bar-bg { background: #D9D2C7; height: 4px; border-radius: 2px; width: 100%; overflow: hidden; margin-top: 2px; }
+        .bar-bg { background: var(--track); height: 4px; border-radius: 2px; width: 100%; overflow: hidden; margin-top: 2px; }
         .bar-fill { background: var(--brand); height: 100%; transition: width 0.3s; }
         .log-card { min-height: 280px; display: flex; flex-direction: column; justify-content: space-between; }
 
@@ -49,7 +65,7 @@
         .text-amber-500, .text-amber-600 { color: var(--brand) !important; }
         span.text-xl.text-amber-500 { color: #d97706 !important; }
         .text-zinc-400, .text-zinc-500, .text-zinc-600 { color: var(--muted) !important; }
-        .text-zinc-800 { color: #D6D0C8 !important; }
+        .text-zinc-800 { color: var(--star-off) !important; }
         .bg-black { background-color: var(--bg) !important; }
         .card.bg-black { background-color: var(--card) !important; }
         .bg-zinc-900, .bg-zinc-900\/50 { background-color: var(--card-2) !important; }
@@ -58,7 +74,7 @@
         .border-zinc-800 { border-color: var(--line) !important; }
         .border-zinc-700 { border-color: var(--line-2) !important; }
         .border-amber-500, .border-amber-600 { border-color: var(--brand) !important; }
-        .border-amber-900 { border-color: #C9A58A !important; }
+        .border-amber-900 { border-color: var(--line-2) !important; }
         .border-l-amber-600 { border-left-color: var(--brand) !important; }
         .active\:bg-zinc-900:active { background-color: var(--card-2) !important; }
         .active\:bg-zinc-800:active { background-color: var(--line) !important; }
@@ -98,7 +114,7 @@
         .x-btn-main { background: var(--brand); color: #fff; }
         .x-btn-main.run { background: #B8532A; }
         .x-btn-sec { background: var(--card); color: var(--brand); border: 1px solid var(--line); }
-        .xbar { position: relative; width: 100%; border-radius: 12px 12px 0 0; background: #CFC8BE; overflow: hidden; display: flex; align-items: center; justify-content: center; }
+        .xbar { position: relative; width: 100%; border-radius: 12px 12px 0 0; background: var(--track); overflow: hidden; display: flex; align-items: center; justify-content: center; }
         .xbar-fill { position: absolute; left: 0; right: 0; bottom: 0; height: 0; background: var(--brand); }
         .xbar-txt { position: relative; font-size: 12px; font-weight: 800; color: var(--text); }
         .xbar.on .xbar-txt { color: #fff; }
@@ -138,7 +154,7 @@
         .chip .mi { width: 20px; height: 20px; color: var(--brand); }
         .chip.on { background: var(--brand); border-color: var(--brand); color: #fff; }
         .chip.on .mi { color: #fff; }
-        .switch { width: 46px; height: 26px; border-radius: 999px; background: #CFC8BE; position: relative; flex-shrink: 0; transition: background 0.2s; }
+        .switch { width: 46px; height: 26px; border-radius: 999px; background: var(--track); position: relative; flex-shrink: 0; transition: background 0.2s; }
         .switch::after { content: ''; position: absolute; top: 3px; left: 3px; width: 20px; height: 20px; border-radius: 50%; background: #fff; transition: left 0.2s; }
         .switch.on { background: var(--brand); }
         .switch.on::after { left: 23px; }
@@ -151,6 +167,20 @@
         .badge-pr { font-size: 10px; font-weight: 900; letter-spacing: 1px; text-transform: uppercase; color: var(--brand); }
         .link-btn { font-size: 12px; font-weight: 800; color: var(--brand); text-decoration: underline; }
         .sel-sm { font-size: 14px; padding: 8px 10px; border-radius: 12px; margin-top: 6px; }
+        .mtile { position: relative; }
+        .mtile.on::after { content: '✓'; position: absolute; top: 5px; right: 9px; font-size: 13px; font-weight: 900; color: var(--brand); }
+
+        /* ===== PASSO E: identidade "torra", receita por etapas, sommelier e frescor ===== */
+        .brand-title { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-weight: 800; letter-spacing: -0.5px; color: var(--text); line-height: 1; }
+        .brand-title::after { content: ''; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--brand); margin-left: 4px; }
+        h2.text-lg { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-weight: 800; font-size: 22px; letter-spacing: -0.3px; }
+        .box-soft { background: var(--card-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px; }
+        .fx-mlento { color: var(--muted); } .fx-lento { color: #5FA46F; } .fx-eq { color: var(--brand); } .fx-rap { color: #D9534F; }
+        .soma-ok { color: #5FA46F; } .soma-warn { color: #D98B2B; }
+        .fresco { font-size: 11px; font-weight: 800; margin-top: 4px; }
+        .f-ok { color: #5FA46F; } .f-warn { color: #D98B2B; } .f-bad { color: #D9534F; } .f-wait { color: var(--muted); }
+        #toast { position: fixed; bottom: 104px; left: 50%; transform: translateX(-50%); background: var(--card-2); border: 1px solid var(--line-2); color: var(--text); padding: 10px 16px; border-radius: 14px; z-index: 3000; font-weight: 700; font-size: 13px; max-width: 90%; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
+        .step-card input[type=number], .step-card input[type=text] { margin-bottom: 0; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
@@ -159,21 +189,22 @@
     <div id="modal-detalhes" class="hidden" onclick="fecharDetalhes()"><div class="card w-full max-w-sm mx-auto border-amber-500 shadow-[0_0_50px_rgba(245,158,11,0.1)]" onclick="event.stopPropagation()"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-4 text-center">Ficha Técnica</h3><div id="detalhes-content" class="space-y-4 text-left"></div><button class="btn-gold w-full mt-8" onclick="fecharDetalhes()">VOLTAR</button></div></div>
     <div id="admin-user-details" class="hidden"><div class="card w-full max-w-md mx-auto border-amber-600 bg-black h-[90vh] flex flex-col"><div class="flex justify-between items-center mb-4"><h3 id="adm-u-nick" class="text-amber-500 font-black italic uppercase text-xl">Usuário</h3><button onclick="document.getElementById('admin-user-details').classList.add('hidden')" class="text-zinc-500 font-bold">X</button></div><div id="adm-u-content" class="space-y-6 overflow-y-auto flex-1 pr-1 no-scrollbar"></div><button class="btn-gold w-full mt-4" onclick="document.getElementById('admin-user-details').classList.add('hidden')">VOLTAR</button></div></div>
 
-    <div id="modal-feedback" class="hidden"><div class="card w-full max-w-sm mx-auto border-amber-600 text-center"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-2">Como ficou?</h3><p id="f-resumo" class="text-xs text-zinc-500 mb-4 text-center"></p><div class="flex justify-center mb-4"><span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span></div><div class="grid grid-cols-2 gap-4 text-left px-2"><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Doçura</span><span id="val-doce" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-doce" min="0" max="5" value="3" oninput="document.getElementById('val-doce').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Acidez</span><span id="val-acidez" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-acidez" min="0" max="5" value="3" oninput="document.getElementById('val-acidez').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Amargor</span><span id="val-amargor" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-amargor" min="0" max="5" value="3" oninput="document.getElementById('val-amargor').innerText=this.value"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Corpo</span><span id="val-corpo" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-corpo" min="0" max="5" value="3" oninput="document.getElementById('val-corpo').innerText=this.value"></div></div><textarea id="f-obs" rows="2" class="mt-4" placeholder="NOTAS DO DIÁRIO..."></textarea><div id="f-moagem-row" class="hidden flex items-center justify-between gap-3 mt-4 text-left"><span class="text-xs font-bold text-zinc-500">Atualizar moagem padrão desta receita?</span><button type="button" id="f-atualiza-moagem" class="switch" onclick="this.classList.toggle('on')" aria-label="Atualizar moagem padrão"></button></div><button class="btn-gold w-full mt-4" onclick="salvarFeedback()">Salvar no Diário</button><button class="text-zinc-500 text-[10px] mt-4 font-bold uppercase" onclick="fecharFeedback()">Sair sem salvar</button></div></div>
+    <div id="modal-feedback" class="hidden"><div class="card w-full max-w-sm mx-auto border-amber-600 text-center"><h3 class="text-amber-500 font-black italic uppercase text-xl mb-2">Como ficou?</h3><p id="f-resumo" class="text-xs text-zinc-500 mb-4 text-center"></p><div class="flex justify-center mb-4"><span class="star" onclick="setRating(1)">★</span><span class="star" onclick="setRating(2)">★</span><span class="star" onclick="setRating(3)">★</span><span class="star" onclick="setRating(4)">★</span><span class="star" onclick="setRating(5)">★</span></div><div class="grid grid-cols-2 gap-4 text-left px-2"><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Doçura</span><span id="val-doce" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-doce" min="0" max="5" value="3" oninput="document.getElementById('val-doce').innerText=this.value;atualizarSommelier()"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Acidez</span><span id="val-acidez" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-acidez" min="0" max="5" value="3" oninput="document.getElementById('val-acidez').innerText=this.value;atualizarSommelier()"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Amargor</span><span id="val-amargor" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-amargor" min="0" max="5" value="3" oninput="document.getElementById('val-amargor').innerText=this.value;atualizarSommelier()"></div><div><div class="flex justify-between items-center"><span class="label-gold mt-0">Corpo</span><span id="val-corpo" class="text-white text-xs font-bold">3</span></div><input type="range" id="f-corpo" min="0" max="5" value="3" oninput="document.getElementById('val-corpo').innerText=this.value;atualizarSommelier()"></div></div><div id="f-sommelier" class="box-soft text-left mt-4"><div class="label-gold mt-0 ml-0">Sommelier de ajuste</div><div id="f-somm-titulo" class="font-black mt-1"></div><div id="f-somm-txt" class="text-sm mt-1"></div><button type="button" id="f-somm-btn" class="btn-novo w-full mt-3 hidden" onclick="salvarFeedback('repetir')">Salvar e preparar de novo com ajuste</button></div><textarea id="f-obs" rows="2" class="mt-4" placeholder="NOTAS DO DIÁRIO..."></textarea><div id="f-moagem-row" class="hidden flex items-center justify-between gap-3 mt-4 text-left"><span class="text-xs font-bold text-zinc-500">Atualizar moagem padrão desta receita?</span><button type="button" id="f-atualiza-moagem" class="switch" onclick="this.classList.toggle('on')" aria-label="Atualizar moagem padrão"></button></div><button class="btn-gold w-full mt-4" onclick="salvarFeedback()">Salvar no Diário</button><button class="text-zinc-500 text-[10px] mt-4 font-bold uppercase" onclick="fecharFeedback()">Sair sem salvar</button></div></div>
 
     <div id="pix-modal" class="hidden" onclick="closePix()"><div class="card w-full max-w-sm mx-auto text-center" onclick="event.stopPropagation()"><h2 class="text-amber-500 font-black italic uppercase mb-4">Apoie o Coffee Master</h2><div id="pix-qrcode" class="flex justify-center mb-4 bg-white p-2 rounded-lg"></div><button class="btn-gold w-full" onclick="copyPix()">Copiar Chave Pix</button><button class="text-zinc-500 text-[10px] mt-4 uppercase font-bold" onclick="closePix()">Fechar</button></div></div>
 
-    <div id="auth-screen"><div class="card w-full max-w-sm mx-auto text-center"><h1 class="text-3xl font-black text-amber-500 italic uppercase mb-8">COFFEE MASTER</h1><div id="login-form"><input type="email" id="login-email" placeholder="E-MAIL"><input type="password" id="login-pass" placeholder="SENHA"><button class="btn-gold w-full mt-6" onclick="handleLogin()">Entrar</button><p class="text-[10px] mt-6 uppercase text-zinc-500 underline" onclick="toggleAuth(false)">Criar agora</p></div><div id="signup-form" class="hidden text-left"><input type="text" id="sign-nick" placeholder="NICKNAME"><input type="email" id="sign-email" placeholder="E-MAIL"><input type="password" id="sign-pass" placeholder="SENHA"><select id="sign-type"><option value="pessoal">PESSOAL (PRIVADO)</option><option value="comunidade" selected>COMUNIDADE (PÚBLICO)</option></select><button class="btn-gold w-full mt-6" onclick="handleSignup()">Criar Conta</button><p class="text-[10px] mt-6 text-center uppercase text-zinc-500 underline" onclick="toggleAuth(true)">Já tenho conta</p></div></div></div>
+    <div id="auth-screen"><div class="card w-full max-w-sm mx-auto text-center"><h1 class="brand-title text-3xl mb-8">Coffee Master</h1><div id="login-form"><input type="email" id="login-email" placeholder="E-MAIL"><input type="password" id="login-pass" placeholder="SENHA"><button class="btn-gold w-full mt-6" onclick="handleLogin()">Entrar</button><p class="text-[10px] mt-6 uppercase text-zinc-500 underline" onclick="toggleAuth(false)">Criar agora</p></div><div id="signup-form" class="hidden text-left"><input type="text" id="sign-nick" placeholder="NICKNAME"><input type="email" id="sign-email" placeholder="E-MAIL"><input type="password" id="sign-pass" placeholder="SENHA"><select id="sign-type"><option value="pessoal">PESSOAL (PRIVADO)</option><option value="comunidade" selected>COMUNIDADE (PÚBLICO)</option></select><button class="btn-gold w-full mt-6" onclick="handleSignup()">Criar Conta</button><p class="text-[10px] mt-6 text-center uppercase text-zinc-500 underline" onclick="toggleAuth(true)">Já tenho conta</p></div></div></div>
 
     <div id="main-app" class="hidden">
         <div class="flex justify-between items-center mb-5 sticky top-0 bg-black z-50 py-2">
-            <div><h1 class="text-2xl font-black text-amber-500 italic uppercase leading-none">COFFEE MASTER</h1><span id="user-display" class="text-[8px] font-black text-zinc-600 uppercase"></span></div>
+            <div><h1 class="brand-title text-2xl">Coffee Master</h1><span id="user-display" class="text-[8px] font-black text-zinc-600 uppercase"></span></div>
             <div class="flex gap-2">
                 <button onclick="openPix()" class="bg-zinc-900 text-[9px] font-black p-2 rounded-lg border border-amber-600 text-amber-500 italic uppercase">Pagar um café ☕</button>
                 <div class="relative self-center">
                     <button id="btn-avatar" class="avatar-btn" onclick="toggleMenu()" aria-label="Menu">?</button>
                     <div id="menu-user" class="menu-pop hidden">
                         <button onclick="menuEquip()"><svg viewBox="0 0 24 24"><path d="M14.5 6.5a4 4 0 0 0-5 5L4 17l3 3 5.5-5.5a4 4 0 0 0 5-5l-2.5 2.5-2-2z"/></svg>Equipamentos</button>
+                        <button onclick="alternarTema()"><svg viewBox="0 0 24 24"><path d="M20 14.5A8 8 0 0 1 9.5 4 8 8 0 1 0 20 14.5z"/></svg><span id="menu-tema-txt">Tema claro</span></button>
                         <button onclick="auth.signOut()"><svg viewBox="0 0 24 24"><path d="M10 4H5v16h5"/><path d="M15 8l4 4-4 4"/><path d="M9 12h10"/></svg>Sair</button>
                     </div>
                 </div>
@@ -194,10 +225,30 @@
             <div id="form-g" class="form-screen hidden"><div class="max-w-lg mx-auto"><div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="cancelEdit('g')" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="form-g-titulo" class="text-lg font-black">Novo grão</h2></div><div class="card p-4"><span class="label-gold mt-0">Produtor</span><input type="text" id="g-prod"><span class="label-gold">Grão</span><input type="text" id="g-nome"><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Variedade</span><input type="text" id="g-variedade"></div><div class="flex-1"><span class="label-gold">Processo</span><input type="text" id="g-processo"></div></div><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Torrefação</span><input type="text" id="g-torrefacao"></div><div class="flex-1"><span class="label-gold">Altitude</span><input type="text" id="g-altitude"></div></div><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Torra</span><select id="g-torra"><option value=""></option><option>CLARA</option><option>MÉDIA</option><option>ESCURA</option></select></div><div class="flex-1"><span class="label-gold">DATA TORRA</span><input type="date" id="g-data"></div></div><span class="label-gold">Notas Sensoriais</span><textarea id="g-notas" rows="2"></textarea><span class="label-gold">Foto</span><input type="file" id="g-photo-input" accept="image/*" class="text-[10px] bg-transparent border-dashed border-zinc-700 p-2"><div id="g-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveG()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('g')">X</button></div><button class="btn-gold w-full mt-4" onclick="saveG()" id="g-btn-main">Salvar Grão</button></div></div></div>
         </div>
 
-        <div id="tab-receitas" class="hidden"><div class="flex gap-2 items-center mb-3"><input type="text" id="search-r" oninput="filtrarR()" class="bg-black border border-zinc-800 p-3 rounded-xl flex-1 min-w-0 text-xs uppercase" style="margin-bottom:0" placeholder="BUSCAR POR NOME, MÉTODO OU AUTOR..."><button class="btn-novo" onclick="abrirForm('r')">+ Nova</button></div><div id="chips-metodo" class="chips-row" onclick="chipClick(event)"></div><div id="list-r" class="space-y-3"></div><div id="form-r" class="form-screen hidden"><div class="max-w-lg mx-auto"><div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="cancelEdit('r')" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="form-r-titulo" class="text-lg font-black">Nova receita</h2></div><div class="card p-4"><span class="label-gold mt-0">Nome</span><input type="text" id="r-nome"><div class="flex items-center justify-between"><span class="label-gold">Método</span><button type="button" class="link-btn" onclick="abrirEquip()">Gerenciar</button></div><input type="hidden" id="r-metodo" value=""><div id="r-metodo-grid" onclick="metodoClick(event)"></div><div id="r-metodo-novo-box" class="hidden atk-row mt-3"><input type="text" id="r-metodo-novo" placeholder="NOME DO NOVO MÉTODO"><div id="r-novo-cats" class="flex flex-wrap gap-2 mt-2"></div><div class="flex gap-2 mt-3"><button type="button" class="btn-novo flex-1" onclick="adicionarMetodo('form')">Adicionar</button><button type="button" class="btn-mini" style="width:44px;height:44px" onclick="ocultarNovoMetodo()">✕</button></div></div><div class="grid grid-cols-3 gap-2 mt-2"><div><span class="label-gold mt-0">Ratio</span><input type="number" id="r-ratio" step="0.1" oninput="calcTotalR()"></div><div><span class="label-gold mt-0">Pó(g)</span><input type="number" id="r-po" oninput="calcTotalR()"></div><div><span class="label-gold mt-0">Total</span><input type="number" id="r-total" readonly class="text-amber-500 font-bold bg-transparent border-none"></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold mt-0">Clicks</span><input type="number" id="r-clicks"></div><div><span class="label-gold mt-0">Temp</span><input type="number" id="r-temp"></div></div><div class="grid grid-cols-2 gap-2 mt-2 border-t border-zinc-800 pt-2"><div><span class="label-gold mt-0">Bloom(ml)</span><input type="number" id="r-bloom-ml"></div><div><span class="label-gold mt-0">Tempo(s)</span><input type="number" id="r-bloom-sec"></div></div><div id="ataques-container" class="mt-2"></div><button onclick="addAtackField()" class="text-[9px] font-black text-amber-500 mt-2 p-3 border border-dashed border-amber-900 w-full rounded-lg uppercase">+ ADD ATAQUE</button><div id="r-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveR()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('r')">X</button></div><button class="btn-gold w-full mt-4" onclick="saveR()" id="r-btn-main">Salvar Receita</button></div></div></div></div>
+        <div id="tab-receitas" class="hidden"><div class="flex gap-2 items-center mb-3"><input type="text" id="search-r" oninput="filtrarR()" class="bg-black border border-zinc-800 p-3 rounded-xl flex-1 min-w-0 text-xs uppercase" style="margin-bottom:0" placeholder="BUSCAR POR NOME, MÉTODO OU AUTOR..."><button class="btn-novo" onclick="abrirForm('r')">+ Nova</button></div><div id="chips-metodo" class="chips-row" onclick="chipClick(event)"></div><div id="list-r" class="space-y-3"></div><div id="form-r" class="form-screen hidden"><div class="max-w-lg mx-auto"><div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="cancelEdit('r')" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="form-r-titulo" class="text-lg font-black">Nova receita</h2></div><div class="card p-4"><span class="label-gold mt-0">Nome</span><input type="text" id="r-nome"><div class="flex items-center justify-between"><span class="label-gold">Método</span><button type="button" class="link-btn" onclick="abrirEquip()">Gerenciar</button></div><input type="hidden" id="r-metodo" value=""><div id="r-metodo-grid" onclick="metodoClick(event)"></div><div id="r-metodo-novo-box" class="hidden atk-row mt-3"><input type="text" id="r-metodo-novo" placeholder="NOME DO NOVO MÉTODO"><div id="r-novo-cats" class="flex flex-wrap gap-2 mt-2"></div><div class="flex gap-2 mt-3"><button type="button" class="btn-novo flex-1" onclick="adicionarMetodo('form')">Adicionar</button><button type="button" class="btn-mini" style="width:44px;height:44px" onclick="ocultarNovoMetodo()">✕</button></div></div><div class="prep-duo mt-3" style="border:1px solid var(--line);border-radius:18px">
+                <div class="prep-cell"><span class="label-gold mt-0 ml-0">Dose</span><div class="stepper"><button type="button" onclick="ajustarR('r-po',-1)">−</button><input type="text" inputmode="decimal" id="r-po" oninput="atualizarForm()"><button type="button" onclick="ajustarR('r-po',1)">+</button></div><div class="prep-un">g</div></div>
+                <div class="prep-cell prep-sep"><span class="label-gold mt-0 ml-0">Água</span><div class="stepper"><button type="button" onclick="ajustarR('r-total',-5)">−</button><input type="text" inputmode="decimal" id="r-total" oninput="atualizarForm()"><button type="button" onclick="ajustarR('r-total',5)">+</button></div><div class="prep-un">ml</div></div>
+            </div>
+            <div class="flex items-center justify-between mt-3 px-1"><span class="label-gold mt-0 ml-0">Proporção</span><div class="flex items-center"><span class="text-2xl font-black">1:</span><input type="text" id="r-ratio" readonly class="ratio-ro"></div></div>
+            <div class="grid grid-cols-2 gap-2 mt-3">
+                <div class="box-soft"><span class="label-gold mt-0 ml-0">Temperatura (°C)</span><div class="stepper sm"><button type="button" onclick="ajustarR('r-temp',-1)">−</button><input type="text" inputmode="decimal" id="r-temp"><button type="button" onclick="ajustarR('r-temp',1)">+</button></div></div>
+                <div class="box-soft"><span class="label-gold mt-0 ml-0">Moagem de referência</span><select id="r-moedor" class="sel-sm"></select><div class="stepper sm"><button type="button" onclick="ajustarR('r-clicks',-1)">−</button><input type="text" inputmode="decimal" id="r-clicks"><button type="button" onclick="ajustarR('r-clicks',1)">+</button></div><div class="prep-un">cliques</div></div>
+            </div>
+            <div class="flex items-center justify-between mt-4"><span class="label-gold mt-0 ml-0">Despejos</span><button type="button" class="link-btn" onclick="distribuirIgual()">Distribuir água igual</button></div>
+            <div id="r-npour" class="chips-row mt-2" onclick="npourClick(event)"></div>
+            <div class="atk-row step-card" id="r-bloom-card">
+                <div class="flex justify-between items-center"><span class="label-gold mt-0 ml-0 st-title">Hidratação (bloom)</span><span class="st-time text-lg font-black">0:00</span></div>
+                <div class="grid grid-cols-2 gap-2 mt-2"><div><span class="label-gold mt-0 ml-0">Água (g) <span class="st-pct text-zinc-500 font-bold"></span></span><input type="number" inputmode="decimal" id="r-bloom-ml" class="st-ml" oninput="atualizarForm()"></div><div><span class="label-gold mt-0 ml-0">Duração (s)</span><input type="number" inputmode="decimal" id="r-bloom-sec" class="st-sec" oninput="atualizarForm()"></div></div>
+                <div class="grid grid-cols-2 gap-2 mt-2"><div><span class="label-gold mt-0 ml-0">Tempo de despejo (s)</span><input type="number" inputmode="decimal" id="r-bloom-pour" class="st-pour" oninput="atualizarForm()"></div><div><span class="label-gold mt-0 ml-0">Fluxo</span><div class="st-flow font-black text-lg">—</div></div></div>
+                <div class="st-info text-xs text-zinc-500 mt-1"></div>
+                <input type="text" id="r-bloom-obs" class="st-obs mt-2" placeholder="Observação (ex: despeje no centro, em espiral)">
+            </div>
+            <div id="ataques-container"></div>
+            <div id="r-soma" class="text-sm font-bold text-center mt-1"></div><div id="r-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveR()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('r')">X</button></div><button class="btn-gold w-full mt-4" onclick="saveR()" id="r-btn-main">Salvar Receita</button></div></div></div></div>
 
         <div id="tab-preparo" class="hidden">
-            <div class="card p-4"><span class="label-gold mt-0">Café</span><select id="p-g" onchange="upCalc()"></select><span class="label-gold">Receita</span><select id="p-r" onchange="handleRecipeSelect()"></select></div>
+            <div class="card p-4"><span class="label-gold mt-0">Café</span><select id="p-g" onchange="graoMudou()"></select><div id="p-fresco"></div><span class="label-gold">Receita</span><select id="p-r" onchange="handleRecipeSelect()"></select></div>
+            <div id="p-dica" class="card hidden" style="border-color:var(--brand)"><div class="label-gold mt-0 ml-0">Sua melhor com este café</div><div id="p-dica-txt" class="text-sm"></div><button type="button" class="btn-novo w-full mt-3" onclick="usarMelhor()">Usar esta receita</button></div>
             <div class="card prep-duo">
                 <div class="prep-cell"><div class="flex items-center justify-between"><span class="label-gold mt-0 ml-0">Dose</span><button id="p-reset" class="btn-mini hidden" onclick="resetarDoseAgua()" aria-label="Voltar ao original"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button></div><div class="stepper"><button onclick="ajustar('po',-1)">−</button><input type="text" inputmode="decimal" id="p-po-val" value="--" onfocus="handleFocus(this)" oninput="upCalc()"><button onclick="ajustar('po',1)">+</button></div><div class="prep-un">g</div></div>
                 <div class="prep-cell prep-sep"><span class="label-gold mt-0 ml-0">Água</span><div class="stepper"><button onclick="ajustar('agua',-5)">−</button><input type="text" inputmode="decimal" id="p-agua-val" value="--" onfocus="handleFocus(this)" oninput="upCalc()"><button onclick="ajustar('agua',5)">+</button></div><div class="prep-un">ml</div></div>
@@ -214,18 +265,18 @@
             <div class="max-w-lg mx-auto">
                 <div class="flex items-center gap-3 mb-2">
                     <button class="btn-voltar" onclick="fecharExec()" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button>
-                    <div id="x-ico" class="metodo-ico"></div><div class="min-w-0 flex-1"><div id="x-titulo" class="font-black text-base truncate"></div><div id="x-sub" class="text-xs text-zinc-500 truncate"></div></div>
+                    <div id="x-ico" class="metodo-ico"></div><div class="min-w-0 flex-1"><div id="x-titulo" class="font-black text-base truncate"></div><div id="x-sub" class="text-xs text-zinc-500 truncate"></div></div><button type="button" id="x-som" class="btn-mini" style="width:40px;height:40px;font-size:18px" onclick="alternarSom()" aria-label="Som">🔊</button>
                 </div>
                 <svg id="x-svg" viewBox="0 0 360 340" class="w-full" style="display:block;max-width:360px;margin:0 auto">
                     <defs><clipPath id="x-clip"><circle cx="180" cy="190" r="125"/></clipPath></defs>
-                    <circle cx="180" cy="190" r="140" fill="none" stroke="#C7BFB2" stroke-width="14"/>
+                    <circle cx="180" cy="190" r="140" fill="none" style="stroke:var(--ring)" stroke-width="14"/>
                     <circle cx="180" cy="190" r="125" style="fill:var(--bg)"/>
                     <g clip-path="url(#x-clip)"><g id="x-water" transform="translate(0 315)">
-                        <g class="wave-anim2"><path d="M-70 2 q17.5 6 35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 L455 300 L-70 300 Z" fill="#A9C9DA" opacity=".7"/></g>
-                        <g class="wave-anim"><path d="M-70 0 q17.5 -7 35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 L455 300 L-70 300 Z" fill="#8DB6CC"/></g>
+                        <g class="wave-anim2"><path d="M-70 2 q17.5 6 35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 L455 300 L-70 300 Z" style="fill:var(--water-2)" opacity=".7"/></g>
+                        <g class="wave-anim"><path d="M-70 0 q17.5 -7 35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 t35 0 L455 300 L-70 300 Z" style="fill:var(--water)"/></g>
                     </g></g>
-                    <circle id="x-ring" cx="180" cy="190" r="140" fill="none" stroke="#7F3F1F" stroke-width="14" stroke-linecap="round" stroke-dasharray="879.65 879.65" stroke-dashoffset="879.65" transform="rotate(-90 180 190)"/>
-                    <line id="x-stream" x1="232" y1="41" x2="232" y2="200" stroke="#8DB6CC" stroke-width="3.5" stroke-linecap="round" style="display:none"/>
+                    <circle id="x-ring" cx="180" cy="190" r="140" fill="none" style="stroke:var(--brand)" stroke-width="14" stroke-linecap="round" stroke-dasharray="879.65 879.65" stroke-dashoffset="879.65" transform="rotate(-90 180 190)"/>
+                    <line id="x-stream" x1="232" y1="41" x2="232" y2="200" stroke-width="3.5" stroke-linecap="round" style="stroke:var(--water);display:none"/>
                     <line id="x-stream2" x1="232" y1="41" x2="232" y2="200" stroke="#fff" stroke-opacity=".6" stroke-width="1.5" stroke-dasharray="5 9" class="stream-dash" style="display:none"/>
                     <ellipse id="x-splash" class="splash" cx="232" cy="200" rx="11" ry="3" fill="#fff" fill-opacity=".55" style="display:none"/>
                     <text id="x-time" x="180" y="208" text-anchor="middle" font-size="60" font-weight="900" style="fill:var(--text);font-variant-numeric:tabular-nums">00:00</text>
@@ -233,12 +284,12 @@
                     <text id="x-flow" x="358" y="312" text-anchor="end" font-size="24" font-weight="800" style="fill:var(--brand)"></text>
                     <text id="x-flow-lab" x="358" y="330" text-anchor="end" font-size="11" font-weight="700" letter-spacing="1.5" style="fill:var(--muted)">ESTIMADO</text>
                     <g transform="translate(232 8)"><g id="x-kettle" style="transform-origin:80px 58px;transition:transform .35s ease">
-                <path d="M52 50 C38 50 36 30 28 22 C22 16 10 14 4 22" fill="none" stroke="#2F3133" stroke-width="5" stroke-linecap="round"/>
-                <path d="M108 22 Q124 22 124 36 Q124 50 108 52" fill="none" stroke="#2F3133" stroke-width="5" stroke-linecap="round"/>
-                <path d="M60 14 H100 Q108 14 108 22 V50 Q108 58 100 58 H60 Q52 58 52 50 V22 Q52 14 60 14 Z" fill="#2F3133"/>
-                <rect x="52" y="40" width="56" height="5" fill="#7F3F1F"/>
-                <path d="M58 14 Q58 6 80 6 Q102 6 102 14 Z" fill="#3E4246"/>
-                <circle cx="80" cy="4" r="3.2" fill="#7F3F1F"/>
+                <path d="M52 50 C38 50 36 30 28 22 C22 16 10 14 4 22" fill="none" style="stroke:var(--kettle)" stroke-width="5" stroke-linecap="round"/>
+                <path d="M108 22 Q124 22 124 36 Q124 50 108 52" fill="none" style="stroke:var(--kettle)" stroke-width="5" stroke-linecap="round"/>
+                <path d="M60 14 H100 Q108 14 108 22 V50 Q108 58 100 58 H60 Q52 58 52 50 V22 Q52 14 60 14 Z" style="fill:var(--kettle)"/>
+                <rect x="52" y="40" width="56" height="5" style="fill:var(--brand)"/>
+                <path d="M58 14 Q58 6 80 6 Q102 6 102 14 Z" style="fill:var(--kettle-2)"/>
+                <circle cx="80" cy="4" r="3.2" style="fill:var(--brand)"/>
                 <rect x="58" y="20" width="4" height="17" rx="2" fill="#fff" opacity=".14"/>
             </g></g>
                 </svg>
@@ -247,6 +298,7 @@
                         <div class="card" style="margin-bottom:0;text-align:center"><div class="label-gold mt-0" style="margin-left:0">Despeje até</div><div class="x-big"><span id="x-alvo">0</span><small>g</small></div></div>
                         <div class="card" style="margin-bottom:0;text-align:center"><div id="x-prox-lab" class="label-gold mt-0" style="margin-left:0">Próximo</div><div class="x-big" style="color:var(--muted)"><span id="x-prox">—</span><small id="x-prox-un">g</small></div><div id="x-prox-sub" class="text-xs text-zinc-500"></div></div>
                     </div>
+                    <div id="x-obs-card" class="card hidden" style="text-align:center"><div class="label-gold mt-0" style="margin-left:0">Instrução</div><div id="x-obs" class="text-base" style="font-style:italic"></div></div>
                     <div class="card"><div class="label-gold mt-0">Todos os passos</div><div id="x-bars" class="flex items-end gap-2" style="height:170px"></div></div>
                     <div class="flex gap-3">
                         <button class="x-btn x-btn-sec" onclick="reiniciarExec()" aria-label="Reiniciar"><svg viewBox="0 0 24 24"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg></button>
@@ -273,6 +325,8 @@
                 <div class="card">
                     <div class="flex justify-between items-center mb-3"><span class="label-gold mt-0 ml-0">Moedores</span><span id="eq-cnt-moedor" class="text-xs text-zinc-500 font-bold"></span></div>
                     <div id="eq-lista-moedor"></div>
+                    <button type="button" id="eq-btn-catalogo" class="link-btn" onclick="toggleCatalogo()">+ Adicionar da lista de moedores populares</button>
+                    <div id="eq-catalogo-box" class="hidden mt-2"><input type="text" id="eq-busca-moedor" placeholder="BUSCAR MODELO OU MARCA..." oninput="renderCatalogoMoedores()" style="margin-bottom:0"><div id="eq-catalogo" onclick="catalogoClick(event)"></div></div>
                     <div class="flex gap-2 mt-3 items-center"><input type="text" id="eq-nome-moedor" placeholder="Ex: Timemore C3 ESP" style="margin-bottom:0"><button id="eq-btn-moedor" class="btn-novo" onclick="salvarMoedor()">Adicionar</button><button id="eq-cancel-moedor" class="btn-mini hidden" style="width:44px;height:44px;flex-shrink:0" onclick="cancelarEdicaoMoedor()">✕</button></div>
                 </div>
                 <div class="card">
@@ -282,6 +336,7 @@
                 </div>
             </div>
         </div>
+        <div id="toast" class="hidden"></div>
         <div id="tab-admin" class="hidden text-center"><h2 class="text-amber-500 font-black italic uppercase text-lg mb-4">Painel Admin</h2><div class="grid grid-cols-2 gap-2 mb-6"><div class="card p-4"><span class="label-gold mt-0">Usuários</span><div id="admin-user-count" class="text-3xl font-black italic">0</div></div><div class="card p-4"><span class="label-gold mt-0">Receitas</span><div id="admin-total-receitas" class="text-3xl font-black italic">0</div></div></div><div id="admin-user-list" class="space-y-2"></div></div>
     </div>
 
@@ -304,7 +359,7 @@
                     document.getElementById('user-display').innerText = `@${userProfile.nick} (${userProfile.type})`;
                     document.getElementById('btn-avatar').innerText = (userProfile.nick || '?').charAt(0).toUpperCase();
                     if(user.email === ADMIN_EMAIL) document.getElementById('btn-admin').classList.remove('hidden');
-                    loadG(); loadR(); loadEq(); showTab('cafes');
+                    loadG(); loadR(); loadEq(); carregarLogs(); showTab('cafes');
                 } catch(e) { console.error(e); }
             } else { document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); }
         });
@@ -355,7 +410,7 @@
             } catch(e) { console.error(e); }
         }
 
-        function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div></div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
+        function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div>${badgeFresco(i)}</div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
         function renderR(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; h += `<div class="card p-3 flex items-center h-[85px] gap-3"><div class="metodo-ico">${svgMetodo(i.metodo, catDoMetodo(i.metodo))}</div><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesR('${i.id}')"><div class="text-lg font-black italic uppercase text-amber-500 truncate">${i.nome}</div><div class="text-[8px] text-zinc-600 font-black uppercase mt-1">por @${i.owner_nick || 'Mestre'} | ${i.metodo || '--'}</div></div><div class="flex gap-2"> ${isOwner ? `<button onclick="editR('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('receitas','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''} <button onclick="showTab('preparo'); handleRecipeSelect('${i.id}')" class="text-xs font-black p-3 bg-amber-600 text-black rounded-lg italic uppercase">Preparar</button> </div></div>`; }); document.getElementById('list-r').innerHTML = h; }
         async function loadPrep() { let gh = '<option value="0">SELECIONE O GRÃO</option>', rh = '<option value="0">SELECIONE A RECEITA</option>'; localData.g.forEach(i => gh += `<option value="${i.id}">${i.nome}</option>`); localData.r.forEach(i => rh += `<option value="${i.id}">${i.nome}</option>`); document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh; document.getElementById('p-moedor').innerHTML = optsMoedores(''); }
 
@@ -435,32 +490,13 @@
         }
 
         async function processImage(file) { return new Promise((res) => { const r = new FileReader(); r.onload = (e) => { const img = new Image(); img.onload = () => { const cv = document.createElement('canvas'); cv.width = 600; cv.height = 600; cv.getContext('2d').drawImage(img, (img.width-Math.min(img.width,img.height))/2, (img.height-Math.min(img.width,img.height))/2, Math.min(img.width,img.height), Math.min(img.width,img.height), 0, 0, 600, 600); res(cv.toDataURL('image/jpeg', 0.8)); }; img.src = e.target.result; }; r.readAsDataURL(file); }); }
-        function addAtackField(ml='', sec='', obs='') { document.getElementById('ataques-container').insertAdjacentHTML('beforeend', `<div class="atk-row"><div class="flex gap-2"><div><span class="label-gold mt-0">ML</span><input type="number" class="atk-ml" value="${ml}"></div><div><span class="label-gold mt-0">SEG</span><input type="number" class="atk-sec" value="${sec}"></div><button onclick="this.parentElement.parentElement.remove()" class="text-zinc-600 font-black pt-5 px-2">X</button></div><input type="text" class="atk-obs mt-1 text-xs" placeholder="Obs..." value="${obs}"></div>`); }
         async function saveG() { const file = document.getElementById('g-photo-input').files[0]; const orig = editIds.g ? localData.g.find(x => x.id === editIds.g) : null; const d = { prod: document.getElementById('g-prod').value.toUpperCase(), nome: document.getElementById('g-nome').value.toUpperCase(), variedade: document.getElementById('g-variedade').value.toUpperCase(), processo: document.getElementById('g-processo').value.toUpperCase(), torrefacao: document.getElementById('g-torrefacao').value.toUpperCase(), torra: document.getElementById('g-torra').value, altitude: document.getElementById('g-altitude').value, data: document.getElementById('g-data').value, notas: document.getElementById('g-notas').value.toUpperCase(), owner_uid: orig ? orig.owner_uid : currentUser.uid, owner_nick: orig ? orig.owner_nick : userProfile.nick, visibilidade: orig ? orig.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp() }; if(file) d.photo = await processImage(file); if(editIds.g) await db.collection('cafes').doc(editIds.g).update(d); else await db.collection('cafes').add(d); cancelEdit('g'); loadG(); }
-        async function saveR() { 
-            try {
-                const atks = []; document.querySelectorAll('.atk-row').forEach(row => { atks.push({ ml: parseFloat(row.querySelector('.atk-ml').value)||0, sec: parseFloat(row.querySelector('.atk-sec').value)||0, obs: row.querySelector('.atk-obs').value.toUpperCase() }); }); 
-                const original = editIds.r ? localData.r.find(x => x.id === editIds.r) : null; 
-                const d = { 
-                    nome: document.getElementById('r-nome').value.toUpperCase(), metodo: document.getElementById('r-metodo').value, 
-                    origRatio: parseFloat(document.getElementById('r-ratio').value)||0, origPo: parseFloat(document.getElementById('r-po').value)||0, 
-                    origTotal: parseInt(document.getElementById('r-total').value)||0, origClicks: document.getElementById('r-clicks').value, 
-                    origTemp: document.getElementById('r-temp').value, bloomMl: parseFloat(document.getElementById('r-bloom-ml').value)||0, 
-                    bloomSec: parseFloat(document.getElementById('r-bloom-sec').value)||0, ataques: atks, 
-                    owner_uid: original ? original.owner_uid : currentUser.uid, owner_nick: original ? original.owner_nick : userProfile.nick, 
-                    visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp() 
-                }; 
-                if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); else await db.collection('receitas').add(d); cancelEdit('r'); loadR(); 
-            } catch(e) { alert("Erro: " + e.message); }
-        }
 
         function editG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; editIds.g = id; document.getElementById('g-prod').value = i.prod; document.getElementById('g-nome').value = i.nome; document.getElementById('g-variedade').value = i.variedade; document.getElementById('g-processo').value = i.processo || ''; document.getElementById('g-torrefacao').value = i.torrefacao || ''; document.getElementById('g-torra').value = i.torra || ''; document.getElementById('g-altitude').value = i.altitude || ''; document.getElementById('g-data').value = i.data || ''; document.getElementById('g-notas').value = i.notas || ''; document.getElementById('g-edit-actions').classList.remove('hidden'); document.getElementById('g-btn-main').classList.add('hidden'); abrirForm('g', true); }
-        function editR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; editIds.r = id; document.getElementById('r-nome').value = i.nome; setMetodoForm(i.metodo || ''); document.getElementById('r-ratio').value = i.origRatio; document.getElementById('r-po').value = i.origPo; document.getElementById('r-total').value = i.origTotal; document.getElementById('r-clicks').value = i.origClicks || ''; document.getElementById('r-temp').value = i.origTemp || ''; document.getElementById('r-bloom-ml').value = i.bloomMl || ''; document.getElementById('r-bloom-sec').value = i.bloomSec || ''; document.getElementById('ataques-container').innerHTML = ''; (i.ataques || []).forEach(a => addAtackField(a.ml, a.sec, a.obs)); document.getElementById('r-edit-actions').classList.remove('hidden'); document.getElementById('r-btn-main').classList.add('hidden'); abrirForm('r', true); }
         function cancelEdit(t) { editIds[t] = null; fecharForm(t); document.getElementById(t+'-edit-actions').classList.add('hidden'); document.getElementById(t+'-btn-main').classList.remove('hidden'); document.querySelectorAll('#form-'+t+' input, #form-'+t+' select, #form-'+t+' textarea').forEach(el => el.value = ""); document.getElementById('ataques-container').innerHTML = ''; }
-        function abrirForm(t, editando) { const f = document.getElementById('form-' + t); f.classList.remove('hidden'); f.scrollTop = 0; document.getElementById('form-' + t + '-titulo').innerText = (t === 'g' ? (editando ? 'Editar grão' : 'Novo grão') : (editando ? 'Editar receita' : 'Nova receita')); if(t === 'r' && !editando) setMetodoForm(''); }
+        function abrirForm(t, editando) { const f = document.getElementById('form-' + t); f.classList.remove('hidden'); f.scrollTop = 0; document.getElementById('form-' + t + '-titulo').innerText = (t === 'g' ? (editando ? 'Editar grão' : 'Novo grão') : (editando ? 'Editar receita' : 'Nova receita')); if(t === 'r' && !editando) { setMetodoForm(''); novaReceitaPadrao(); } }
         function fecharForm(t) { document.getElementById('form-' + t).classList.add('hidden'); }
         async function del(c, id, n) { if(confirm(`Excluir ${n}?`)) { await db.collection(c).doc(id).delete(); loadG(); loadR(); loadDiario(); if(!document.getElementById('admin-user-details').classList.contains('hidden')) { loadAdmin(); document.getElementById('admin-user-details').classList.add('hidden'); } } }
-        function calcTotalR() { const r = parseFloat(document.getElementById('r-ratio').value)||0, p = parseFloat(document.getElementById('r-po').value)||0; document.getElementById('r-total').value = Math.round(r*p); }
         function handleFocus(el) { if(el.value === "--") el.value = ""; el.select(); }
         function fecharDetalhes() { document.getElementById('modal-detalhes').classList.add('hidden'); }
         /* ===== PASSO C: configuração e execução do preparo ===== */
@@ -499,6 +535,8 @@
                 $x('p-agua-val').value = aguaOrig(i);
                 $x('p-clicks-val').value = i.origClicks || "--";
                 $x('p-temp-val').value = i.origTemp || "--";
+                const mm = i.origMoedor ? moedores().find(m => normN(m.nome) === normN(i.origMoedor)) : null;
+                if(mm && $x('p-moedor')) $x('p-moedor').value = mm.id;
                 upCalc();
             }
         }
@@ -512,8 +550,8 @@
             $x('p-reset').classList.toggle('hidden', p === i.origPo && total === aguaOrig(i));
             const ratioF = i.origTotal > 0 ? total / i.origTotal : 1;
             activeStepsData = { steps: [], times: [] }; let sum = 0;
-            if(i.bloomMl > 0) { let bN = Math.round(i.bloomMl * ratioF); sum += bN; activeStepsData.steps.push({ title: 'BLOOM', ml: bN, sum, sec: i.bloomSec }); activeStepsData.times.push(i.bloomSec); }
-            (i.ataques || []).forEach((a, idx) => { let aN = Math.round(a.ml * ratioF); sum += aN; activeStepsData.steps.push({ title: `ATK ${idx+1}`, ml: aN, sum, sec: a.sec }); activeStepsData.times.push((activeStepsData.times.length > 0 ? activeStepsData.times[activeStepsData.times.length-1] : 0) + a.sec); });
+            if(i.bloomMl > 0) { let bN = Math.round(i.bloomMl * ratioF); sum += bN; activeStepsData.steps.push({ title: 'BLOOM', ml: bN, sum, sec: i.bloomSec, pour: Math.round((i.bloomPour || 0) * ratioF), obs: i.bloomObs || '' }); activeStepsData.times.push(i.bloomSec); }
+            (i.ataques || []).forEach((a, idx) => { let aN = Math.round(a.ml * ratioF); sum += aN; activeStepsData.steps.push({ title: `ATK ${idx+1}`, ml: aN, sum, sec: a.sec, pour: Math.round((a.pour || 0) * ratioF), obs: a.obs || '' }); activeStepsData.times.push((activeStepsData.times.length > 0 ? activeStepsData.times[activeStepsData.times.length-1] : 0) + a.sec); });
             renderStepsList();
         }
         function renderStepsList() {
@@ -523,10 +561,14 @@
             let h = '';
             st.forEach((s, i) => {
                 const nome = s.title === 'BLOOM' ? 'Bloom' : s.title.replace('ATK', 'Ataque');
-                h += '<div class="atk-row flex items-center gap-3"><div class="step-num">' + (i + 1) + '</div><div class="flex-1 grid grid-cols-3 gap-1 text-center">' +
+                const ini = i === 0 ? 0 : tm[i - 1], dur = Math.max(0, tm[i] - ini);
+                const extra = (s.pour > 0 && dur >= s.pour) ? 'Despeja ' + s.pour + 's · espera ' + (dur - s.pour) + 's' : '';
+                h += '<div class="atk-row"><div class="flex items-center gap-3"><div class="step-num">' + (i + 1) + '</div><div class="flex-1 grid grid-cols-3 gap-1 text-center">' +
                     '<div><span class="block text-[9px] text-zinc-500 font-black uppercase">' + nome + '</span><span class="font-black">+' + s.ml + ' g</span></div>' +
                     '<div><span class="block text-[9px] text-zinc-500 font-black uppercase">Acumulado</span><span class="font-black">' + s.sum + ' g</span></div>' +
-                    '<div><span class="block text-[9px] text-zinc-500 font-black uppercase">Aos</span><span class="font-black">' + fmt(tm[i], true) + '</span></div></div></div>';
+                    '<div><span class="block text-[9px] text-zinc-500 font-black uppercase">Aos</span><span class="font-black">' + fmt(tm[i], true) + '</span></div></div></div>' +
+                    (extra ? '<div class="text-xs text-zinc-500 mt-2">' + extra + '</div>' : '') +
+                    (s.obs ? '<div class="text-sm mt-2" style="font-style:italic">“' + escH(s.obs) + '”</div>' : '') + '</div>';
             });
             $x('p-steps').innerHTML = h;
         }
@@ -535,12 +577,12 @@
             ['p-po-val', 'p-agua-val', 'p-ratio-val', 'p-clicks-val', 'p-temp-val'].forEach(id => $x(id).value = "--");
             activeStepsData = { steps: [], times: [] };
             $x('p-lock').innerHTML = ICO_LOCK; $x('p-reset').classList.add('hidden');
-            renderStepsList();
+            renderStepsList(); atualizarFrescoPreparo(); atualizarDica();
         }
 
         /* ---- som, vibração e tela ligada ---- */
         function prepararAudio() { try { const AC = window.AudioContext || window.webkitAudioContext; if(!AC) return; if(!audioCtx) audioCtx = new AC(); if(audioCtx.state === 'suspended') audioCtx.resume(); } catch(e) {} }
-        function bip(freq, dur, vol) { try { if(!audioCtx) return; const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime; o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur); o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + dur + 0.02); } catch(e) {} }
+        function bip(freq, dur, vol) { try { if(modoSom === 'mudo' || !audioCtx) return; const o = audioCtx.createOscillator(), g = audioCtx.createGain(), t = audioCtx.currentTime; o.type = 'sine'; o.frequency.value = freq; g.gain.setValueAtTime(vol, t); g.gain.exponentialRampToValueAtTime(0.001, t + dur); o.connect(g); g.connect(audioCtx.destination); o.start(t); o.stop(t + dur + 0.02); } catch(e) {} }
         function vib(p) { try { if(navigator.vibrate) navigator.vibrate(p); } catch(e) {} }
         async function pedirTela() { try { if('wakeLock' in navigator && !wakeLock) { wakeLock = await navigator.wakeLock.request('screen'); wakeLock.addEventListener('release', () => { wakeLock = null; }); } } catch(e) {} }
         function soltarTela() { try { if(wakeLock) wakeLock.release(); } catch(e) {} wakeLock = null; }
@@ -552,8 +594,8 @@
             activeStepsData.steps.forEach((s, i) => {
                 const end = activeStepsData.times[i];
                 const dur = Math.max(0, end - start);
-                const pour = Math.min(dur, s.ml / 4);
-                plan.push({ title: s.title, ml: s.ml, cumStart: s.sum - s.ml, cumEnd: s.sum, start, end, dur, pour, flow: pour > 0 ? s.ml / pour : 0 });
+                const pour = Math.min(dur, s.pour > 0 ? s.pour : s.ml / 4);
+                plan.push({ title: s.title, obs: s.obs || '', pourReal: s.pour > 0, ml: s.ml, cumStart: s.sum - s.ml, cumEnd: s.sum, start, end, dur, pour, flow: pour > 0 ? s.ml / pour : 0 });
                 start = end;
             });
             return plan;
@@ -581,7 +623,7 @@
             prepararAudio();
             ex = { plan, total, totalMl: plan[plan.length - 1].cumEnd, ms: 0, base: 0, t0: 0, running: false, phase: 'run', lastStep: -1, cdKey: '', drainT0: 0, drainSec: 0, drainAdd: false, drainFrozen: 0 };
             const gSel = $x('p-g');
-            $x('x-titulo').textContent = r.nome; $x('x-ico').innerHTML = r.metodo ? svgMetodo(r.metodo, catDoMetodo(r.metodo)) : '';
+            $x('x-titulo').textContent = r.nome; $x('x-ico').innerHTML = r.metodo ? svgMetodo(r.metodo, catDoMetodo(r.metodo)) : ''; $x('x-som').textContent = iconeSom();
             const mSelX = $x('p-moedor'); $x('x-sub').textContent = (gSel.value !== '0' ? gSel.options[gSel.selectedIndex].text : 'Sem café selecionado') + ((mSelX && mSelX.value) ? ' · ' + mSelX.options[mSelX.selectedIndex].text : '');
             construirBarras();
             $x('x-run-panel').classList.remove('hidden');
@@ -626,7 +668,7 @@
         function entrarDrenagem() {
             ex.phase = 'drain'; ex.drainT0 = Date.now(); ex.drainSec = 0; ex.drainAdd = false; ex.drainFrozen = 0; ex.running = true;
             if(!timer) timer = setInterval(tickExec, 100);
-            bip(880, 0.15, 0.3); setTimeout(() => bip(1175, 0.3, 0.3), 200); vib([200, 100, 200]);
+            bip(880, 0.15, 0.3); setTimeout(() => bip(1175, 0.3, 0.3), 200); vib([200, 100, 200]); falar('Preparo concluído. Aguarde a drenagem.');
             $x('x-run-panel').classList.add('hidden'); $x('x-drain-panel').classList.remove('hidden');
         }
         function alternarDrenagem() {
@@ -647,7 +689,7 @@
             const t = ex.ms / 1000;
             let cur = ex.plan.findIndex(x => t < x.end);
             if(cur < 0) cur = ex.plan.length - 1;
-            if(cur !== ex.lastStep) { ex.lastStep = cur; ex.cdKey = ''; bip(990, 0.18, 0.25); vib(150); }
+            if(cur !== ex.lastStep) { ex.lastStep = cur; ex.cdKey = ''; bip(990, 0.18, 0.25); vib(150); const sx = ex.plan[cur]; falar((cur === 0 ? 'Vamos começar. ' : '') + 'Despeje até ' + sx.cumEnd + ' gramas.' + (sx.obs ? ' ' + sx.obs : '')); }
             else if(cur < ex.plan.length - 1) {
                 const rem = Math.ceil(ex.plan[cur].end - t);
                 if(rem >= 1 && rem <= 3) { const k = cur + ':' + rem; if(k !== ex.cdKey) { ex.cdKey = k; bip(660, 0.08, 0.15); } }
@@ -680,7 +722,7 @@
             const surf = 315 - frac * 252;
 
             $x('x-time').textContent = fmt(emDren ? ex.total : t);
-            $x('x-time').style.fill = emDren ? '#8A6A12' : 'var(--text)';
+            $x('x-time').style.fill = emDren ? 'var(--gold)' : 'var(--text)';
             $x('x-grams').textContent = emDren ? '' : ((ex.ms > 0 ? '≈' + Math.round(g) : '0') + ' / ' + s.cumEnd + 'g');
             $x('x-ring').setAttribute('stroke-dashoffset', (879.65 * (1 - prog)).toFixed(1));
             $x('x-water').setAttribute('transform', 'translate(0 ' + surf.toFixed(1) + ')');
@@ -694,10 +736,11 @@
             } else { st.style.display = 'none'; st2.style.display = 'none'; sp.style.display = 'none'; }
             $x('x-kettle').style.transform = pouring ? 'rotate(-7deg)' : 'rotate(0deg)';
             $x('x-flow').textContent = emDren ? '' : s.flow.toFixed(1) + ' g/s';
-            $x('x-flow-lab').style.display = emDren ? 'none' : '';
+            $x('x-flow-lab').style.display = emDren ? 'none' : ''; $x('x-flow-lab').textContent = s.pourReal ? 'DA RECEITA' : 'ESTIMADO';
 
             if(!emDren) {
                 $x('x-alvo').textContent = s.cumEnd;
+                const oc = $x('x-obs-card'); if(s.obs) { $x('x-obs').textContent = s.obs; oc.classList.remove('hidden'); } else oc.classList.add('hidden');
                 const nx = p[cur + 1];
                 if(nx) { $x('x-prox-lab').textContent = 'Próximo'; $x('x-prox').textContent = nx.cumEnd; $x('x-prox-un').textContent = 'g'; $x('x-prox-sub').textContent = rotuloFluxo(nx.flow); }
                 else { $x('x-prox-lab').textContent = 'Final'; $x('x-prox').textContent = fmt(ex.total); $x('x-prox-un').textContent = ''; $x('x-prox-sub').textContent = 'tempo da receita'; }
@@ -730,7 +773,7 @@
         let filtroMetodo = '', novoCatForm = 'percolacao', novoCatEq = 'percolacao', eqEditMoedor = null, semeando = false;
         const CATEGORIAS = [{ id: 'percolacao', nome: 'Percolação' }, { id: 'imersao', nome: 'Imersão' }, { id: 'pressao', nome: 'Pressão & híbridos' }];
         const METODOS_PADRAO = [{ nome: 'V60', cat: 'percolacao' }, { nome: 'MELITTA', cat: 'percolacao' }, { nome: 'KALITA WAVE', cat: 'percolacao' }, { nome: 'CHEMEX', cat: 'percolacao' }, { nome: 'KOAR', cat: 'percolacao' }, { nome: 'FLUIRE', cat: 'percolacao' }, { nome: 'PRENSA FRANCESA', cat: 'imersao' }, { nome: 'PRESSCA', cat: 'imersao' }, { nome: 'AEROPRESS', cat: 'pressao' }, { nome: 'FLAIR', cat: 'pressao' }];
-        const ICONES = {"xicara": "<path class=\"f\" d=\"M10 20 H32 V30 Q32 38 24 38 H18 Q10 38 10 30 Z\"/><path class=\"l\" d=\"M10 20 H32 V30 Q32 38 24 38 H18 Q10 38 10 30 Z\"/><path class=\"l\" d=\"M32 22 H35 Q39 22 39 26 Q39 30 35 30 H32\"/><path class=\"l\" d=\"M7 43 H35\"/><path class=\"l\" d=\"M16 8 Q13 12 16 15\"/><path class=\"l\" d=\"M23 8 Q20 12 23 15\"/>", "conico": "<path class=\"f\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M19 26 V29 H29 V26\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "v60": "<path class=\"f\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M19 26 V29 H29 V26\"/><path class=\"l\" d=\"M40 12 Q46 12 46 16 Q46 20 38 19\"/><path class=\"l\" d=\"M15 14 L21 24\"/><path class=\"l\" d=\"M24 14 V25\"/><path class=\"l\" d=\"M33 14 L27 24\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "koar": "<path class=\"f\" d=\"M9 10 H39 L29 27 H19 Z\"/><path class=\"l\" d=\"M9 10 H39 L29 27 H19 Z\"/><path class=\"l\" d=\"M19 27 V29 H29 V27\"/><path class=\"l\" d=\"M14 16 H34\"/><path class=\"l\" d=\"M18 22 H30\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "melitta": "<path class=\"f\" d=\"M8 10 H40 L34 27 H14 Z\"/><path class=\"l\" d=\"M8 10 H40 L34 27 H14 Z\"/><path class=\"l\" d=\"M21 27 V30 H27 V27\"/><path class=\"l\" d=\"M16 14 L19 24\"/><path class=\"l\" d=\"M32 14 L29 24\"/><path class=\"l\" d=\"M8 10 L5 13\"/><path class=\"l\" d=\"M24 32 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "kalita": "<path class=\"f\" d=\"M8 11 H40 L36 26 H12 Z\"/><path class=\"l\" d=\"M8 11 H40 L36 26 H12 Z\"/><path class=\"l\" d=\"M8 11 L11 7 L15 11 L19 7 L23 11 L27 7 L31 11 L35 7 L39 11\"/><path class=\"g\" d=\"M19.3 23 C19.3 23.7 18.7 24.3 18 24.3 C17.3 24.3 16.7 23.7 16.7 23 C16.7 22.3 17.3 21.7 18 21.7 C18.7 21.7 19.3 22.3 19.3 23 Z\"/><path class=\"g\" d=\"M25.3 23 C25.3 23.7 24.7 24.3 24 24.3 C23.3 24.3 22.7 23.7 22.7 23 C22.7 22.3 23.3 21.7 24 21.7 C24.7 21.7 25.3 22.3 25.3 23 Z\"/><path class=\"g\" d=\"M31.3 23 C31.3 23.7 30.7 24.3 30 24.3 C29.3 24.3 28.7 23.7 28.7 23 C28.7 22.3 29.3 21.7 30 21.7 C30.7 21.7 31.3 22.3 31.3 23 Z\"/><path class=\"l\" d=\"M12 26 V29 H36 V26\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "chemex": "<path class=\"f\" d=\"M13 5 H35 L27 23 L37 42 H11 L21 23 Z\"/><path class=\"l\" d=\"M13 5 H35 L27 23 L37 42 H11 L21 23 Z\"/><path class=\"g\" d=\"M14.5 36 H33.5 L37 42 H11 Z\"/><path class=\"g\" d=\"M19.5 20 H28.5 V27 H19.5 Z\"/><path class=\"l\" d=\"M19.5 20 H28.5 V27 H19.5 Z\"/><path class=\"l\" d=\"M34 6 L38 4\"/>", "fluire": "<path class=\"f\" d=\"M10 7 H38 L29 21 H19 Z\"/><path class=\"l\" d=\"M10 7 H38 L29 21 H19 Z\"/><path class=\"l\" d=\"M17 10 L21 18\"/><path class=\"l\" d=\"M24 10 V19\"/><path class=\"l\" d=\"M31 10 L27 18\"/><path class=\"l\" d=\"M20 21 V24\"/><path class=\"l\" d=\"M28 21 V24\"/><path class=\"f\" d=\"M13 24 H35 V40 Q35 44 31 44 H17 Q13 44 13 40 Z\"/><path class=\"l\" d=\"M13 24 H35 V40 Q35 44 31 44 H17 Q13 44 13 40 Z\"/><path class=\"g\" d=\"M13 34 H35 V40 Q35 44 31 44 H17 Q13 44 13 40 Z\"/><path class=\"l\" d=\"M35 28 Q43 28 43 34 Q43 40 35 40\"/>", "prensa": "<path class=\"f\" d=\"M13 17 H35 V40 Q35 43 32 43 H16 Q13 43 13 40 Z\"/><path class=\"l\" d=\"M13 17 H35 V40 Q35 43 32 43 H16 Q13 43 13 40 Z\"/><path class=\"g\" d=\"M13 31 H35 V40 Q35 43 32 43 H16 Q13 43 13 40 Z\"/><path class=\"l\" d=\"M11 17 H37\"/><path class=\"l\" d=\"M24 8 V17\"/><path class=\"g\" d=\"M26.6 6 C26.6 7.4 25.4 8.6 24 8.6 C22.6 8.6 21.4 7.4 21.4 6 C21.4 4.6 22.6 3.4 24 3.4 C25.4 3.4 26.6 4.6 26.6 6 Z\"/><path class=\"l\" d=\"M26.6 6 C26.6 7.4 25.4 8.6 24 8.6 C22.6 8.6 21.4 7.4 21.4 6 C21.4 4.6 22.6 3.4 24 3.4 C25.4 3.4 26.6 4.6 26.6 6 Z\"/><path class=\"l\" d=\"M15 31 H33\"/><path class=\"l\" d=\"M35 21 Q43 21 43 29 Q43 37 35 37\"/>", "pressca": "<path class=\"f\" d=\"M14 19 H34 L32 41 Q32 44 29 44 H19 Q16 44 16 41 Z\"/><path class=\"l\" d=\"M14 19 H34 L32 41 Q32 44 29 44 H19 Q16 44 16 41 Z\"/><path class=\"g\" d=\"M15 32 H33 L32 41 Q32 44 29 44 H19 Q16 44 16 41 Z\"/><path class=\"g\" d=\"M13 14 H35 V19 H13 Z\"/><path class=\"l\" d=\"M13 14 H35 V19 H13 Z\"/><path class=\"l\" d=\"M24 6 V14\"/><path class=\"l\" d=\"M19 6 H29\"/><path class=\"l\" d=\"M29 16.5 H32\"/>", "aeropress": "<path class=\"g\" d=\"M13 5 H35 V9 H13 Z\"/><path class=\"l\" d=\"M13 5 H35 V9 H13 Z\"/><path class=\"l\" d=\"M20 9 V17\"/><path class=\"l\" d=\"M28 9 V17\"/><path class=\"f\" d=\"M17 17 H31 V34 H17 Z\"/><path class=\"l\" d=\"M17 17 H31 V34 H17 Z\"/><path class=\"l\" d=\"M17 22 H20.5\"/><path class=\"l\" d=\"M17 26 H20.5\"/><path class=\"l\" d=\"M17 30 H20.5\"/><path class=\"l\" d=\"M13 34 H35\"/><path class=\"f\" d=\"M15 36 H33 L31 43 H17 Z\"/><path class=\"l\" d=\"M15 36 H33 L31 43 H17 Z\"/>", "flair": "<path class=\"l\" d=\"M7 44 H37\"/><path class=\"l\" d=\"M12 44 V16\"/><path class=\"l\" d=\"M12 16 L40 8\"/><path class=\"g\" d=\"M44.2 7.5 C44.2 9.3 42.8 10.7 41 10.7 C39.2 10.7 37.8 9.3 37.8 7.5 C37.8 5.7 39.2 4.3 41 4.3 C42.8 4.3 44.2 5.7 44.2 7.5 Z\"/><path class=\"l\" d=\"M44.2 7.5 C44.2 9.3 42.8 10.7 41 10.7 C39.2 10.7 37.8 9.3 37.8 7.5 C37.8 5.7 39.2 4.3 41 4.3 C42.8 4.3 44.2 5.7 44.2 7.5 Z\"/><path class=\"l\" d=\"M24 13 V21\"/><path class=\"f\" d=\"M17 21 H31 V34 H17 Z\"/><path class=\"l\" d=\"M17 21 H31 V34 H17 Z\"/><path class=\"l\" d=\"M24 34 V37\"/><path class=\"f\" d=\"M17 38 H31 V44 H17 Z\"/><path class=\"l\" d=\"M17 38 H31 V44 H17 Z\"/>", "moedor": "<path class=\"g\" d=\"M14 17 H34 V22 H14 Z\"/><path class=\"l\" d=\"M14 17 H34 V22 H14 Z\"/><path class=\"f\" d=\"M16 22 H32 V40 Q32 43 29 43 H19 Q16 43 16 40 Z\"/><path class=\"l\" d=\"M16 22 H32 V40 Q32 43 29 43 H19 Q16 43 16 40 Z\"/><path class=\"l\" d=\"M16 29 H32\"/><path class=\"l\" d=\"M24 17 V9\"/><path class=\"l\" d=\"M24 9 H37\"/><path class=\"l\" d=\"M37 9 V16\"/><path class=\"g\" d=\"M39.6 18 C39.6 19.4 38.4 20.6 37 20.6 C35.6 20.6 34.4 19.4 34.4 18 C34.4 16.6 35.6 15.4 37 15.4 C38.4 15.4 39.6 16.6 39.6 18 Z\"/><path class=\"l\" d=\"M39.6 18 C39.6 19.4 38.4 20.6 37 20.6 C35.6 20.6 34.4 19.4 34.4 18 C34.4 16.6 35.6 15.4 37 15.4 C38.4 15.4 39.6 16.6 39.6 18 Z\"/>"};
+        const ICONES = {"xicara": "<path class=\"f\" d=\"M10 20 H32 V30 Q32 38 24 38 H18 Q10 38 10 30 Z\"/><path class=\"l\" d=\"M10 20 H32 V30 Q32 38 24 38 H18 Q10 38 10 30 Z\"/><path class=\"l\" d=\"M32 22 H35 Q39 22 39 26 Q39 30 35 30 H32\"/><path class=\"l\" d=\"M7 43 H35\"/><path class=\"l\" d=\"M16 8 Q13 12 16 15\"/><path class=\"l\" d=\"M23 8 Q20 12 23 15\"/>", "conico": "<path class=\"f\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M19 26 V29 H29 V26\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "v60": "<path class=\"f\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M8 10 H40 L29 26 H19 Z\"/><path class=\"l\" d=\"M19 26 V29 H29 V26\"/><path class=\"l\" d=\"M40 12 Q46 12 46 16 Q46 20 38 19\"/><path class=\"l\" d=\"M15 14 L21 24\"/><path class=\"l\" d=\"M24 14 V25\"/><path class=\"l\" d=\"M33 14 L27 24\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "koar": "<path class=\"f\" d=\"M9 10 H39 L29 27 H19 Z\"/><path class=\"l\" d=\"M9 10 H39 L29 27 H19 Z\"/><path class=\"l\" d=\"M19 27 V29 H29 V27\"/><path class=\"l\" d=\"M14 16 H34\"/><path class=\"l\" d=\"M18 22 H30\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "melitta": "<path class=\"f\" d=\"M8 10 H40 L34 27 H14 Z\"/><path class=\"l\" d=\"M8 10 H40 L34 27 H14 Z\"/><path class=\"l\" d=\"M21 27 V30 H27 V27\"/><path class=\"l\" d=\"M16 14 L19 24\"/><path class=\"l\" d=\"M32 14 L29 24\"/><path class=\"l\" d=\"M8 10 L5 13\"/><path class=\"l\" d=\"M24 32 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "kalita": "<path class=\"f\" d=\"M8 11 H40 L36 26 H12 Z\"/><path class=\"l\" d=\"M8 11 H40 L36 26 H12 Z\"/><path class=\"l\" d=\"M8 11 L11 7 L15 11 L19 7 L23 11 L27 7 L31 11 L35 7 L39 11\"/><path class=\"g\" d=\"M19.3 23 C19.3 23.7 18.7 24.3 18 24.3 C17.3 24.3 16.7 23.7 16.7 23 C16.7 22.3 17.3 21.7 18 21.7 C18.7 21.7 19.3 22.3 19.3 23 Z\"/><path class=\"g\" d=\"M25.3 23 C25.3 23.7 24.7 24.3 24 24.3 C23.3 24.3 22.7 23.7 22.7 23 C22.7 22.3 23.3 21.7 24 21.7 C24.7 21.7 25.3 22.3 25.3 23 Z\"/><path class=\"g\" d=\"M31.3 23 C31.3 23.7 30.7 24.3 30 24.3 C29.3 24.3 28.7 23.7 28.7 23 C28.7 22.3 29.3 21.7 30 21.7 C30.7 21.7 31.3 22.3 31.3 23 Z\"/><path class=\"l\" d=\"M12 26 V29 H36 V26\"/><path class=\"l\" d=\"M24 31 V34\"/><path class=\"f\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/><path class=\"l\" d=\"M14 33 H34 V38 Q34 43 29 43 H19 Q14 43 14 38 Z\"/>", "chemex": "<path class=\"f\" d=\"M13 5 H35 L27 23 L37 42 H11 L21 23 Z\"/><path class=\"l\" d=\"M13 5 H35 L27 23 L37 42 H11 L21 23 Z\"/><path class=\"g\" d=\"M14.5 36 H33.5 L37 42 H11 Z\"/><path class=\"g\" d=\"M19.5 20 H28.5 V27 H19.5 Z\"/><path class=\"l\" d=\"M19.5 20 H28.5 V27 H19.5 Z\"/><path class=\"l\" d=\"M34 6 L38 4\"/>", "fluire": "<path class=\"f\" d=\"M10 7 H38 L29 21 H19 Z\"/><path class=\"l\" d=\"M10 7 H38 L29 21 H19 Z\"/><path class=\"l\" d=\"M17 10 L21 18\"/><path class=\"l\" d=\"M24 10 V19\"/><path class=\"l\" d=\"M31 10 L27 18\"/><path class=\"l\" d=\"M20 21 V24\"/><path class=\"l\" d=\"M28 21 V24\"/><path class=\"f\" d=\"M13 24 H35 V40 Q35 44 31 44 H17 Q13 44 13 40 Z\"/><path class=\"l\" d=\"M13 24 H35 V40 Q35 44 31 44 H17 Q13 44 13 40 Z\"/><path class=\"g\" d=\"M13 34 H35 V40 Q35 44 31 44 H17 Q13 44 13 40 Z\"/><path class=\"l\" d=\"M35 28 Q43 28 43 34 Q43 40 35 40\"/>", "prensa": "<path class=\"f\" d=\"M13 17 H35 V40 Q35 43 32 43 H16 Q13 43 13 40 Z\"/><path class=\"l\" d=\"M13 17 H35 V40 Q35 43 32 43 H16 Q13 43 13 40 Z\"/><path class=\"g\" d=\"M13 31 H35 V40 Q35 43 32 43 H16 Q13 43 13 40 Z\"/><path class=\"l\" d=\"M11 17 H37\"/><path class=\"l\" d=\"M24 8 V17\"/><path class=\"g\" d=\"M26.6 6 C26.6 7.4 25.4 8.6 24 8.6 C22.6 8.6 21.4 7.4 21.4 6 C21.4 4.6 22.6 3.4 24 3.4 C25.4 3.4 26.6 4.6 26.6 6 Z\"/><path class=\"l\" d=\"M26.6 6 C26.6 7.4 25.4 8.6 24 8.6 C22.6 8.6 21.4 7.4 21.4 6 C21.4 4.6 22.6 3.4 24 3.4 C25.4 3.4 26.6 4.6 26.6 6 Z\"/><path class=\"l\" d=\"M15 31 H33\"/><path class=\"l\" d=\"M35 21 Q43 21 43 29 Q43 37 35 37\"/>", "pressca": "<path class=\"f\" d=\"M14 19 H34 L32 41 Q32 44 29 44 H19 Q16 44 16 41 Z\"/><path class=\"l\" d=\"M14 19 H34 L32 41 Q32 44 29 44 H19 Q16 44 16 41 Z\"/><path class=\"g\" d=\"M15 32 H33 L32 41 Q32 44 29 44 H19 Q16 44 16 41 Z\"/><path class=\"g\" d=\"M13 14 H35 V19 H13 Z\"/><path class=\"l\" d=\"M13 14 H35 V19 H13 Z\"/><path class=\"l\" d=\"M24 6 V14\"/><path class=\"l\" d=\"M19 6 H29\"/><path class=\"l\" d=\"M29 16.5 H32\"/>", "aeropress": "<path class=\"g\" d=\"M13 5 H35 V9 H13 Z\"/><path class=\"l\" d=\"M13 5 H35 V9 H13 Z\"/><path class=\"l\" d=\"M20 9 V17\"/><path class=\"l\" d=\"M28 9 V17\"/><path class=\"f\" d=\"M17 17 H31 V34 H17 Z\"/><path class=\"l\" d=\"M17 17 H31 V34 H17 Z\"/><path class=\"l\" d=\"M17 22 H20.5\"/><path class=\"l\" d=\"M17 26 H20.5\"/><path class=\"l\" d=\"M17 30 H20.5\"/><path class=\"l\" d=\"M13 34 H35\"/><path class=\"f\" d=\"M15 36 H33 L31 43 H17 Z\"/><path class=\"l\" d=\"M15 36 H33 L31 43 H17 Z\"/>", "flair": "<path class=\"l\" d=\"M7 44 H37\"/><path class=\"l\" d=\"M12 44 V16\"/><path class=\"l\" d=\"M12 16 L40 8\"/><path class=\"g\" d=\"M44.2 7.5 C44.2 9.3 42.8 10.7 41 10.7 C39.2 10.7 37.8 9.3 37.8 7.5 C37.8 5.7 39.2 4.3 41 4.3 C42.8 4.3 44.2 5.7 44.2 7.5 Z\"/><path class=\"l\" d=\"M44.2 7.5 C44.2 9.3 42.8 10.7 41 10.7 C39.2 10.7 37.8 9.3 37.8 7.5 C37.8 5.7 39.2 4.3 41 4.3 C42.8 4.3 44.2 5.7 44.2 7.5 Z\"/><path class=\"l\" d=\"M24 13 V21\"/><path class=\"f\" d=\"M17 21 H31 V34 H17 Z\"/><path class=\"l\" d=\"M17 21 H31 V34 H17 Z\"/><path class=\"l\" d=\"M24 34 V37\"/><path class=\"f\" d=\"M17 38 H31 V44 H17 Z\"/><path class=\"l\" d=\"M17 38 H31 V44 H17 Z\"/>", "moedor": "<path class=\"g\" d=\"M14 17 H34 V22 H14 Z\"/><path class=\"l\" d=\"M14 17 H34 V22 H14 Z\"/><path class=\"f\" d=\"M16 22 H32 V40 Q32 43 29 43 H19 Q16 43 16 40 Z\"/><path class=\"l\" d=\"M16 22 H32 V40 Q32 43 29 43 H19 Q16 43 16 40 Z\"/><path class=\"l\" d=\"M16 29 H32\"/><path class=\"l\" d=\"M24 17 V9\"/><path class=\"l\" d=\"M24 9 H37\"/><path class=\"l\" d=\"M37 9 V16\"/><path class=\"g\" d=\"M39.6 18 C39.6 19.4 38.4 20.6 37 20.6 C35.6 20.6 34.4 19.4 34.4 18 C34.4 16.6 35.6 15.4 37 15.4 C38.4 15.4 39.6 16.6 39.6 18 Z\"/><path class=\"l\" d=\"M39.6 18 C39.6 19.4 38.4 20.6 37 20.6 C35.6 20.6 34.4 19.4 34.4 18 C34.4 16.6 35.6 15.4 37 15.4 C38.4 15.4 39.6 16.6 39.6 18 Z\"/>", "moedor-jarra": "<path class=\"g\" d=\"M14 17 H34 V22 H14 Z\"/><path class=\"l\" d=\"M14 17 H34 V22 H14 Z\"/><path class=\"l\" d=\"M24 17 V9\"/><path class=\"l\" d=\"M24 9 H37\"/><path class=\"l\" d=\"M37 9 V16\"/><path class=\"g\" d=\"M39.6 18 C39.6 19.4 38.4 20.6 37 20.6 C35.6 20.6 34.4 19.4 34.4 18 C34.4 16.6 35.6 15.4 37 15.4 C38.4 15.4 39.6 16.6 39.6 18 Z\"/><path class=\"l\" d=\"M39.6 18 C39.6 19.4 38.4 20.6 37 20.6 C35.6 20.6 34.4 19.4 34.4 18 C34.4 16.6 35.6 15.4 37 15.4 C38.4 15.4 39.6 16.6 39.6 18 Z\"/><path class=\"f\" d=\"M16 22 H32 L34 28 H14 Z\"/><path class=\"l\" d=\"M16 22 H32 L34 28 H14 Z\"/><path class=\"f\" d=\"M14 28 H34 V40 Q34 43 31 43 H17 Q14 43 14 40 Z\"/><path class=\"l\" d=\"M14 28 H34 V40 Q34 43 31 43 H17 Q14 43 14 40 Z\"/><path class=\"g\" d=\"M15 36 H33 V40 Q33 42 31 42 H17 Q15 42 15 40 Z\"/>", "moedor-eletrico": "<path class=\"f\" d=\"M13 5 H35 L30 18 H18 Z\"/><path class=\"l\" d=\"M13 5 H35 L30 18 H18 Z\"/><path class=\"g\" d=\"M17 10 H31 L29 16 H19 Z\"/><path class=\"f\" d=\"M12 18 H36 V38 Q36 40 34 40 H14 Q12 40 12 38 Z\"/><path class=\"l\" d=\"M12 18 H36 V38 Q36 40 34 40 H14 Q12 40 12 38 Z\"/><path class=\"g\" d=\"M32.2 27 C32.2 28.8 30.8 30.2 29 30.2 C27.2 30.2 25.8 28.8 25.8 27 C25.8 25.2 27.2 23.8 29 23.8 C30.8 23.8 32.2 25.2 32.2 27 Z\"/><path class=\"l\" d=\"M32.2 27 C32.2 28.8 30.8 30.2 29 30.2 C27.2 30.2 25.8 28.8 25.8 27 C25.8 25.2 27.2 23.8 29 23.8 C30.8 23.8 32.2 25.2 32.2 27 Z\"/><path class=\"l\" d=\"M16 25 H22\"/><path class=\"l\" d=\"M16 30 H22\"/><path class=\"l\" d=\"M22 40 V43\"/><path class=\"l\" d=\"M10 44 H38\"/>"};
 
         function escH(s) { return String(s == null ? '' : s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#39;'); }
         function normN(s) { return String(s == null ? '' : s).normalize('NFD').replace(/[\u0300-\u036f]/g, '').toUpperCase().replace(/\s+/g, ' ').trim(); }
@@ -806,6 +849,7 @@
         async function salvarMoedor() {
             const nome = $x('eq-nome-moedor').value.trim().replace(/\s+/g, ' ');
             if(!nome) { alert('Digite o nome do moedor.'); return; }
+            if(!eqEditMoedor && temMoedor(nome)) { alert('Esse moedor já está na sua lista.'); return; }
             try {
                 if(eqEditMoedor) {
                     await db.collection('equipamentos').doc(eqEditMoedor).update({ nome });
@@ -898,7 +942,7 @@
             const lm = $x('eq-lista-moedor'); if(!lm) return;
             const ms = moedores();
             $x('eq-cnt-moedor').textContent = ms.length + (ms.length === 1 ? ' cadastrado' : ' cadastrados');
-            lm.innerHTML = ms.length ? ms.map(m => `<div class="eq-row">${svgIcone('moedor', 'mi-md')}<div class="flex-1 min-w-0"><div class="nm truncate">${escH(m.nome)}</div>${m.principal ? '<div class="badge-pr">Principal</div>' : `<button class="link-btn" onclick="tornarPrincipal('${m.id}')">Tornar principal</button>`}</div><button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="editarMoedor('${m.id}')">✏️</button><button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="excluirEq('${m.id}')">🗑️</button></div>`).join('') : '<div class="text-xs text-zinc-500 text-center p-3">Nenhum moedor cadastrado</div>';
+            lm.innerHTML = ms.length ? ms.map(m => `<div class="eq-row">${svgMoedor(m.nome, 'mi-md')}<div class="flex-1 min-w-0"><div class="nm truncate">${escH(m.nome)}</div>${m.principal ? '<div class="badge-pr">Principal</div>' : `<button class="link-btn" onclick="tornarPrincipal('${m.id}')">Tornar principal</button>`}</div><button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="editarMoedor('${m.id}')">✏️</button><button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="excluirEq('${m.id}')">🗑️</button></div>`).join('') : '<div class="text-xs text-zinc-500 text-center p-3">Nenhum moedor cadastrado</div>';
             const lst = listaMetodos();
             $x('eq-cnt-metodo').textContent = lst.length + (lst.length === 1 ? ' método' : ' métodos');
             let h = '';
@@ -907,12 +951,311 @@
                 h += '<div class="mcat">' + c.nome + '</div>' + it.map(m => `<div class="eq-row">${svgMetodo(m.nome, m.cat, 'mi-md')}<div class="nm flex-1 min-w-0 truncate">${escH(m.nome)}</div>${m.id ? `<button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="excluirEq('${m.id}')">🗑️</button>` : ''}</div>`).join('');
             });
             $x('eq-lista-metodo').innerHTML = h || '<div class="text-xs text-zinc-500 text-center p-3">Nenhum método cadastrado</div>';
+            renderCatalogoMoedores();
         }
-        function abrirEquip() { renderEquip(); renderPills(); const s = $x('equip-screen'); s.classList.remove('hidden'); s.scrollTop = 0; }
-        function fecharEquip() { cancelarEdicaoMoedor(); $x('equip-screen').classList.add('hidden'); atualizarSelMoedor(); renderMetodoGrid(); }
+        function abrirEquip() { renderEquip(); renderPills(); const s = $x('equip-screen'); s.classList.remove('hidden'); s.scrollTop = 0; if(moedores().length === 0) abrirCatalogo(); else fecharCatalogo(); }
+        function fecharEquip() { cancelarEdicaoMoedor(); fecharCatalogo(); $x('equip-screen').classList.add('hidden'); atualizarSelMoedor(); renderMetodoGrid(); }
         function toggleMenu() { $x('menu-user').classList.toggle('hidden'); }
         function menuEquip() { $x('menu-user').classList.add('hidden'); abrirEquip(); }
         document.addEventListener('click', e => { const m = $x('menu-user'); if(m && !e.target.closest('#btn-avatar') && !e.target.closest('#menu-user')) m.classList.add('hidden'); });
+
+        /* ---- moedores populares (lista pronta) ---- */
+        const MOEDORES_PADRAO = [{ nome: 'Timemore C2', tipo: 'manual' }, { nome: 'Timemore C3', tipo: 'manual' }, { nome: 'Timemore C3 ESP', tipo: 'manual' }, { nome: 'Timemore S3', tipo: 'manual' }, { nome: '1Zpresso JX', tipo: 'manual' }, { nome: '1Zpresso JX-Pro', tipo: 'manual' }, { nome: '1Zpresso J-Ultra', tipo: 'manual' }, { nome: '1Zpresso K-Ultra', tipo: 'manual' }, { nome: '1Zpresso ZP6 Special', tipo: 'manual' }, { nome: '1Zpresso Q2', tipo: 'manual' }, { nome: 'Kingrinder K6', tipo: 'manual' }, { nome: 'Kingrinder K4', tipo: 'manual' }, { nome: 'Kingrinder P2', tipo: 'manual' }, { nome: 'Comandante C40 MK4', tipo: 'manual' }, { nome: 'iCoffee M3 Pro', tipo: 'manual' }, { nome: 'Porlex Mini', tipo: 'manual' }, { nome: 'Hario Skerton Pro', tipo: 'manual', icone: 'moedor-jarra' }, { nome: 'Hario Mini Mill Slim', tipo: 'manual', icone: 'moedor-jarra' }, { nome: 'Tramontina Manual', tipo: 'manual' }, { nome: 'Baratza Encore', tipo: 'eletrico' }, { nome: 'Baratza Encore ESP', tipo: 'eletrico' }, { nome: 'Baratza Virtuoso+', tipo: 'eletrico' }, { nome: 'Breville Smart Grinder Pro', tipo: 'eletrico' }, { nome: 'Fellow Ode Gen 2', tipo: 'eletrico' }, { nome: 'Eureka Mignon Specialità', tipo: 'eletrico' }, { nome: 'Niche Zero', tipo: 'eletrico' }, { nome: 'DF64', tipo: 'eletrico' }, { nome: 'Wilfa Svart Aroma', tipo: 'eletrico' }, { nome: 'Timemore Sculptor 078', tipo: 'eletrico' }, { nome: 'Hario V60 Electric', tipo: 'eletrico' }, { nome: 'Oster Precision Grind', tipo: 'eletrico' }, { nome: 'Philco (elétrico)', tipo: 'eletrico' }, { nome: 'Cadence (elétrico)', tipo: 'eletrico' }];
+        function chaveIconeMoedor(nome) {
+            const n = normN(nome);
+            const p = MOEDORES_PADRAO.find(m => normN(m.nome) === n);
+            if(p) return p.icone || (p.tipo === 'eletrico' ? 'moedor-eletrico' : 'moedor');
+            if(/HARIO|SKERTON|MINI MILL|MINIMILL/.test(n)) return 'moedor-jarra';
+            if(/BARATZA|BREVILLE|FELLOW|EUREKA|NICHE|DF64|WILFA|SCULPTOR|OSTER|PHILCO|CADENCE|HAMILTON|ELETRIC|ELECTRIC|MIGNON|\bODE\b/.test(n)) return 'moedor-eletrico';
+            return 'moedor';
+        }
+        function svgMoedor(nome, cls) { return svgIcone(chaveIconeMoedor(nome), cls); }
+        function temMoedor(nome) { return moedores().find(m => normN(m.nome) === normN(nome)); }
+        function renderCatalogoMoedores() {
+            const box = $x('eq-catalogo'); if(!box) return;
+            const q = normN($x('eq-busca-moedor').value);
+            let h = '';
+            [['manual', 'Manuais'], ['eletrico', 'Elétricos']].forEach(t => {
+                const it = MOEDORES_PADRAO.filter(m => m.tipo === t[0] && (!q || normN(m.nome).includes(q)));
+                if(!it.length) return;
+                h += '<div class="mcat">' + t[1] + '</div><div class="mgrid">' + it.map(m => '<button type="button" class="mtile' + (temMoedor(m.nome) ? ' on' : '') + '" data-n="' + escH(m.nome) + '">' + svgMoedor(m.nome) + '<span>' + escH(m.nome) + '</span></button>').join('') + '</div>';
+            });
+            box.innerHTML = h || '<div class="text-xs text-zinc-500 text-center p-3">Nenhum modelo encontrado. Cadastre o seu logo abaixo.</div>';
+        }
+        function catalogoClick(ev) { const b = ev.target.closest('button'); if(!b || b.dataset.n === undefined) return; alternarMoedorCatalogo(b.dataset.n); }
+        async function alternarMoedorCatalogo(nome) {
+            const ex = temMoedor(nome);
+            if(ex) { await excluirEq(ex.id); return; }
+            try {
+                const primeiro = moedores().length === 0;
+                const ref = await db.collection('equipamentos').add({ owner_uid: currentUser.uid, tipo: 'moedor', nome, principal: primeiro, ts: firebase.firestore.FieldValue.serverTimestamp() });
+                localData.eq.push({ id: ref.id, owner_uid: currentUser.uid, tipo: 'moedor', nome, principal: primeiro });
+                renderEquip(); atualizarSelMoedor();
+            } catch(e) { erroEquip(e); }
+        }
+        function abrirCatalogo() { $x('eq-catalogo-box').classList.remove('hidden'); $x('eq-btn-catalogo').textContent = '− Ocultar lista de moedores'; renderCatalogoMoedores(); }
+        function fecharCatalogo() { const b = $x('eq-catalogo-box'); if(b) b.classList.add('hidden'); const t = $x('eq-btn-catalogo'); if(t) t.textContent = '+ Adicionar da lista de moedores populares'; }
+        function toggleCatalogo() { if($x('eq-catalogo-box').classList.contains('hidden')) abrirCatalogo(); else fecharCatalogo(); }
+
+        /* ===== PASSO E: identidade, receita por etapas, voz, sommelier e frescor ===== */
+        let safeGId = '', safeRId = '', ajusteAtual = null, modoSom = 'tudo', melhorAtual = null, toastT = null;
+        try { modoSom = localStorage.getItem('cm_som') || 'tudo'; } catch(e) {}
+
+        /* ---- tema ---- */
+        function temaAtual() { return document.documentElement.getAttribute('data-tema') || 'escuro'; }
+        function aplicarTema(t) {
+            document.documentElement.setAttribute('data-tema', t);
+            try { localStorage.setItem('cm_tema', t); } catch(e) {}
+            const m = $x('meta-tema'); if(m) m.setAttribute('content', t === 'claro' ? '#FAF9F7' : '#14100D');
+            const x = $x('menu-tema-txt'); if(x) x.textContent = t === 'claro' ? 'Tema escuro' : 'Tema claro';
+        }
+        function alternarTema() { aplicarTema(temaAtual() === 'claro' ? 'escuro' : 'claro'); const m = $x('menu-user'); if(m) m.classList.add('hidden'); }
+        function toast(msg) { const el = $x('toast'); if(!el) return; el.textContent = msg; el.classList.remove('hidden'); clearTimeout(toastT); toastT = setTimeout(() => el.classList.add('hidden'), 3500); }
+
+        /* ---- receita por etapas ---- */
+        function fluxoInfo(ml, pour) {
+            if(!(ml > 0 && pour > 0)) return null;
+            const f = ml / pour;
+            if(f < 3) return { flow: f, label: 'Muito lento', cls: 'fx-mlento' };
+            if(f <= 4.5) return { flow: f, label: 'Lento e controlado', cls: 'fx-lento' };
+            if(f <= 7) return { flow: f, label: 'Equilibrado', cls: 'fx-eq' };
+            return { flow: f, label: 'Rápido', cls: 'fx-rap' };
+        }
+        function ajustarR(id, d) { $x(id).value = Math.max(0, Math.round((numVal(id) + d) * 10) / 10); atualizarForm(); }
+        function htmlEtapa(ml, sec, pour, obs) {
+            const v = x => (x === undefined || x === null || x === 0) ? '' : escH(x);
+            return '<div class="atk-row step-card">' +
+                '<div class="flex justify-between items-center"><span class="label-gold mt-0 ml-0 st-title">Despejo</span><div class="flex items-center gap-2"><span class="st-time text-lg font-black">0:00</span><button type="button" class="btn-mini" onclick="removerEtapa(this)" aria-label="Remover">✕</button></div></div>' +
+                '<div class="grid grid-cols-2 gap-2 mt-2"><div><span class="label-gold mt-0 ml-0">Água (g) <span class="st-pct text-zinc-500 font-bold"></span></span><input type="number" inputmode="decimal" class="st-ml atk-ml" value="' + v(ml) + '" oninput="atualizarForm()"></div>' +
+                '<div><span class="label-gold mt-0 ml-0">Duração (s)</span><input type="number" inputmode="decimal" class="st-sec atk-sec" value="' + v(sec) + '" oninput="atualizarForm()"></div></div>' +
+                '<div class="grid grid-cols-2 gap-2 mt-2"><div><span class="label-gold mt-0 ml-0">Tempo de despejo (s)</span><input type="number" inputmode="decimal" class="st-pour atk-pour" value="' + v(pour) + '" oninput="atualizarForm()"></div>' +
+                '<div><span class="label-gold mt-0 ml-0">Fluxo</span><div class="st-flow font-black text-lg">—</div></div></div>' +
+                '<div class="st-info text-xs text-zinc-500 mt-1"></div>' +
+                '<input type="text" class="st-obs atk-obs mt-2" placeholder="Observação (ex: despeje nas bordas)" value="' + (obs ? escH(obs) : '') + '"></div>';
+        }
+        function addAtackField(ml, sec, obs, pour) { $x('ataques-container').insertAdjacentHTML('beforeend', htmlEtapa(ml, sec, pour, obs)); atualizarForm(); renderNpour(); }
+        function removerEtapa(btn) { const c = btn.closest('.step-card'); if(c) c.remove(); atualizarForm(); renderNpour(); }
+        function atualizarForm() {
+            const po = numVal('r-po'), total = Math.round(numVal('r-total'));
+            const rEl = $x('r-ratio'); if(rEl) rEl.value = (po > 0 && total > 0) ? String(Math.round(total / po * 10) / 10) : '';
+            let acc = 0, soma = 0;
+            document.querySelectorAll('.step-card').forEach((c, idx) => {
+                const ml = parseFloat(c.querySelector('.st-ml').value) || 0, sec = parseFloat(c.querySelector('.st-sec').value) || 0, pour = parseFloat(c.querySelector('.st-pour').value) || 0;
+                soma += ml; acc += sec;
+                c.querySelector('.st-title').textContent = idx === 0 ? 'Hidratação (bloom)' : 'Despejo ' + (idx + 1);
+                c.querySelector('.st-time').textContent = fmt(acc, true);
+                c.querySelector('.st-pct').textContent = (total > 0 && ml > 0) ? '· ' + Math.round(ml / total * 100) + '%' : '';
+                const fx = fluxoInfo(ml, pour), fl = c.querySelector('.st-flow');
+                fl.textContent = fx ? fx.flow.toFixed(1) + ' g/s' : '—';
+                fl.className = 'st-flow font-black text-lg ' + (fx ? fx.cls : '');
+                let info = '';
+                if(pour > 0 && sec > 0) info = pour > sec ? 'O despejo é maior que a duração da etapa' : 'Despeja ' + pour + 's · espera ' + (sec - pour) + 's';
+                if(fx) info += (info ? ' · ' : '') + fx.label;
+                c.querySelector('.st-info').textContent = info;
+            });
+            const s = $x('r-soma');
+            if(s) {
+                if(total > 0 && soma === total) { s.textContent = 'Soma dos despejos: ' + soma + ' / ' + total + ' g ✓'; s.className = 'text-sm font-bold text-center mt-1 soma-ok'; }
+                else if(total > 0 && soma > 0) { s.textContent = 'Soma dos despejos: ' + soma + ' / ' + total + ' g · ' + (soma < total ? 'faltam ' + (total - soma) : 'passou ' + (soma - total)) + ' g'; s.className = 'text-sm font-bold text-center mt-1 soma-warn'; }
+                else { s.textContent = ''; }
+            }
+        }
+        function renderNpour() {
+            const el = $x('r-npour'); if(!el) return;
+            const n = document.querySelectorAll('.step-card').length;
+            let h = ''; for(let k = 1; k <= 10; k++) h += '<button type="button" class="chip' + (k === n ? ' on' : '') + '" data-k="' + k + '">' + k + '</button>';
+            el.innerHTML = h;
+        }
+        function npourClick(ev) { const b = ev.target.closest('button'); if(!b || !b.dataset.k) return; setNumDespejos(parseInt(b.dataset.k, 10)); }
+        function setNumDespejos(k) {
+            const cont = $x('ataques-container');
+            let rows = cont.querySelectorAll('.step-card');
+            if(k - 1 > rows.length) {
+                let soma = 0; document.querySelectorAll('.step-card').forEach(c => { soma += parseFloat(c.querySelector('.st-ml').value) || 0; });
+                let rest = Math.max(0, Math.round(numVal('r-total')) - soma);
+                while(rows.length < k - 1) { addAtackField(rest > 0 ? rest : '', '', '', ''); rest = 0; rows = cont.querySelectorAll('.step-card'); }
+            } else {
+                while(rows.length > k - 1) {
+                    const last = rows[rows.length - 1];
+                    const temDados = Array.prototype.some.call(last.querySelectorAll('input'), i => i.value);
+                    if(temDados && !confirm('Remover o último despejo? Os dados dele serão perdidos.')) break;
+                    last.remove(); rows = cont.querySelectorAll('.step-card');
+                }
+            }
+            atualizarForm(); renderNpour();
+        }
+        function distribuirIgual() {
+            const total = Math.round(numVal('r-total')), cards = document.querySelectorAll('.step-card'), n = cards.length;
+            if(!n || total <= 0) return;
+            const base = Math.floor(total / n);
+            cards.forEach((c, i) => { c.querySelector('.st-ml').value = (i === n - 1) ? total - base * (n - 1) : base; });
+            atualizarForm();
+        }
+        function setMoedorForm(nome) {
+            const el = $x('r-moedor'); if(!el) return;
+            const nomes = moedores().map(m => m.nome);
+            if(nome && !nomes.some(n => normN(n) === normN(nome))) nomes.push(nome);
+            let h = '<option value="">— sem moedor —</option>';
+            nomes.forEach(n => { h += '<option value="' + escH(n) + '">' + escH(n) + '</option>'; });
+            el.innerHTML = h;
+            el.value = nome ? (nomes.find(n => normN(n) === normN(nome)) || '') : '';
+        }
+        function novaReceitaPadrao() {
+            $x('r-po').value = 15; $x('r-total').value = 250; $x('r-temp').value = 92; $x('r-clicks').value = '';
+            const p = moedores().find(m => m.principal); setMoedorForm(p ? p.nome : '');
+            ['r-bloom-ml', 'r-bloom-sec', 'r-bloom-pour', 'r-bloom-obs'].forEach(id => { $x(id).value = ''; });
+            $x('ataques-container').innerHTML = '';
+            addAtackField('', '', '', ''); addAtackField('', '', '', '');
+            distribuirIgual(); renderNpour();
+        }
+        async function saveR() {
+            try {
+                const nome = $x('r-nome').value.trim();
+                if(!nome) { alert('Dê um nome à receita.'); return; }
+                const atks = [];
+                $x('ataques-container').querySelectorAll('.step-card').forEach(row => {
+                    atks.push({ ml: parseFloat(row.querySelector('.st-ml').value) || 0, sec: parseFloat(row.querySelector('.st-sec').value) || 0, pour: parseFloat(row.querySelector('.st-pour').value) || 0, obs: row.querySelector('.st-obs').value.trim() });
+                });
+                const original = editIds.r ? localData.r.find(x => x.id === editIds.r) : null;
+                const d = {
+                    nome: nome.toUpperCase(), metodo: $x('r-metodo').value,
+                    origRatio: numVal('r-ratio'), origPo: numVal('r-po'), origTotal: Math.round(numVal('r-total')), origClicks: $x('r-clicks').value, origTemp: $x('r-temp').value,
+                    origMoedor: $x('r-moedor').value || '',
+                    bloomMl: numVal('r-bloom-ml'), bloomSec: numVal('r-bloom-sec'), bloomPour: numVal('r-bloom-pour'), bloomObs: $x('r-bloom-obs').value.trim(), ataques: atks,
+                    owner_uid: original ? original.owner_uid : currentUser.uid, owner_nick: original ? original.owner_nick : userProfile.nick,
+                    visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp()
+                };
+                if(editIds.r) await db.collection('receitas').doc(editIds.r).update(d); else await db.collection('receitas').add(d);
+                cancelEdit('r'); loadR();
+            } catch(e) { alert("Erro: " + e.message); }
+        }
+        function editR(id) {
+            const i = localData.r.find(x => x.id === id); if(!i) return;
+            editIds.r = id;
+            $x('r-nome').value = i.nome; setMetodoForm(i.metodo || '');
+            $x('r-po').value = i.origPo || '';
+            $x('r-total').value = i.origTotal || ((i.origPo && i.origRatio) ? Math.round(i.origPo * i.origRatio) : '');
+            $x('r-clicks').value = i.origClicks || ''; $x('r-temp').value = i.origTemp || ''; setMoedorForm(i.origMoedor || '');
+            $x('r-bloom-ml').value = i.bloomMl || ''; $x('r-bloom-sec').value = i.bloomSec || ''; $x('r-bloom-pour').value = i.bloomPour || ''; $x('r-bloom-obs').value = i.bloomObs || '';
+            $x('ataques-container').innerHTML = '';
+            (i.ataques || []).forEach(a => addAtackField(a.ml, a.sec, a.obs, a.pour));
+            $x('r-edit-actions').classList.remove('hidden'); $x('r-btn-main').classList.add('hidden');
+            atualizarForm(); renderNpour(); abrirForm('r', true);
+        }
+
+        /* ---- voz e som ---- */
+        function falar(txt) {
+            if(modoSom !== 'tudo' || !txt) return;
+            try { if(!('speechSynthesis' in window)) return; window.speechSynthesis.cancel(); const u = new SpeechSynthesisUtterance(txt); u.lang = 'pt-BR'; u.rate = 1.05; window.speechSynthesis.speak(u); } catch(e) {}
+        }
+        function iconeSom() { return modoSom === 'tudo' ? '🔊' : (modoSom === 'bipe' ? '🔔' : '🔇'); }
+        function alternarSom() {
+            modoSom = modoSom === 'tudo' ? 'bipe' : (modoSom === 'bipe' ? 'mudo' : 'tudo');
+            try { localStorage.setItem('cm_som', modoSom); } catch(e) {}
+            try { window.speechSynthesis.cancel(); } catch(e) {}
+            const b = $x('x-som'); if(b) b.textContent = iconeSom();
+            toast(modoSom === 'tudo' ? 'Bipes e voz ligados' : (modoSom === 'bipe' ? 'Só bipes' : 'Silencioso'));
+        }
+
+        /* ---- sommelier de ajuste ---- */
+        function diagnosticar(v) {
+            const d = v.docura, a = v.acidez, m = v.amargor, c = v.corpo;
+            const r = { titulo: 'Equilibrado', msgs: [], clicks: 0, temp: 0, aguaPct: 0 };
+            if(m >= 4 && m - a >= 2) { const f = m >= 5 ? 1 : 0; r.titulo = 'Amargo: sinal de sobre-extração'; r.clicks = 2 + f; r.temp = -(1 + f); r.msgs.push('Moa mais grosso', 'Use água um pouco mais fria'); }
+            else if(a >= 4 && a - m >= 2) { const f = a >= 5 ? 1 : 0; r.titulo = 'Azedo: sinal de sub-extração'; r.clicks = -(2 + f); r.temp = 1 + f; r.msgs.push('Moa mais fino', 'Use água um pouco mais quente'); }
+            else if(a >= 4 && m >= 4) { r.titulo = 'Muito intenso: azedo e amargo'; r.aguaPct = 5; r.msgs.push('Dilua um pouco: mais água'); }
+            else if(c <= 1 && d <= 2) { r.titulo = 'Fraco e aguado'; r.aguaPct = -5; r.clicks = -1; r.msgs.push('Proporção mais forte: menos água', 'Moa um clique mais fino'); }
+            else if(d <= 1) { r.titulo = 'Pouca doçura'; r.temp = 1; r.msgs.push('Tente 1 °C a mais para realçar a doçura'); }
+            else if(c >= 4 && m >= 3) { r.titulo = 'Corpo pesado'; r.clicks = 1; r.msgs.push('Moa um clique mais grosso'); }
+            r.temAjuste = r.clicks !== 0 || r.temp !== 0 || r.aguaPct !== 0;
+            if(!r.temAjuste && !r.msgs.length) r.msgs.push('Nada a ajustar. Se gostou, salve a moagem como padrão da receita.');
+            return r;
+        }
+        function atualizarSommelier() {
+            const box = $x('f-sommelier'); if(!box) return;
+            const r = diagnosticar({ docura: numVal('f-doce'), acidez: numVal('f-acidez'), amargor: numVal('f-amargor'), corpo: numVal('f-corpo') });
+            ajusteAtual = r;
+            const cl = parseFloat(String($x('p-clicks-val').value).replace(',', '.')), tp = parseFloat(String($x('p-temp-val').value).replace(',', '.')), ag = Math.round(numVal('p-agua-val'));
+            const det = [];
+            if(r.clicks) det.push(isNaN(cl) ? (r.clicks > 0 ? '+' : '') + r.clicks + ' cliques' : cl + ' → ' + Math.max(0, cl + r.clicks) + ' cliques');
+            if(r.temp) det.push(isNaN(tp) ? (r.temp > 0 ? '+' : '') + r.temp + ' °C' : tp + ' → ' + (tp + r.temp) + ' °C');
+            if(r.aguaPct && ag > 0) det.push(ag + ' → ' + (ag + Math.round(ag * r.aguaPct / 100 / 5) * 5) + ' ml');
+            $x('f-somm-titulo').textContent = r.titulo;
+            $x('f-somm-txt').innerHTML = r.msgs.map(m => '<div>• ' + escH(m) + '</div>').join('') + (det.length ? '<div class="text-xs text-zinc-500 mt-1">' + det.join(' · ') + '</div>' : '');
+            $x('f-somm-btn').classList.toggle('hidden', !r.temAjuste);
+        }
+        function aplicarAjuste(r) {
+            const partes = [];
+            const cl = parseFloat(String($x('p-clicks-val').value).replace(',', '.'));
+            if(r.clicks && !isNaN(cl)) { const n = Math.max(0, cl + r.clicks); $x('p-clicks-val').value = n; partes.push(n + ' cliques'); }
+            const tp = parseFloat(String($x('p-temp-val').value).replace(',', '.'));
+            if(r.temp && !isNaN(tp)) { const n = tp + r.temp; $x('p-temp-val').value = n; partes.push(n + ' °C'); }
+            if(r.aguaPct) { const ag = Math.round(numVal('p-agua-val')); if(ag > 0) { const n = ag + Math.round(ag * r.aguaPct / 100 / 5) * 5; $x('p-agua-val').value = n; partes.push(n + ' ml'); } }
+            upCalc();
+            toast('Ajuste aplicado: ' + (partes.join(' · ') || 'nada a mudar') + '. Pronto para preparar de novo.');
+        }
+
+        /* ---- radar de frescor e memória do café ---- */
+        function diasTorra(s) {
+            if(!s) return null;
+            const p = String(s).split('-'); if(p.length !== 3) return null;
+            const d = new Date(+p[0], +p[1] - 1, +p[2]), h = new Date(); h.setHours(0, 0, 0, 0);
+            return Math.round((h - d) / 86400000);
+        }
+        function infoFresco(dias) {
+            if(dias == null || dias < 0) return null;
+            if(dias <= 3) return { txt: 'Desgaseificando', cls: 'f-wait' };
+            if(dias <= 6) return { txt: 'Descansando', cls: 'f-wait' };
+            if(dias <= 30) return { txt: 'Janela ideal', cls: 'f-ok' };
+            if(dias <= 45) return { txt: 'Passando do ponto', cls: 'f-warn' };
+            return { txt: 'Velho', cls: 'f-bad' };
+        }
+        function badgeFresco(i) {
+            const dias = diasTorra(i.data), f = infoFresco(dias);
+            return f ? '<div class="fresco ' + f.cls + '">● ' + dias + (dias === 1 ? ' dia' : ' dias') + ' de torra · ' + f.txt + '</div>' : '';
+        }
+        function atualizarFrescoPreparo() {
+            const el = $x('p-fresco'); if(!el) return;
+            const g = localData.g.find(x => x.id === $x('p-g').value);
+            el.innerHTML = g ? badgeFresco(g) : '';
+        }
+        async function carregarLogs() {
+            if(!currentUser) return;
+            try {
+                const s = await db.collection('logs').where('owner_uid', '==', currentUser.uid).get();
+                localData.logs = s.docs.map(d => ({ id: d.id, ...d.data() })).sort((a, b) => (b.ts ? b.ts.seconds : 0) - (a.ts ? a.ts.seconds : 0));
+            } catch(e) { console.error(e); }
+            atualizarDica();
+        }
+        function melhorLog(g) {
+            if(!g) return null;
+            const bons = localData.logs.filter(l => (l.graoId ? l.graoId === g.id : l.grao === g.nome) && l.nota >= 4);
+            if(!bons.length) return null;
+            return bons.slice().sort((a, b) => b.nota - a.nota)[0];
+        }
+        function atualizarDica() {
+            const box = $x('p-dica'); if(!box) return;
+            const l = melhorLog(localData.g.find(x => x.id === $x('p-g').value));
+            melhorAtual = l;
+            if(!l) { box.classList.add('hidden'); return; }
+            const partes = [(l.po && l.po !== '--') ? l.po + ' g' : '', (l.ratio && l.ratio !== '--') ? '1:' + l.ratio : '', l.moedor ? (l.moedor + ((l.clicks && l.clicks !== '--') ? ' @ ' + l.clicks : '')) : ((l.clicks && l.clicks !== '--') ? l.clicks + ' cliques' : ''), (l.temp && l.temp !== '--') ? l.temp + ' °C' : ''].filter(Boolean);
+            $x('p-dica-txt').innerHTML = '<b>' + escH(l.receita) + '</b> · ' + '★'.repeat(l.nota) + (partes.length ? '<div class="text-xs text-zinc-500 mt-1">' + escH(partes.join(' · ')) + '</div>' : '');
+            box.classList.remove('hidden');
+        }
+        function usarMelhor() {
+            const l = melhorAtual; if(!l) return;
+            const r = (l.receitaId && localData.r.find(x => x.id === l.receitaId)) || localData.r.find(x => x.nome === l.receita);
+            if(!r) { toast('A receita desse preparo não está mais disponível.'); return; }
+            $x('p-r').value = r.id; handleRecipeSelect();
+            const po = parseFloat(l.po), ra = parseFloat(l.ratio);
+            if(po > 0) { $x('p-po-val').value = po; if(ra > 0) $x('p-agua-val').value = Math.round(po * ra); }
+            if(l.clicks && l.clicks !== '--') $x('p-clicks-val').value = l.clicks;
+            if(l.temp && l.temp !== '--') $x('p-temp-val').value = l.temp;
+            const mm = l.moedorId && moedores().find(m => m.id === l.moedorId); if(mm) $x('p-moedor').value = mm.id;
+            upCalc(); toast('Preparo carregado: ' + r.nome);
+        }
+        function graoMudou() { upCalc(); atualizarFrescoPreparo(); atualizarDica(); }
+        aplicarTema(temaAtual()); renderNpour(); atualizarForm();
 
         /* ---- receitas: busca e filtro por método ---- */
         function renderChips() {
@@ -946,6 +1289,7 @@
             safeM = safeMId ? mSel.options[mSel.selectedIndex].text : '';
             const rec = localData.r.find(x => x.id === rSel.value);
             safeMetodo = rec ? (rec.metodo || '') : '';
+            safeGId = gSel.value !== '0' ? gSel.value : ''; safeRId = rSel.value !== '0' ? rSel.value : '';
             const d = $x('p-po-val').value, a = $x('p-agua-val').value, r = $x('p-ratio-val').value, c = $x('p-clicks-val').value, tp = $x('p-temp-val').value;
             let res = d + 'g · ' + a + 'ml · 1:' + r + ' · ' + tempoFinalTxt;
             if(safeM) res += ' · ' + safeM + ((c && c !== '--') ? ' @ ' + c + ' clicks' : '');
@@ -954,13 +1298,14 @@
             $x('f-resumo').textContent = res;
             $x('f-atualiza-moagem').classList.remove('on');
             $x('f-moagem-row').classList.toggle('hidden', !(rec && currentUser && rec.owner_uid === currentUser.uid && c && c !== '--'));
+            atualizarSommelier();
             document.getElementById('modal-feedback').classList.remove('hidden');
         }
 
         function fecharFeedback() { document.getElementById('modal-feedback').classList.add('hidden'); setRating(0); }
         function setRating(n) { notaSelecionada = n; document.querySelectorAll('.star').forEach((s, i) => s.classList.toggle('active', i < n)); }
         
-        async function salvarFeedback() { 
+        async function salvarFeedback(modo) { 
             if(safeG === "SELECIONE O GRÃO" || safeR === "SELECIONE A RECEITA") { alert("Selecione os dados antes de salvar!"); return; }
             try {
                 await db.collection('logs').add({ 
@@ -972,7 +1317,7 @@
                     ratio: document.getElementById('p-ratio-val').value,
                     clicks: document.getElementById('p-clicks-val').value,
                     temp: document.getElementById('p-temp-val').value,
-                    moedor: safeM, moedorId: safeMId, metodo: safeMetodo,
+                    moedor: safeM, moedorId: safeMId, metodo: safeMetodo, graoId: safeGId, receitaId: safeRId, diag: (ajusteAtual && ajusteAtual.titulo) || '',
                     observacoes: (document.getElementById('f-obs').value||"").toUpperCase(), 
                     data: new Date().toLocaleString(), ts: firebase.firestore.FieldValue.serverTimestamp(), owner_uid: currentUser.uid 
                 }); 
@@ -983,12 +1328,14 @@
                         if(rec && rec.owner_uid === currentUser.uid && cl && cl !== '--') { await db.collection('receitas').doc(rid).update({ origClicks: cl }); rec.origClicks = cl; }
                     } catch(e) { console.error(e); }
                 }
+                carregarLogs();
+                if(modo === 'repetir' && ajusteAtual && ajusteAtual.temAjuste) { const aj = ajusteAtual; fecharFeedback(); aplicarAjuste(aj); return; }
                 fecharFeedback(); showTab('diario');
             } catch(e) { alert("Erro ao salvar: " + e.message); }
         }
 
         function abrirDetalhesG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; document.getElementById('detalhes-content').innerHTML = `<div class="flex justify-center mb-4"><img src="${img}" class="w-44 h-44 rounded-2xl object-cover border-2 border-zinc-800 shadow-2xl cursor-zoom-in" onclick="ampliarImagem('${img}')"></div><div><span class="label-gold">PRODUTOR</span><p class="text-white font-bold italic text-sm">${i.prod||'--'}</p></div><div><span class="label-gold">IDENTIFICAÇÃO</span><p class="text-white font-bold italic text-sm">${i.nome||'--'}</p></div><div><span class="label-gold">TORREFAÇÃO</span><p class="text-amber-500 font-bold italic text-sm">${i.torrefacao||'--'}</p></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">VARIEDADE</span><p class="text-white font-bold italic text-sm">${i.variedade||'--'}</p></div><div><span class="label-gold">PROCESSO</span><p class="text-white font-bold italic text-sm">${i.processo||'--'}</p></div></div><div><span class="label-gold">ALTITUDE | TORRA</span><p class="text-white font-bold italic text-sm"><span class="text-white">${i.altitude||'--'}</span> | <span class="text-white">${i.torra||'--'}</span></p></div><div><span class="label-gold">NOTAS</span><p class="text-zinc-400 italic text-sm">"${i.notas||'--'}"</p></div>`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
-        function abrirDetalhesR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; let atkH = (i.ataques || []).map((a, idx) => `<p class="text-zinc-500 text-[10px]">Atk ${idx+1}: ${a.ml}ml em ${a.sec}s</p>`).join(''); document.getElementById('detalhes-content').innerHTML = `<div><span class="label-gold">RECEITA</span><p class="text-white font-bold italic text-sm">${i.nome}</p></div>${i.metodo ? '<div class="flex items-center gap-2 mt-3">' + svgMetodo(i.metodo, catDoMetodo(i.metodo), 'mi-md') + '<span class="font-black text-sm">' + escH(i.metodo) + '</span></div>' : ''}<div class="grid grid-cols-3 gap-2"><div><span class="label-gold">RATIO</span><p class="text-white text-sm">1:${i.origRatio}</p></div><div><span class="label-gold">PÓ</span><p class="text-white text-sm">${i.origPo}g</p></div><div><span class="label-gold">TOTAL</span><p class="text-amber-500 text-sm">${i.origTotal}ml</p></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">CLICKS</span><p class="text-white text-sm">${i.origClicks||'--'}</p></div><div><span class="label-gold">TEMP</span><p class="text-white text-sm">${i.origTemp||'--'}°</p></div></div>${atkH ? `<div><span class="label-gold">ATAQUES</span>${atkH}</div>` : ''}`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
+        function abrirDetalhesR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; let atkH = ''; const passos = []; if(i.bloomMl > 0) passos.push({ t: 'Bloom', ml: i.bloomMl, sec: i.bloomSec, pour: i.bloomPour, obs: i.bloomObs }); (i.ataques || []).forEach((a, idx) => passos.push({ t: 'Despejo ' + (idx + (i.bloomMl > 0 ? 2 : 1)), ml: a.ml, sec: a.sec, pour: a.pour, obs: a.obs })); atkH = passos.map(p => `<p class="text-zinc-500 text-xs">${p.t}: ${p.ml} g em ${p.sec}s${p.pour ? ' (despeja ' + p.pour + 's)' : ''}</p>${p.obs ? '<p class="text-xs" style="font-style:italic">“' + escH(p.obs) + '”</p>' : ''}`).join(''); document.getElementById('detalhes-content').innerHTML = `<div><span class="label-gold">RECEITA</span><p class="text-white font-bold italic text-sm">${i.nome}</p></div>${i.metodo ? '<div class="flex items-center gap-2 mt-3">' + svgMetodo(i.metodo, catDoMetodo(i.metodo), 'mi-md') + '<span class="font-black text-sm">' + escH(i.metodo) + '</span></div>' : ''}<div class="grid grid-cols-3 gap-2"><div><span class="label-gold">RATIO</span><p class="text-white text-sm">1:${i.origRatio}</p></div><div><span class="label-gold">PÓ</span><p class="text-white text-sm">${i.origPo}g</p></div><div><span class="label-gold">TOTAL</span><p class="text-amber-500 text-sm">${i.origTotal}ml</p></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">CLICKS</span><p class="text-white text-sm">${i.origClicks||'--'}</p>${i.origMoedor ? '<p class="text-zinc-500 text-[10px]">' + escH(i.origMoedor) + '</p>' : ''}</div><div><span class="label-gold">TEMP</span><p class="text-white text-sm">${i.origTemp||'--'}°</p></div></div>${atkH ? `<div><span class="label-gold">ATAQUES</span>${atkH}</div>` : ''}`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
         function ampliarImagem(src) { document.getElementById('img-ampliada').src = src; document.getElementById('modal-zoom').classList.remove('hidden'); }
         function toggleAuth(l) { document.getElementById('login-form').classList.toggle('hidden', !l); document.getElementById('signup-form').classList.toggle('hidden', l); }
         async function handleLogin() { try { await auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value); } catch(e) { alert(e.message); } }
