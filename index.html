@@ -181,6 +181,24 @@
         .f-ok { color: #5FA46F; } .f-warn { color: #D98B2B; } .f-bad { color: #D9534F; } .f-wait { color: var(--muted); }
         #toast { position: fixed; bottom: 104px; left: 50%; transform: translateX(-50%); background: var(--card-2); border: 1px solid var(--line-2); color: var(--text); padding: 10px 16px; border-radius: 14px; z-index: 3000; font-weight: 700; font-size: 13px; max-width: 90%; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.35); }
         .step-card input[type=number], .step-card input[type=text] { margin-bottom: 0; }
+
+        /* ===== Lista de receitas: card completo, sem nomes cortados ===== */
+        .clamp3 { display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+        .rc { padding: 14px; }
+        .rc-head { display: flex; gap: 12px; align-items: flex-start; cursor: pointer; }
+        .rc-nome { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-weight: 800; font-size: 17px; line-height: 1.2; color: var(--text); display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden; overflow-wrap: anywhere; }
+        .rc-meta { font-size: 12px; font-weight: 700; color: var(--muted); margin-top: 4px; overflow-wrap: anywhere; }
+        .rc-stats { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+        .rc-stat { background: var(--card-2); border: 1px solid var(--line); border-radius: 999px; padding: 4px 10px; font-size: 12px; font-weight: 800; color: var(--text); }
+        .rc-perfil { display: flex; gap: 3px; margin-top: 12px; height: 6px; }
+        .rc-perfil span { border-radius: 3px; background: var(--brand); min-width: 4px; }
+        .rc-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 12px; }
+        .rc-acoes { display: flex; gap: 8px; }
+        .rc-btn { width: 40px; height: 40px; border-radius: 12px; background: var(--card-2); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--muted); }
+        .rc-btn svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
+        .rc-btn.del { color: #D9534F; }
+        .rc-prep { display: flex; align-items: center; gap: 8px; background: var(--brand); color: #fff; font-weight: 900; padding: 11px 20px; border-radius: 14px; font-size: 14px; }
+        .rc-prep svg { width: 16px; height: 16px; fill: currentColor; stroke: none; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
@@ -232,7 +250,7 @@
             <div class="flex items-center justify-between mt-3 px-1"><span class="label-gold mt-0 ml-0">Proporção</span><div class="flex items-center"><span class="text-2xl font-black">1:</span><input type="text" id="r-ratio" readonly class="ratio-ro"></div></div>
             <div class="grid grid-cols-2 gap-2 mt-3">
                 <div class="box-soft"><span class="label-gold mt-0 ml-0">Temperatura (°C)</span><div class="stepper sm"><button type="button" onclick="ajustarR('r-temp',-1)">−</button><input type="text" inputmode="decimal" id="r-temp"><button type="button" onclick="ajustarR('r-temp',1)">+</button></div></div>
-                <div class="box-soft"><span class="label-gold mt-0 ml-0">Moagem de referência</span><select id="r-moedor" class="sel-sm"></select><div class="stepper sm"><button type="button" onclick="ajustarR('r-clicks',-1)">−</button><input type="text" inputmode="decimal" id="r-clicks"><button type="button" onclick="ajustarR('r-clicks',1)">+</button></div><div class="prep-un">cliques</div></div>
+                <div class="box-soft"><span class="label-gold mt-0 ml-0">Moagem de referência</span><select id="r-moedor" class="sel-sm" onchange="atualizarForm()"></select><div class="stepper sm"><button type="button" onclick="ajustarR('r-clicks',-1)">−</button><input type="text" inputmode="decimal" id="r-clicks" oninput="atualizarForm()"><button type="button" onclick="ajustarR('r-clicks',1)">+</button></div><div class="prep-un">cliques</div><div id="r-um-info" class="text-xs text-zinc-500 text-center"></div></div>
             </div>
             <div class="flex items-center justify-between mt-4"><span class="label-gold mt-0 ml-0">Despejos</span><button type="button" class="link-btn" onclick="distribuirIgual()">Distribuir água igual</button></div>
             <div id="r-npour" class="chips-row mt-2" onclick="npourClick(event)"></div>
@@ -255,9 +273,10 @@
             </div>
             <div class="card flex items-center justify-between"><span class="label-gold mt-0 ml-0">Proporção</span><div class="flex items-center gap-2"><span id="p-lock" class="lockico"></span><span class="text-2xl font-black">1:</span><input type="text" id="p-ratio-val" value="--" readonly class="ratio-ro"></div></div>
             <div class="grid grid-cols-2 gap-3 mb-3">
-                <div class="card" style="margin-bottom:0"><div class="flex items-center justify-between"><span class="label-gold mt-0 ml-0">Moagem</span><button class="link-btn" onclick="abrirEquip()">Gerenciar</button></div><select id="p-moedor" class="sel-sm"></select><div class="stepper sm"><button onclick="ajustar('clicks',-1)">−</button><input type="text" inputmode="decimal" id="p-clicks-val" value="--" onfocus="handleFocus(this)"><button onclick="ajustar('clicks',1)">+</button></div><div class="prep-un">cliques</div></div>
+                <div class="card" style="margin-bottom:0"><div class="flex items-center justify-between"><span class="label-gold mt-0 ml-0">Moagem</span><button class="link-btn" onclick="abrirEquip()">Gerenciar</button></div><select id="p-moedor" class="sel-sm" onchange="atualizarConversao()"></select><div class="stepper sm"><button onclick="ajustar('clicks',-1)">−</button><input type="text" inputmode="decimal" id="p-clicks-val" value="--" onfocus="handleFocus(this)"><button onclick="ajustar('clicks',1)">+</button></div><div class="prep-un">cliques</div></div>
                 <div class="card" style="margin-bottom:0"><span class="label-gold mt-0 ml-0">Temperatura (°C)</span><div class="stepper sm"><button onclick="ajustar('temp',-1)">−</button><input type="text" inputmode="decimal" id="p-temp-val" value="--" onfocus="handleFocus(this)"><button onclick="ajustar('temp',1)">+</button></div></div>
             </div>
+            <div id="p-conv" class="box-soft hidden mb-3"><div class="label-gold mt-0 ml-0">Moagem equivalente</div><div id="p-conv-txt" class="text-sm"></div><button type="button" id="p-conv-btn" class="btn-novo w-full mt-2" onclick="usarConversao()">Usar no meu moedor</button></div>
             <div class="card"><div class="flex justify-between items-center mb-2"><span class="label-gold mt-0 ml-0">Despejos</span><span id="p-steps-count" class="text-xs text-zinc-500 font-bold">0 etapas</span></div><div id="p-steps"></div></div>
             <button class="btn-gold" onclick="abrirExec()">Iniciar preparo</button>
         </div>
@@ -326,8 +345,9 @@
                     <div class="flex justify-between items-center mb-3"><span class="label-gold mt-0 ml-0">Moedores</span><span id="eq-cnt-moedor" class="text-xs text-zinc-500 font-bold"></span></div>
                     <div id="eq-lista-moedor"></div>
                     <button type="button" id="eq-btn-catalogo" class="link-btn" onclick="toggleCatalogo()">+ Adicionar da lista de moedores populares</button>
+                    <div class="text-xs text-zinc-500 mt-2">Os µm por clique vêm das especificações dos fabricantes e servem só para estimar conversões entre moedores. Conte os cliques a partir do zero (mós encostadas) e ajuste sempre pelo sabor.</div>
                     <div id="eq-catalogo-box" class="hidden mt-2"><input type="text" id="eq-busca-moedor" placeholder="BUSCAR MODELO OU MARCA..." oninput="renderCatalogoMoedores()" style="margin-bottom:0"><div id="eq-catalogo" onclick="catalogoClick(event)"></div></div>
-                    <div class="flex gap-2 mt-3 items-center"><input type="text" id="eq-nome-moedor" placeholder="Ex: Timemore C3 ESP" style="margin-bottom:0"><button id="eq-btn-moedor" class="btn-novo" onclick="salvarMoedor()">Adicionar</button><button id="eq-cancel-moedor" class="btn-mini hidden" style="width:44px;height:44px;flex-shrink:0" onclick="cancelarEdicaoMoedor()">✕</button></div>
+                    <div class="flex gap-2 mt-3 items-center"><input type="text" id="eq-nome-moedor" placeholder="Ex: Timemore C3 ESP" style="margin-bottom:0"><input type="text" inputmode="decimal" id="eq-um-moedor" placeholder="µm/clique" style="margin-bottom:0;width:104px;flex-shrink:0"><button id="eq-btn-moedor" class="btn-novo" onclick="salvarMoedor()">Adicionar</button><button id="eq-cancel-moedor" class="btn-mini hidden" style="width:44px;height:44px;flex-shrink:0" onclick="cancelarEdicaoMoedor()">✕</button></div>
                 </div>
                 <div class="card">
                     <div class="flex justify-between items-center mb-1"><span class="label-gold mt-0 ml-0">Métodos de preparo</span><span id="eq-cnt-metodo" class="text-xs text-zinc-500 font-bold"></span></div>
@@ -410,8 +430,40 @@
             } catch(e) { console.error(e); }
         }
 
-        function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase truncate">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white truncate leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 truncate">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div>${badgeFresco(i)}</div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
-        function renderR(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; h += `<div class="card p-3 flex items-center h-[85px] gap-3"><div class="metodo-ico">${svgMetodo(i.metodo, catDoMetodo(i.metodo))}</div><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesR('${i.id}')"><div class="text-lg font-black italic uppercase text-amber-500 truncate">${i.nome}</div><div class="text-[8px] text-zinc-600 font-black uppercase mt-1">por @${i.owner_nick || 'Mestre'} | ${i.metodo || '--'}</div></div><div class="flex gap-2"> ${isOwner ? `<button onclick="editR('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('receitas','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''} <button onclick="showTab('preparo'); handleRecipeSelect('${i.id}')" class="text-xs font-black p-3 bg-amber-600 text-black rounded-lg italic uppercase">Preparar</button> </div></div>`; }); document.getElementById('list-r').innerHTML = h; }
+        function renderG(data) { let h = ''; data.forEach(i => { const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; h += `<div class="card p-3 flex gap-3 items-center border border-zinc-800"><div class="flex-1 min-w-0 cursor-pointer" onclick="abrirDetalhesG('${i.id}')"><div class="text-[8px] text-white font-black uppercase clamp3">${i.prod || '--'} • @${i.owner_nick || 'Mestre'}</div><div class="text-base font-black italic uppercase text-white clamp3 leading-tight">${i.nome}</div><div class="text-[8px] text-amber-500 font-black uppercase mt-1 clamp3">${i.variedade || '--'} | ${i.processo || '--'} | ${i.torrefacao || '--'}</div>${badgeFresco(i)}</div><img src="${img}" class="grain-thumb"><div class="flex flex-col gap-1">${isOwner ? `<button onclick="editG('${i.id}')" class="p-2 bg-zinc-900 rounded-lg text-xs">✏️</button><button onclick="del('cafes','${i.id}','${i.nome}')" class="p-2 bg-zinc-900 rounded-lg text-xs">🗑️</button>` : ''}</div></div>`; }); document.getElementById('list-g').innerHTML = h; }
+        const ICO_EDIT = '<svg viewBox="0 0 24 24"><path d="M4 20h4L18.5 9.5l-4-4L4 16z"/><path d="M13 7l4 4"/></svg>';
+        const ICO_TRASH = '<svg viewBox="0 0 24 24"><path d="M4 7h16"/><path d="M9 7V4h6v3"/><path d="M6.5 7l1 13h9l1-13"/><path d="M10 11v6M14 11v6"/></svg>';
+        function tempoReceita(i) { let t = 0; if(i.bloomMl > 0) t += i.bloomSec || 0; (i.ataques || []).forEach(a => { t += a.sec || 0; }); return t; }
+        function perfilDespejo(i) {
+            const p = []; if(i.bloomMl > 0) p.push(i.bloomMl); (i.ataques || []).forEach(a => { if(a.ml > 0) p.push(a.ml); });
+            if(!p.length) return '';
+            return '<div class="rc-perfil" title="' + escH(p.join(' g · ') + ' g') + '">' + p.map((ml, k) => '<span style="flex:' + ml + (k === 0 && i.bloomMl > 0 ? ';opacity:.45' : '') + '"></span>').join('') + '</div>';
+        }
+        function delR(id) { const r = localData.r.find(x => x.id === id); del('receitas', id, r ? r.nome : 'receita'); }
+        function renderR(data) {
+            let h = '';
+            data.forEach(i => {
+                const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL;
+                const stats = [];
+                if(i.origPo > 0) stats.push(i.origPo + ' g');
+                if(i.origRatio > 0) stats.push('1:' + i.origRatio);
+                const t = tempoReceita(i); if(t > 0) stats.push(fmt(t, true));
+                if(i.origTemp) stats.push(i.origTemp + ' °C');
+                const moedor = i.origMoedor ? escH(i.origMoedor) + (i.origClicks ? ' @ ' + escH(i.origClicks) + ' cliques' : '') : '';
+                h += '<div class="card rc">' +
+                    '<div class="rc-head" onclick="abrirDetalhesR(\'' + i.id + '\')">' +
+                        '<div class="metodo-ico">' + svgMetodo(i.metodo, catDoMetodo(i.metodo)) + '</div>' +
+                        '<div class="min-w-0 flex-1"><div class="rc-nome">' + escH(i.nome) + '</div>' +
+                        '<div class="rc-meta">por @' + escH(i.owner_nick || 'Mestre') + (i.metodo ? ' · ' + escH(i.metodo) : '') + '</div></div></div>' +
+                    (stats.length ? '<div class="rc-stats">' + stats.map(s => '<span class="rc-stat">' + escH(s) + '</span>').join('') + '</div>' : '') +
+                    (moedor ? '<div class="rc-meta">' + moedor + '</div>' : '') +
+                    perfilDespejo(i) +
+                    '<div class="rc-foot"><div class="rc-acoes">' +
+                        (isOwner ? '<button class="rc-btn" onclick="editR(\'' + i.id + '\')" aria-label="Editar">' + ICO_EDIT + '</button><button class="rc-btn del" onclick="delR(\'' + i.id + '\')" aria-label="Excluir">' + ICO_TRASH + '</button>' : '') +
+                    '</div><button class="rc-prep" onclick="showTab(\'preparo\'); handleRecipeSelect(\'' + i.id + '\')">' + ICO_PLAY + 'Preparar</button></div></div>';
+            });
+            document.getElementById('list-r').innerHTML = h;
+        }
         async function loadPrep() { let gh = '<option value="0">SELECIONE O GRÃO</option>', rh = '<option value="0">SELECIONE A RECEITA</option>'; localData.g.forEach(i => gh += `<option value="${i.id}">${i.nome}</option>`); localData.r.forEach(i => rh += `<option value="${i.id}">${i.nome}</option>`); document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh; document.getElementById('p-moedor').innerHTML = optsMoedores(''); }
 
 
@@ -537,7 +589,7 @@
                 $x('p-temp-val').value = i.origTemp || "--";
                 const mm = i.origMoedor ? moedores().find(m => normN(m.nome) === normN(i.origMoedor)) : null;
                 if(mm && $x('p-moedor')) $x('p-moedor').value = mm.id;
-                upCalc();
+                upCalc(); atualizarConversao();
             }
         }
         function upCalc() {
@@ -577,7 +629,7 @@
             ['p-po-val', 'p-agua-val', 'p-ratio-val', 'p-clicks-val', 'p-temp-val'].forEach(id => $x(id).value = "--");
             activeStepsData = { steps: [], times: [] };
             $x('p-lock').innerHTML = ICO_LOCK; $x('p-reset').classList.add('hidden');
-            renderStepsList(); atualizarFrescoPreparo(); atualizarDica();
+            renderStepsList(); atualizarFrescoPreparo(); atualizarDica(); atualizarConversao();
         }
 
         /* ---- som, vibração e tela ligada ---- */
@@ -814,7 +866,7 @@
                 const s = await db.collection('equipamentos').where('owner_uid', '==', currentUser.uid).get();
                 localData.eq = s.docs.map(d => ({ id: d.id, ...d.data() }));
                 await semearMetodos();
-            } catch(e) { console.error('equipamentos:', e); }
+            } catch(e) { console.error('equipamentos:', e); if(e && e.code === 'permission-denied') toast('Equipamentos bloqueados pelas regras do Firestore. Falta liberar a coleção "equipamentos".'); }
             atualizarSelMoedor(); renderEquip(); renderMetodoGrid(); renderPills(); filtrarR();
         }
         async function semearMetodos() {
@@ -832,7 +884,7 @@
             } catch(e) { console.error('semear métodos:', e); }
             semeando = false;
         }
-        function erroEquip(e) { console.error(e); alert('Não foi possível salvar. Se o erro for de permissão, é preciso liberar a coleção "equipamentos" nas regras do Firestore.'); }
+        function erroEquip(e) { console.error(e); alert('Não foi possível salvar (' + ((e && (e.code || e.message)) || 'erro') + '). Se o erro for de permissão, é preciso liberar a coleção "equipamentos" nas regras do Firestore.'); }
 
         /* ---- moedores ---- */
         function moedores() { return localData.eq.filter(e => e.tipo === 'moedor').sort((a, b) => (b.principal ? 1 : 0) - (a.principal ? 1 : 0) || String(a.nome).localeCompare(String(b.nome))); }
@@ -850,23 +902,24 @@
             const nome = $x('eq-nome-moedor').value.trim().replace(/\s+/g, ' ');
             if(!nome) { alert('Digite o nome do moedor.'); return; }
             if(!eqEditMoedor && temMoedor(nome)) { alert('Esse moedor já está na sua lista.'); return; }
+            const umN = parseFloat(String($x('eq-um-moedor').value).replace(',', '.')), um = umN > 0 ? umN : null;
             try {
                 if(eqEditMoedor) {
-                    await db.collection('equipamentos').doc(eqEditMoedor).update({ nome });
-                    const e = localData.eq.find(x => x.id === eqEditMoedor); if(e) e.nome = nome;
+                    await db.collection('equipamentos').doc(eqEditMoedor).update({ nome, um });
+                    const e = localData.eq.find(x => x.id === eqEditMoedor); if(e) { e.nome = nome; e.um = um; }
                 } else {
                     const primeiro = moedores().length === 0;
-                    const ref = await db.collection('equipamentos').add({ owner_uid: currentUser.uid, tipo: 'moedor', nome, principal: primeiro, ts: firebase.firestore.FieldValue.serverTimestamp() });
-                    localData.eq.push({ id: ref.id, owner_uid: currentUser.uid, tipo: 'moedor', nome, principal: primeiro });
+                    const ref = await db.collection('equipamentos').add({ owner_uid: currentUser.uid, tipo: 'moedor', nome, um, principal: primeiro, ts: firebase.firestore.FieldValue.serverTimestamp() });
+                    localData.eq.push({ id: ref.id, owner_uid: currentUser.uid, tipo: 'moedor', nome, um, principal: primeiro });
                 }
-                cancelarEdicaoMoedor(); renderEquip(); atualizarSelMoedor();
+                cancelarEdicaoMoedor(); renderEquip(); atualizarSelMoedor(); atualizarConversao();
             } catch(e) { erroEquip(e); }
         }
         function editarMoedor(id) {
             const e = localData.eq.find(x => x.id === id); if(!e) return;
-            eqEditMoedor = id; $x('eq-nome-moedor').value = e.nome; $x('eq-btn-moedor').textContent = 'Salvar'; $x('eq-cancel-moedor').classList.remove('hidden'); $x('eq-nome-moedor').focus();
+            eqEditMoedor = id; $x('eq-nome-moedor').value = e.nome; $x('eq-um-moedor').value = e.um || ''; $x('eq-btn-moedor').textContent = 'Salvar'; $x('eq-cancel-moedor').classList.remove('hidden'); $x('eq-nome-moedor').focus();
         }
-        function cancelarEdicaoMoedor() { eqEditMoedor = null; $x('eq-nome-moedor').value = ''; $x('eq-btn-moedor').textContent = 'Adicionar'; $x('eq-cancel-moedor').classList.add('hidden'); }
+        function cancelarEdicaoMoedor() { eqEditMoedor = null; $x('eq-nome-moedor').value = ''; $x('eq-um-moedor').value = ''; $x('eq-btn-moedor').textContent = 'Adicionar'; $x('eq-cancel-moedor').classList.add('hidden'); }
         async function tornarPrincipal(id) {
             try {
                 const batch = db.batch();
@@ -942,7 +995,7 @@
             const lm = $x('eq-lista-moedor'); if(!lm) return;
             const ms = moedores();
             $x('eq-cnt-moedor').textContent = ms.length + (ms.length === 1 ? ' cadastrado' : ' cadastrados');
-            lm.innerHTML = ms.length ? ms.map(m => `<div class="eq-row">${svgMoedor(m.nome, 'mi-md')}<div class="flex-1 min-w-0"><div class="nm truncate">${escH(m.nome)}</div>${m.principal ? '<div class="badge-pr">Principal</div>' : `<button class="link-btn" onclick="tornarPrincipal('${m.id}')">Tornar principal</button>`}</div><button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="editarMoedor('${m.id}')">✏️</button><button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="excluirEq('${m.id}')">🗑️</button></div>`).join('') : '<div class="text-xs text-zinc-500 text-center p-3">Nenhum moedor cadastrado</div>';
+            lm.innerHTML = ms.length ? ms.map(m => `<div class="eq-row">${svgMoedor(m.nome, 'mi-md')}<div class="flex-1 min-w-0"><div class="nm truncate">${escH(m.nome)}</div><div class="text-xs text-zinc-500">${umTxt(m)}</div>${m.principal ? '<div class="badge-pr">Principal</div>' : `<button class="link-btn" onclick="tornarPrincipal('${m.id}')">Tornar principal</button>`}</div><button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="editarMoedor('${m.id}')">✏️</button><button class="p-2 bg-zinc-900 rounded-lg text-xs" onclick="excluirEq('${m.id}')">🗑️</button></div>`).join('') : '<div class="text-xs text-zinc-500 text-center p-3">Nenhum moedor cadastrado</div>';
             const lst = listaMetodos();
             $x('eq-cnt-metodo').textContent = lst.length + (lst.length === 1 ? ' método' : ' métodos');
             let h = '';
@@ -960,7 +1013,7 @@
         document.addEventListener('click', e => { const m = $x('menu-user'); if(m && !e.target.closest('#btn-avatar') && !e.target.closest('#menu-user')) m.classList.add('hidden'); });
 
         /* ---- moedores populares (lista pronta) ---- */
-        const MOEDORES_PADRAO = [{ nome: 'Timemore C2', tipo: 'manual' }, { nome: 'Timemore C3', tipo: 'manual' }, { nome: 'Timemore C3 ESP', tipo: 'manual' }, { nome: 'Timemore S3', tipo: 'manual' }, { nome: '1Zpresso JX', tipo: 'manual' }, { nome: '1Zpresso JX-Pro', tipo: 'manual' }, { nome: '1Zpresso J-Ultra', tipo: 'manual' }, { nome: '1Zpresso K-Ultra', tipo: 'manual' }, { nome: '1Zpresso ZP6 Special', tipo: 'manual' }, { nome: '1Zpresso Q2', tipo: 'manual' }, { nome: 'Kingrinder K6', tipo: 'manual' }, { nome: 'Kingrinder K4', tipo: 'manual' }, { nome: 'Kingrinder P2', tipo: 'manual' }, { nome: 'Comandante C40 MK4', tipo: 'manual' }, { nome: 'iCoffee M3 Pro', tipo: 'manual' }, { nome: 'Porlex Mini', tipo: 'manual' }, { nome: 'Hario Skerton Pro', tipo: 'manual', icone: 'moedor-jarra' }, { nome: 'Hario Mini Mill Slim', tipo: 'manual', icone: 'moedor-jarra' }, { nome: 'Tramontina Manual', tipo: 'manual' }, { nome: 'Baratza Encore', tipo: 'eletrico' }, { nome: 'Baratza Encore ESP', tipo: 'eletrico' }, { nome: 'Baratza Virtuoso+', tipo: 'eletrico' }, { nome: 'Breville Smart Grinder Pro', tipo: 'eletrico' }, { nome: 'Fellow Ode Gen 2', tipo: 'eletrico' }, { nome: 'Eureka Mignon Specialità', tipo: 'eletrico' }, { nome: 'Niche Zero', tipo: 'eletrico' }, { nome: 'DF64', tipo: 'eletrico' }, { nome: 'Wilfa Svart Aroma', tipo: 'eletrico' }, { nome: 'Timemore Sculptor 078', tipo: 'eletrico' }, { nome: 'Hario V60 Electric', tipo: 'eletrico' }, { nome: 'Oster Precision Grind', tipo: 'eletrico' }, { nome: 'Philco (elétrico)', tipo: 'eletrico' }, { nome: 'Cadence (elétrico)', tipo: 'eletrico' }];
+        const MOEDORES_PADRAO = [{ nome: 'Timemore C2', tipo: 'manual', um: 83 }, { nome: 'Timemore C3', tipo: 'manual', um: 83 }, { nome: 'Timemore C3 ESP', tipo: 'manual', um: 23.3 }, { nome: 'Timemore S3', tipo: 'manual', um: 15 }, { nome: '1Zpresso JX', tipo: 'manual' }, { nome: '1Zpresso JX-Pro', tipo: 'manual', um: 12.5 }, { nome: '1Zpresso J-Ultra', tipo: 'manual', um: 8 }, { nome: '1Zpresso K-Ultra', tipo: 'manual', um: 20 }, { nome: '1Zpresso ZP6 Special', tipo: 'manual', um: 22 }, { nome: '1Zpresso Q2', tipo: 'manual', um: 25 }, { nome: 'Kingrinder K6', tipo: 'manual', um: 16 }, { nome: 'Kingrinder K4', tipo: 'manual', um: 16 }, { nome: 'Kingrinder P2', tipo: 'manual' }, { nome: 'Comandante C40 MK4', tipo: 'manual', um: 30 }, { nome: 'iCoffee M3 Pro', tipo: 'manual' }, { nome: 'Porlex Mini', tipo: 'manual' }, { nome: 'Hario Skerton Pro', tipo: 'manual', icone: 'moedor-jarra' }, { nome: 'Hario Mini Mill Slim', tipo: 'manual', icone: 'moedor-jarra' }, { nome: 'Tramontina Manual', tipo: 'manual' }, { nome: 'Baratza Encore', tipo: 'eletrico' }, { nome: 'Baratza Encore ESP', tipo: 'eletrico' }, { nome: 'Baratza Virtuoso+', tipo: 'eletrico' }, { nome: 'Breville Smart Grinder Pro', tipo: 'eletrico' }, { nome: 'Fellow Ode Gen 2', tipo: 'eletrico' }, { nome: 'Eureka Mignon Specialità', tipo: 'eletrico' }, { nome: 'Niche Zero', tipo: 'eletrico' }, { nome: 'DF64', tipo: 'eletrico' }, { nome: 'Wilfa Svart Aroma', tipo: 'eletrico' }, { nome: 'Timemore Sculptor 078', tipo: 'eletrico' }, { nome: 'Hario V60 Electric', tipo: 'eletrico' }, { nome: 'Oster Precision Grind', tipo: 'eletrico' }, { nome: 'Philco (elétrico)', tipo: 'eletrico' }, { nome: 'Cadence (elétrico)', tipo: 'eletrico' }];
         function chaveIconeMoedor(nome) {
             const n = normN(nome);
             const p = MOEDORES_PADRAO.find(m => normN(m.nome) === n);
@@ -988,8 +1041,9 @@
             if(ex) { await excluirEq(ex.id); return; }
             try {
                 const primeiro = moedores().length === 0;
-                const ref = await db.collection('equipamentos').add({ owner_uid: currentUser.uid, tipo: 'moedor', nome, principal: primeiro, ts: firebase.firestore.FieldValue.serverTimestamp() });
-                localData.eq.push({ id: ref.id, owner_uid: currentUser.uid, tipo: 'moedor', nome, principal: primeiro });
+                const cat = MOEDORES_PADRAO.find(m => normN(m.nome) === normN(nome)), umC = (cat && cat.um) ? cat.um : null;
+                const ref = await db.collection('equipamentos').add({ owner_uid: currentUser.uid, tipo: 'moedor', nome, um: umC, principal: primeiro, ts: firebase.firestore.FieldValue.serverTimestamp() });
+                localData.eq.push({ id: ref.id, owner_uid: currentUser.uid, tipo: 'moedor', nome, um: umC, principal: primeiro });
                 renderEquip(); atualizarSelMoedor();
             } catch(e) { erroEquip(e); }
         }
@@ -1037,6 +1091,7 @@
         function removerEtapa(btn) { const c = btn.closest('.step-card'); if(c) c.remove(); atualizarForm(); renderNpour(); }
         function atualizarForm() {
             const po = numVal('r-po'), total = Math.round(numVal('r-total'));
+            const ui = $x('r-um-info'); if(ui) { const u = umDoMoedor($x('r-moedor') ? $x('r-moedor').value : ''), c = numVal('r-clicks'); ui.textContent = (u > 0 && c > 0) ? '≈ ' + Math.round(c * u) + ' µm (nominal)' : ''; }
             const rEl = $x('r-ratio'); if(rEl) rEl.value = (po > 0 && total > 0) ? String(Math.round(total / po * 10) / 10) : '';
             let acc = 0, soma = 0;
             document.querySelectorAll('.step-card').forEach((c, idx) => {
@@ -1158,7 +1213,7 @@
         }
 
         /* ---- sommelier de ajuste ---- */
-        function diagnosticar(v) {
+        function diagnosticar(v, um) {
             const d = v.docura, a = v.acidez, m = v.amargor, c = v.corpo;
             const r = { titulo: 'Equilibrado', msgs: [], clicks: 0, temp: 0, aguaPct: 0 };
             if(m >= 4 && m - a >= 2) { const f = m >= 5 ? 1 : 0; r.titulo = 'Amargo: sinal de sobre-extração'; r.clicks = 2 + f; r.temp = -(1 + f); r.msgs.push('Moa mais grosso', 'Use água um pouco mais fria'); }
@@ -1167,18 +1222,20 @@
             else if(c <= 1 && d <= 2) { r.titulo = 'Fraco e aguado'; r.aguaPct = -5; r.clicks = -1; r.msgs.push('Proporção mais forte: menos água', 'Moa um clique mais fino'); }
             else if(d <= 1) { r.titulo = 'Pouca doçura'; r.temp = 1; r.msgs.push('Tente 1 °C a mais para realçar a doçura'); }
             else if(c >= 4 && m >= 3) { r.titulo = 'Corpo pesado'; r.clicks = 1; r.msgs.push('Moa um clique mais grosso'); }
+            if(um > 0 && r.clicks) { r.dum = Math.abs(r.clicks) * 20; r.clicks = (r.clicks > 0 ? 1 : -1) * Math.max(1, Math.round(r.dum / um)); }
             r.temAjuste = r.clicks !== 0 || r.temp !== 0 || r.aguaPct !== 0;
             if(!r.temAjuste && !r.msgs.length) r.msgs.push('Nada a ajustar. Se gostou, salve a moagem como padrão da receita.');
             return r;
         }
         function atualizarSommelier() {
             const box = $x('f-sommelier'); if(!box) return;
-            const r = diagnosticar({ docura: numVal('f-doce'), acidez: numVal('f-acidez'), amargor: numVal('f-amargor'), corpo: numVal('f-corpo') });
+            const r = diagnosticar({ docura: numVal('f-doce'), acidez: numVal('f-acidez'), amargor: numVal('f-amargor'), corpo: numVal('f-corpo') }, umAtual());
             ajusteAtual = r;
             const cl = parseFloat(String($x('p-clicks-val').value).replace(',', '.')), tp = parseFloat(String($x('p-temp-val').value).replace(',', '.')), ag = Math.round(numVal('p-agua-val'));
             const det = [];
             if(r.clicks) det.push(isNaN(cl) ? (r.clicks > 0 ? '+' : '') + r.clicks + ' cliques' : cl + ' → ' + Math.max(0, cl + r.clicks) + ' cliques');
             if(r.temp) det.push(isNaN(tp) ? (r.temp > 0 ? '+' : '') + r.temp + ' °C' : tp + ' → ' + (tp + r.temp) + ' °C');
+            if(r.dum) det.push('≈ ' + r.dum + ' µm de mudança na moagem (' + Math.round(r.dum / umAtual() * 10) / 10 + ' cliques do seu moedor)');
             if(r.aguaPct && ag > 0) det.push(ag + ' → ' + (ag + Math.round(ag * r.aguaPct / 100 / 5) * 5) + ' ml');
             $x('f-somm-titulo').textContent = r.titulo;
             $x('f-somm-txt').innerHTML = r.msgs.map(m => '<div>• ' + escH(m) + '</div>').join('') + (det.length ? '<div class="text-xs text-zinc-500 mt-1">' + det.join(' · ') + '</div>' : '');
@@ -1252,10 +1309,51 @@
             if(l.clicks && l.clicks !== '--') $x('p-clicks-val').value = l.clicks;
             if(l.temp && l.temp !== '--') $x('p-temp-val').value = l.temp;
             const mm = l.moedorId && moedores().find(m => m.id === l.moedorId); if(mm) $x('p-moedor').value = mm.id;
-            upCalc(); toast('Preparo carregado: ' + r.nome);
+            upCalc(); atualizarConversao(); toast('Preparo carregado: ' + r.nome);
         }
         function graoMudou() { upCalc(); atualizarFrescoPreparo(); atualizarDica(); }
         aplicarTema(temaAtual()); renderNpour(); atualizarForm();
+
+        /* ---- µm por clique, conversão de moagem e sommelier consciente do moedor ---- */
+        let convAtual = null;
+        function umDoMoedor(nome) {
+            const n = normN(nome); if(!n) return 0;
+            const mine = localData.eq.find(e => e.tipo === 'moedor' && normN(e.nome) === n && e.um > 0);
+            if(mine) return mine.um;
+            const ex = MOEDORES_PADRAO.find(m => m.um && normN(m.nome) === n);
+            if(ex) return ex.um;
+            let best = null;
+            MOEDORES_PADRAO.forEach(m => { if(m.um && n.includes(normN(m.nome)) && (!best || normN(m.nome).length > normN(best.nome).length)) best = m; });
+            return best ? best.um : 0;
+        }
+        function umTxt(m) { const u = umDoMoedor(m.nome); return u > 0 ? (Math.round(u * 10) / 10) + ' µm por clique' : 'sem dado de µm por clique (toque em ✏️ para informar)'; }
+        function converterCliques(cl, deNome, paraNome) {
+            const a = umDoMoedor(deNome), b = umDoMoedor(paraNome);
+            if(!(cl > 0 && a > 0 && b > 0)) return null;
+            const um = cl * a;
+            return { um: Math.round(um), clicks: Math.max(1, Math.round(um / b)) };
+        }
+        function umAtual() { const s = $x('p-moedor'), mm = (s && s.value) ? moedores().find(m => m.id === s.value) : null; return mm ? umDoMoedor(mm.nome) : 0; }
+        function atualizarConversao() {
+            const box = $x('p-conv'); if(!box) return;
+            convAtual = null;
+            const r = localData.r.find(x => x.id === $x('p-r').value);
+            const ms = $x('p-moedor'), mm = (ms && ms.value) ? moedores().find(m => m.id === ms.value) : null;
+            const cl = r ? parseFloat(String(r.origClicks).replace(',', '.')) : NaN;
+            if(!(r && mm && r.origMoedor && cl > 0 && normN(r.origMoedor) !== normN(mm.nome))) { box.classList.add('hidden'); return; }
+            const c = converterCliques(cl, r.origMoedor, mm.nome);
+            if(c) {
+                convAtual = c;
+                $x('p-conv-txt').innerHTML = escH(r.nome) + ' pede <b>' + cl + ' cliques</b> no ' + escH(r.origMoedor) + ' (≈ ' + c.um + ' µm). No seu ' + escH(mm.nome) + ': <b>≈ ' + c.clicks + ' cliques</b>. É uma estimativa: ajuste pelo sabor.';
+                $x('p-conv-btn').classList.remove('hidden');
+            } else {
+                const falta = umDoMoedor(r.origMoedor) > 0 ? mm.nome : r.origMoedor;
+                $x('p-conv-txt').innerHTML = escH(r.nome) + ' pede <b>' + cl + ' cliques</b> no ' + escH(r.origMoedor) + '. Para converter, informe o µm por clique do <b>' + escH(falta) + '</b> em Equipamentos.';
+                $x('p-conv-btn').classList.add('hidden');
+            }
+            box.classList.remove('hidden');
+        }
+        function usarConversao() { if(!convAtual) return; $x('p-clicks-val').value = convAtual.clicks; upCalc(); toast('Moagem ajustada: ≈ ' + convAtual.clicks + ' cliques (estimativa)'); }
 
         /* ---- receitas: busca e filtro por método ---- */
         function renderChips() {
