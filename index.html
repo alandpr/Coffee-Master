@@ -199,6 +199,25 @@
         .rc-btn.del { color: #D9534F; }
         .rc-prep { display: flex; align-items: center; gap: 8px; background: var(--brand); color: #fff; font-weight: 900; padding: 11px 20px; border-radius: 14px; font-size: 14px; }
         .rc-prep svg { width: 16px; height: 16px; fill: currentColor; stroke: none; }
+
+        /* ===== Lista compacta de receitas, compartilhar e importar ===== */
+        .rl { background: var(--card); border: 1px solid var(--line); border-radius: 20px; overflow: hidden; }
+        .rl-row { display: flex; align-items: center; gap: 8px; padding: 10px 12px; border-bottom: 1px solid var(--line); }
+        .rl-row:last-child { border-bottom: none; }
+        .rl-main { display: flex; align-items: center; gap: 10px; flex: 1; min-width: 0; cursor: pointer; }
+        .rl-ico { width: 38px; height: 38px; flex-shrink: 0; display: flex; align-items: center; justify-content: center; color: var(--brand); }
+        .rl-ico .mi { width: 34px; height: 34px; }
+        .rl-nome { font-family: 'Fraunces', Georgia, 'Times New Roman', serif; font-weight: 800; font-size: 15px; line-height: 1.2; color: var(--text); overflow-wrap: anywhere; }
+        .rl-meta { font-size: 11.5px; font-weight: 700; color: var(--muted); margin-top: 2px; overflow-wrap: anywhere; }
+        .rl-perfil { display: flex; gap: 2px; height: 3px; margin-top: 6px; }
+        .rl-perfil span { border-radius: 2px; background: var(--brand); min-width: 3px; }
+        .rl-play { width: 40px; height: 40px; border-radius: 50%; background: var(--brand); color: #fff; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+        .rl-play svg { width: 16px; height: 16px; fill: currentColor; stroke: none; margin-left: 2px; }
+        .rd-acoes { display: flex; gap: 8px; margin-top: 18px; }
+        .rd-acoes .rc-prep { flex: 1; justify-content: center; }
+        .btn-sec { background: var(--card-2); border: 1px solid var(--line); border-radius: 14px; padding: 12px; font-weight: 800; color: var(--text); font-size: 14px; width: 100%; }
+        .btn-sec-ico { width: 44px; height: 44px; border-radius: 14px; background: var(--card); border: 1px solid var(--line); display: flex; align-items: center; justify-content: center; color: var(--brand); flex-shrink: 0; }
+        .btn-sec-ico svg { width: 22px; height: 22px; fill: none; stroke: currentColor; stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; }
     </style>
 </head>
 <body class="p-3 max-w-lg mx-auto">
@@ -243,7 +262,7 @@
             <div id="form-g" class="form-screen hidden"><div class="max-w-lg mx-auto"><div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="cancelEdit('g')" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="form-g-titulo" class="text-lg font-black">Novo grão</h2></div><div class="card p-4"><span class="label-gold mt-0">Produtor</span><input type="text" id="g-prod"><span class="label-gold">Grão</span><input type="text" id="g-nome"><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Variedade</span><input type="text" id="g-variedade"></div><div class="flex-1"><span class="label-gold">Processo</span><input type="text" id="g-processo"></div></div><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Torrefação</span><input type="text" id="g-torrefacao"></div><div class="flex-1"><span class="label-gold">Altitude</span><input type="text" id="g-altitude"></div></div><div class="flex gap-2"><div class="flex-1"><span class="label-gold">Torra</span><select id="g-torra"><option value=""></option><option>CLARA</option><option>MÉDIA</option><option>ESCURA</option></select></div><div class="flex-1"><span class="label-gold">DATA TORRA</span><input type="date" id="g-data"></div></div><span class="label-gold">Notas Sensoriais</span><textarea id="g-notas" rows="2"></textarea><span class="label-gold">Foto</span><input type="file" id="g-photo-input" accept="image/*" class="text-[10px] bg-transparent border-dashed border-zinc-700 p-2"><div id="g-edit-actions" class="hidden flex gap-2 mt-4"><button class="btn-gold flex-1 mt-0" onclick="saveG()">Atualizar</button><button class="bg-zinc-800 text-zinc-400 font-black py-4 px-4 rounded-xl flex-[0.3]" onclick="cancelEdit('g')">X</button></div><button class="btn-gold w-full mt-4" onclick="saveG()" id="g-btn-main">Salvar Grão</button></div></div></div>
         </div>
 
-        <div id="tab-receitas" class="hidden"><div class="flex gap-2 items-center mb-3"><input type="text" id="search-r" oninput="filtrarR()" class="bg-black border border-zinc-800 p-3 rounded-xl flex-1 min-w-0 text-xs uppercase" style="margin-bottom:0" placeholder="BUSCAR POR NOME, MÉTODO OU AUTOR..."><button class="btn-novo" onclick="abrirForm('r')">+ Nova</button></div><div id="chips-metodo" class="chips-row" onclick="chipClick(event)"></div><div id="list-r" class="space-y-3"></div><div id="form-r" class="form-screen hidden"><div class="max-w-lg mx-auto"><div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="cancelEdit('r')" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="form-r-titulo" class="text-lg font-black">Nova receita</h2></div><div class="card p-4"><span class="label-gold mt-0">Nome</span><input type="text" id="r-nome"><div class="flex items-center justify-between"><span class="label-gold">Método</span><button type="button" class="link-btn" onclick="abrirEquip()">Gerenciar</button></div><input type="hidden" id="r-metodo" value=""><div id="r-metodo-grid" onclick="metodoClick(event)"></div><div id="r-metodo-novo-box" class="hidden atk-row mt-3"><input type="text" id="r-metodo-novo" placeholder="NOME DO NOVO MÉTODO"><div id="r-novo-cats" class="flex flex-wrap gap-2 mt-2"></div><div class="flex gap-2 mt-3"><button type="button" class="btn-novo flex-1" onclick="adicionarMetodo('form')">Adicionar</button><button type="button" class="btn-mini" style="width:44px;height:44px" onclick="ocultarNovoMetodo()">✕</button></div></div><div class="prep-duo mt-3" style="border:1px solid var(--line);border-radius:18px">
+        <div id="tab-receitas" class="hidden"><div class="flex gap-2 items-center mb-3"><input type="text" id="search-r" oninput="filtrarR()" class="bg-black border border-zinc-800 p-3 rounded-xl flex-1 min-w-0 text-xs uppercase" style="margin-bottom:0" placeholder="BUSCAR POR NOME, MÉTODO OU AUTOR..."><button class="btn-sec-ico" onclick="abrirImportar()" aria-label="Importar receita"><svg viewBox="0 0 24 24"><path d="M12 4v11"/><path d="M7.5 10.5L12 15l4.5-4.5"/><path d="M5 19h14"/></svg></button><button class="btn-novo" onclick="abrirForm('r')">+ Nova</button></div><div id="chips-metodo" class="chips-row" onclick="chipClick(event)"></div><div id="list-r" class="space-y-3"></div><div id="form-r" class="form-screen hidden"><div class="max-w-lg mx-auto"><div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="cancelEdit('r')" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 id="form-r-titulo" class="text-lg font-black">Nova receita</h2></div><div class="card p-4"><span class="label-gold mt-0">Nome</span><input type="text" id="r-nome"><div class="flex items-center justify-between"><span class="label-gold">Método</span><button type="button" class="link-btn" onclick="abrirEquip()">Gerenciar</button></div><input type="hidden" id="r-metodo" value=""><input type="hidden" id="r-fonte" value=""><div id="r-metodo-grid" onclick="metodoClick(event)"></div><div id="r-metodo-novo-box" class="hidden atk-row mt-3"><input type="text" id="r-metodo-novo" placeholder="NOME DO NOVO MÉTODO"><div id="r-novo-cats" class="flex flex-wrap gap-2 mt-2"></div><div class="flex gap-2 mt-3"><button type="button" class="btn-novo flex-1" onclick="adicionarMetodo('form')">Adicionar</button><button type="button" class="btn-mini" style="width:44px;height:44px" onclick="ocultarNovoMetodo()">✕</button></div></div><div class="prep-duo mt-3" style="border:1px solid var(--line);border-radius:18px">
                 <div class="prep-cell"><span class="label-gold mt-0 ml-0">Dose</span><div class="stepper"><button type="button" onclick="ajustarR('r-po',-1)">−</button><input type="text" inputmode="decimal" id="r-po" oninput="atualizarForm()"><button type="button" onclick="ajustarR('r-po',1)">+</button></div><div class="prep-un">g</div></div>
                 <div class="prep-cell prep-sep"><span class="label-gold mt-0 ml-0">Água</span><div class="stepper"><button type="button" onclick="ajustarR('r-total',-5)">−</button><input type="text" inputmode="decimal" id="r-total" oninput="atualizarForm()"><button type="button" onclick="ajustarR('r-total',5)">+</button></div><div class="prep-un">ml</div></div>
             </div>
@@ -356,6 +375,26 @@
                 </div>
             </div>
         </div>
+        <div id="share-screen" class="form-screen hidden">
+            <div class="max-w-lg mx-auto">
+                <div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="fecharShare()" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 class="text-lg font-black">Compartilhar receita</h2></div>
+                <div class="card" style="text-align:center"><img id="share-img" alt="Cartão da receita" style="width:100%;border-radius:14px"><div id="share-status" class="text-xs text-zinc-500 mt-2"></div></div>
+                <button class="btn-gold" onclick="enviarCartao()">Enviar imagem</button>
+                <div class="grid grid-cols-2 gap-2 mt-3"><button class="btn-sec" onclick="copiarLink()">Copiar link</button><button class="btn-sec" onclick="baixarCartao()">Baixar imagem</button></div>
+            </div>
+        </div>
+        <div id="import-screen" class="form-screen hidden">
+            <div class="max-w-lg mx-auto">
+                <div class="flex items-center gap-3 mb-4"><button class="btn-voltar" onclick="fecharImportar()" aria-label="Voltar"><svg viewBox="0 0 24 24"><path d="M15 5l-7 7 7 7"/></svg></button><h2 class="text-lg font-black">Importar receita</h2></div>
+                <div class="card"><span class="label-gold mt-0 ml-0">Colar link ou código</span><textarea id="imp-texto" rows="3" class="mt-2" placeholder="Cole aqui o link de uma receita compartilhada"></textarea><button class="btn-gold" onclick="importarTexto()">Ler código</button></div>
+                <div class="card"><span class="label-gold mt-0 ml-0">Ler print com IA</span><div class="text-sm text-zinc-500 mt-1">Escolha o print (ou até 4) de uma receita de qualquer app. A IA lê os números e preenche o formulário para você conferir antes de salvar. Cada leitura custa centavos.</div><input type="file" id="imp-arq" accept="image/*" multiple class="mt-3 text-xs"><button id="imp-btn-ler" class="btn-gold" onclick="lerPrints()">Ler print</button></div>
+                <div class="card"><span class="label-gold mt-0 ml-0">Chave da API (Anthropic)</span>
+                    <div id="imp-chave-ok" class="hidden"><div class="text-sm mt-1">Chave salva neste aparelho ✓</div><button class="link-btn mt-2" onclick="removerChaveIA()">Remover chave</button></div>
+                    <div id="imp-chave-box"><div class="text-xs text-zinc-500 mt-1">Crie uma chave em console.anthropic.com e adicione alguns créditos. Ela fica só neste aparelho e nunca vai para o GitHub. Defina um limite de gasto no Console.</div><input type="password" id="imp-chave" placeholder="sk-ant-..." class="mt-2" autocomplete="off"><button class="btn-novo w-full mt-2" onclick="salvarChaveIA()">Salvar chave</button></div>
+                </div>
+                <div id="imp-status" class="text-sm text-center font-bold" style="color:var(--brand)"></div>
+            </div>
+        </div>
         <div id="toast" class="hidden"></div>
         <div id="tab-admin" class="hidden text-center"><h2 class="text-amber-500 font-black italic uppercase text-lg mb-4">Painel Admin</h2><div class="grid grid-cols-2 gap-2 mb-6"><div class="card p-4"><span class="label-gold mt-0">Usuários</span><div id="admin-user-count" class="text-3xl font-black italic">0</div></div><div class="card p-4"><span class="label-gold mt-0">Receitas</span><div id="admin-total-receitas" class="text-3xl font-black italic">0</div></div></div><div id="admin-user-list" class="space-y-2"></div></div>
     </div>
@@ -379,7 +418,7 @@
                     document.getElementById('user-display').innerText = `@${userProfile.nick} (${userProfile.type})`;
                     document.getElementById('btn-avatar').innerText = (userProfile.nick || '?').charAt(0).toUpperCase();
                     if(user.email === ADMIN_EMAIL) document.getElementById('btn-admin').classList.remove('hidden');
-                    loadG(); loadR(); loadEq(); carregarLogs(); showTab('cafes');
+                    loadG(); loadR(); loadEq(); carregarLogs(); showTab('cafes'); verificarImportacao();
                 } catch(e) { console.error(e); }
             } else { document.getElementById('auth-screen').classList.remove('hidden'); document.getElementById('main-app').classList.add('hidden'); }
         });
@@ -437,32 +476,24 @@
         function perfilDespejo(i) {
             const p = []; if(i.bloomMl > 0) p.push(i.bloomMl); (i.ataques || []).forEach(a => { if(a.ml > 0) p.push(a.ml); });
             if(!p.length) return '';
-            return '<div class="rc-perfil" title="' + escH(p.join(' g · ') + ' g') + '">' + p.map((ml, k) => '<span style="flex:' + ml + (k === 0 && i.bloomMl > 0 ? ';opacity:.45' : '') + '"></span>').join('') + '</div>';
+            return '<div class="rl-perfil" title="' + escH(p.join(' g · ') + ' g') + '">' + p.map((ml, k) => '<span style="flex:' + ml + (k === 0 && i.bloomMl > 0 ? ';opacity:.45' : '') + '"></span>').join('') + '</div>';
         }
         function delR(id) { const r = localData.r.find(x => x.id === id); del('receitas', id, r ? r.nome : 'receita'); }
         function renderR(data) {
             let h = '';
             data.forEach(i => {
-                const isOwner = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL;
-                const stats = [];
-                if(i.origPo > 0) stats.push(i.origPo + ' g');
-                if(i.origRatio > 0) stats.push('1:' + i.origRatio);
-                const t = tempoReceita(i); if(t > 0) stats.push(fmt(t, true));
-                if(i.origTemp) stats.push(i.origTemp + ' °C');
-                const moedor = i.origMoedor ? escH(i.origMoedor) + (i.origClicks ? ' @ ' + escH(i.origClicks) + ' cliques' : '') : '';
-                h += '<div class="card rc">' +
-                    '<div class="rc-head" onclick="abrirDetalhesR(\'' + i.id + '\')">' +
-                        '<div class="metodo-ico">' + svgMetodo(i.metodo, catDoMetodo(i.metodo)) + '</div>' +
-                        '<div class="min-w-0 flex-1"><div class="rc-nome">' + escH(i.nome) + '</div>' +
-                        '<div class="rc-meta">por @' + escH(i.owner_nick || 'Mestre') + (i.metodo ? ' · ' + escH(i.metodo) : '') + '</div></div></div>' +
-                    (stats.length ? '<div class="rc-stats">' + stats.map(s => '<span class="rc-stat">' + escH(s) + '</span>').join('') + '</div>' : '') +
-                    (moedor ? '<div class="rc-meta">' + moedor + '</div>' : '') +
-                    perfilDespejo(i) +
-                    '<div class="rc-foot"><div class="rc-acoes">' +
-                        (isOwner ? '<button class="rc-btn" onclick="editR(\'' + i.id + '\')" aria-label="Editar">' + ICO_EDIT + '</button><button class="rc-btn del" onclick="delR(\'' + i.id + '\')" aria-label="Excluir">' + ICO_TRASH + '</button>' : '') +
-                    '</div><button class="rc-prep" onclick="showTab(\'preparo\'); handleRecipeSelect(\'' + i.id + '\')">' + ICO_PLAY + 'Preparar</button></div></div>';
+                const minha = i.owner_uid === currentUser.uid, meta = [];
+                if(!minha) meta.push('por @' + (i.owner_nick || 'Mestre'));
+                if(i.metodo) meta.push(i.metodo);
+                if(i.origPo > 0) meta.push(i.origPo + ' g');
+                if(i.origRatio > 0) meta.push('1:' + i.origRatio);
+                const t = tempoReceita(i); if(t > 0) meta.push(fmt(t, true));
+                if(i.origTemp) meta.push(i.origTemp + ' °C');
+                h += '<div class="rl-row"><div class="rl-main" onclick="abrirDetalhesR(\'' + i.id + '\')"><div class="rl-ico">' + svgMetodo(i.metodo, catDoMetodo(i.metodo)) + '</div>' +
+                    '<div class="min-w-0 flex-1"><div class="rl-nome">' + escH(i.nome) + '</div><div class="rl-meta">' + meta.map(m => escH(m)).join(' · ') + '</div>' + perfilDespejo(i) + '</div></div>' +
+                    '<button class="rl-play" onclick="showTab(\'preparo\'); handleRecipeSelect(\'' + i.id + '\')" aria-label="Preparar">' + ICO_PLAY + '</button></div>';
             });
-            document.getElementById('list-r').innerHTML = h;
+            document.getElementById('list-r').innerHTML = h ? '<div class="rl">' + h + '</div>' : '';
         }
         async function loadPrep() { let gh = '<option value="0">SELECIONE O GRÃO</option>', rh = '<option value="0">SELECIONE A RECEITA</option>'; localData.g.forEach(i => gh += `<option value="${i.id}">${i.nome}</option>`); localData.r.forEach(i => rh += `<option value="${i.id}">${i.nome}</option>`); document.getElementById('p-g').innerHTML = gh; document.getElementById('p-r').innerHTML = rh; document.getElementById('p-moedor').innerHTML = optsMoedores(''); }
 
@@ -1156,7 +1187,7 @@
             el.value = nome ? (nomes.find(n => normN(n) === normN(nome)) || '') : '';
         }
         function novaReceitaPadrao() {
-            $x('r-po').value = 15; $x('r-total').value = 250; $x('r-temp').value = 92; $x('r-clicks').value = '';
+            $x('r-po').value = 15; $x('r-total').value = 250; $x('r-temp').value = 92; $x('r-clicks').value = ''; $x('r-fonte').value = '';
             const p = moedores().find(m => m.principal); setMoedorForm(p ? p.nome : '');
             ['r-bloom-ml', 'r-bloom-sec', 'r-bloom-pour', 'r-bloom-obs'].forEach(id => { $x(id).value = ''; });
             $x('ataques-container').innerHTML = '';
@@ -1175,7 +1206,7 @@
                 const d = {
                     nome: nome.toUpperCase(), metodo: $x('r-metodo').value,
                     origRatio: numVal('r-ratio'), origPo: numVal('r-po'), origTotal: Math.round(numVal('r-total')), origClicks: $x('r-clicks').value, origTemp: $x('r-temp').value,
-                    origMoedor: $x('r-moedor').value || '',
+                    origMoedor: $x('r-moedor').value || '', fonte: $x('r-fonte').value,
                     bloomMl: numVal('r-bloom-ml'), bloomSec: numVal('r-bloom-sec'), bloomPour: numVal('r-bloom-pour'), bloomObs: $x('r-bloom-obs').value.trim(), ataques: atks,
                     owner_uid: original ? original.owner_uid : currentUser.uid, owner_nick: original ? original.owner_nick : userProfile.nick,
                     visibilidade: original ? original.visibilidade : (userProfile.type === 'pessoal' ? 'privado' : 'publico'), ts: firebase.firestore.FieldValue.serverTimestamp()
@@ -1187,7 +1218,7 @@
         function editR(id) {
             const i = localData.r.find(x => x.id === id); if(!i) return;
             editIds.r = id;
-            $x('r-nome').value = i.nome; setMetodoForm(i.metodo || '');
+            $x('r-nome').value = i.nome; setMetodoForm(i.metodo || ''); $x('r-fonte').value = i.fonte || '';
             $x('r-po').value = i.origPo || '';
             $x('r-total').value = i.origTotal || ((i.origPo && i.origRatio) ? Math.round(i.origPo * i.origRatio) : '');
             $x('r-clicks').value = i.origClicks || ''; $x('r-temp').value = i.origTemp || ''; setMoedorForm(i.origMoedor || '');
@@ -1355,6 +1386,279 @@
         }
         function usarConversao() { if(!convAtual) return; $x('p-clicks-val').value = convAtual.clicks; upCalc(); toast('Moagem ajustada: ≈ ' + convAtual.clicks + ' cliques (estimativa)'); }
 
+        /* ===== Compartilhar e importar receitas ===== */
+        const ICO_SHARE = '<svg viewBox="0 0 24 24"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 10.5l6.8-4M8.6 13.5l6.8 4"/></svg>';
+        const MODELO_IA = 'claude-sonnet-5-5';
+        let cartaoAtual = null;
+
+        function acoesReceita(i) {
+            const dono = i.owner_uid === currentUser.uid || currentUser.email === ADMIN_EMAIL;
+            return '<div class="rd-acoes"><button class="rc-prep" onclick="fecharDetalhes(); showTab(\'preparo\'); handleRecipeSelect(\'' + i.id + '\')">' + ICO_PLAY + 'Preparar</button>' +
+                '<button class="rc-btn" onclick="compartilharReceita(\'' + i.id + '\')" aria-label="Compartilhar">' + ICO_SHARE + '</button>' +
+                (dono ? '<button class="rc-btn" onclick="fecharDetalhes(); editR(\'' + i.id + '\')" aria-label="Editar">' + ICO_EDIT + '</button><button class="rc-btn del" onclick="fecharDetalhes(); delR(\'' + i.id + '\')" aria-label="Excluir">' + ICO_TRASH + '</button>' : '') + '</div>';
+        }
+
+        /* ---- formato de troca (link/QR) ---- */
+        function b64urlEnc(s) { return btoa(unescape(encodeURIComponent(s))).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/, ''); }
+        function b64urlDec(s) { s = s.replace(/-/g, '+').replace(/_/g, '/'); while(s.length % 4) s += '='; return decodeURIComponent(escape(atob(s))); }
+        function txtS(v, max) { return String(v == null ? '' : v).replace(/[\u0000-\u001f]/g, ' ').trim().slice(0, max); }
+        function numOk(v, min, max) { const n = parseFloat(String(v == null ? '' : v).replace(',', '.')); return (isFinite(n) && n >= min && n <= max) ? n : 0; }
+        function etapaOk(e) {
+            if(!e || typeof e !== 'object') return null;
+            const x = { ml: numOk(e.ml, 0, 2000), sec: numOk(e.s, 0, 3600), pour: numOk(e.p, 0, 3600), obs: txtS(e.o, 240) };
+            return (x.ml > 0 || x.sec > 0 || x.obs) ? x : null;
+        }
+        function normalizarReceita(o) {
+            if(!o || typeof o !== 'object') return null;
+            const r = { nome: txtS(o.n, 80), metodo: nomeLimpo(txtS(o.m, 40)), po: numOk(o.po, 1, 200), total: numOk(o.to, 10, 5000), temp: numOk(o.t, 0, 100), moedor: txtS(o.mo, 60), clicks: txtS(o.cl, 8), autor: txtS(o.au, 40), fonte: txtS(o.f, 90), bloom: etapaOk(o.b), ataques: [] };
+            (Array.isArray(o.a) ? o.a : []).slice(0, 12).forEach(a => { const e = etapaOk(a); if(e) r.ataques.push(e); });
+            const soma = (r.bloom ? r.bloom.ml : 0) + r.ataques.reduce((s, e) => s + e.ml, 0);
+            if(!r.total && soma > 0) r.total = Math.round(soma);
+            r.ratio = (r.po > 0 && r.total > 0) ? Math.round(r.total / r.po * 10) / 10 : 0;
+            if(!r.nome && !r.po && !r.total && !r.bloom && !r.ataques.length) return null;
+            return r;
+        }
+        function etapaCompacta(ml, sec, pour, obs) { const e = {}; if(ml > 0) e.ml = ml; if(sec > 0) e.s = sec; if(pour > 0) e.p = pour; if(obs) e.o = obs; return e; }
+        function receitaParaCompacto(i) {
+            const o = { v: 1, n: i.nome };
+            if(i.metodo) o.m = i.metodo;
+            if(i.origPo > 0) o.po = i.origPo;
+            const tot = i.origTotal || Math.round((i.origPo || 0) * (i.origRatio || 0)); if(tot > 0) o.to = tot;
+            const t = parseFloat(i.origTemp); if(t > 0) o.t = t;
+            if(i.origMoedor) o.mo = i.origMoedor;
+            if(i.origClicks) o.cl = String(i.origClicks);
+            if(i.owner_nick) o.au = i.owner_nick;
+            if(i.bloomMl > 0) o.b = etapaCompacta(i.bloomMl, i.bloomSec, i.bloomPour, i.bloomObs);
+            o.a = (i.ataques || []).map(a => etapaCompacta(a.ml, a.sec, a.pour, a.obs));
+            return o;
+        }
+        function linkReceita(i) { return location.href.split('#')[0] + '#r=' + b64urlEnc(JSON.stringify(receitaParaCompacto(i))); }
+        function lerCodigoReceita(t) {
+            t = String(t == null ? '' : t).trim(); if(!t) return null;
+            try {
+                const m = t.match(/[#?&]r=([A-Za-z0-9_\-]+)/);
+                let j;
+                if(m) j = JSON.parse(b64urlDec(m[1]));
+                else if(t[0] === '{') j = JSON.parse(t);
+                else if(/^[A-Za-z0-9_\-]{20,}$/.test(t)) j = JSON.parse(b64urlDec(t));
+                else return null;
+                return normalizarReceita(j);
+            } catch(e) { return null; }
+        }
+        function abrirFormComDados(d, fonte) {
+            editIds.r = null; $x('r-edit-actions').classList.add('hidden'); $x('r-btn-main').classList.remove('hidden');
+            abrirForm('r');
+            $x('r-nome').value = d.nome; setMetodoForm(d.metodo);
+            $x('r-po').value = d.po || ''; $x('r-total').value = d.total || '';
+            $x('r-temp').value = d.temp || ''; $x('r-clicks').value = d.clicks || ''; setMoedorForm(d.moedor);
+            const b = d.bloom || {};
+            $x('r-bloom-ml').value = b.ml || ''; $x('r-bloom-sec').value = b.sec || ''; $x('r-bloom-pour').value = b.pour || ''; $x('r-bloom-obs').value = b.obs || '';
+            $x('ataques-container').innerHTML = '';
+            d.ataques.forEach(a => addAtackField(a.ml, a.sec, a.obs, a.pour));
+            $x('r-fonte').value = fonte || d.fonte || '';
+            atualizarForm(); renderNpour();
+            $x('form-r-titulo').innerText = 'Importar receita';
+        }
+        function verificarImportacao() {
+            const h = location.hash || ''; if(!/[#&]r=/.test(h)) return;
+            const d = lerCodigoReceita(h);
+            try { history.replaceState(null, '', location.href.split('#')[0]); } catch(e) {}
+            if(!d) { toast('Não consegui ler o link da receita.'); return; }
+            showTab('receitas'); abrirFormComDados(d, d.autor ? 'Compartilhada por @' + d.autor : 'Compartilhada por link');
+            toast('Receita recebida. Revise e toque em Salvar.');
+        }
+
+        /* ---- cartão de compartilhar ---- */
+        function passosDe(i) {
+            const p = []; let acum = 0, tt = 0;
+            const add = (t, ml, sec, obs) => { acum += ml || 0; tt += sec || 0; p.push({ t, ml: ml || 0, acum, fim: tt, obs: obs || '' }); };
+            if(i.bloomMl > 0) add('Hidratação', i.bloomMl, i.bloomSec, i.bloomObs);
+            (i.ataques || []).forEach((a, k) => add('Despejo ' + (k + (i.bloomMl > 0 ? 2 : 1)), a.ml, a.sec, a.obs));
+            return p;
+        }
+        function quebrarTexto(c, texto, maxW, maxLinhas) {
+            const palavras = String(texto).split(/\s+/).filter(Boolean), linhas = []; let atual = '';
+            palavras.forEach(w => { const t = atual ? atual + ' ' + w : w; if(c.measureText(t).width > maxW && atual) { linhas.push(atual); atual = w; } else atual = t; });
+            if(atual) linhas.push(atual);
+            if(maxLinhas && linhas.length > maxLinhas) { const cut = linhas.slice(0, maxLinhas); cut[maxLinhas - 1] = cut[maxLinhas - 1].replace(/\s*\S*$/, '') + '…'; return cut; }
+            return linhas;
+        }
+        function rr(c, x, y, w, h, r) { c.beginPath(); c.moveTo(x + r, y); c.lineTo(x + w - r, y); c.quadraticCurveTo(x + w, y, x + w, y + r); c.lineTo(x + w, y + h - r); c.quadraticCurveTo(x + w, y + h, x + w - r, y + h); c.lineTo(x + r, y + h); c.quadraticCurveTo(x, y + h, x, y + h - r); c.lineTo(x, y + r); c.quadraticCurveTo(x, y, x + r, y); c.closePath(); }
+        function svgIconeStandalone(key, cor, tam) { return '<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="' + tam + '" height="' + tam + '" color="' + cor + '" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><style>.f{fill:currentColor;fill-opacity:.12;stroke:none}.g{fill:currentColor;fill-opacity:.38;stroke:none}.l{fill:none}</style>' + (ICONES[key] || ICONES.xicara) + '</svg>'; }
+        function gerarQR(texto, tam) {
+            try {
+                const div = document.createElement('div');
+                new QRCode(div, { text: texto, width: tam, height: tam, correctLevel: QRCode.CorrectLevel.L });
+                return div.querySelector('canvas') || div.querySelector('img') || null;
+            } catch(e) { return null; }
+        }
+        function desenharCartao(r, link) {
+            return new Promise(resolve => {
+                const W = 1080, H = 1350, cv = document.createElement('canvas'); cv.width = W; cv.height = H;
+                const c = cv.getContext('2d');
+                const BG = '#14100D', CARD = '#1E1814', LINE = '#372D25', TXT = '#F2E8DA', MUT = '#A89888', BR = '#C8692B';
+                const SERIF = "Fraunces, Georgia, 'Times New Roman', serif", SANS = "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif";
+                const g = c.createLinearGradient(0, 0, 0, H); g.addColorStop(0, '#221A15'); g.addColorStop(1, BG); c.fillStyle = g; c.fillRect(0, 0, W, H);
+                c.fillStyle = BR; c.fillRect(0, 0, W, 10);
+                c.textBaseline = 'alphabetic'; c.textAlign = 'left';
+                c.fillStyle = TXT; c.font = '800 40px ' + SERIF; c.fillText('Coffee Master', 72, 112);
+                c.fillStyle = BR; c.beginPath(); c.arc(72 + c.measureText('Coffee Master').width + 14, 100, 6, 0, Math.PI * 2); c.fill();
+                rr(c, 72, 156, 150, 150, 34); c.fillStyle = CARD; c.fill(); c.strokeStyle = LINE; c.lineWidth = 3; c.stroke();
+                c.fillStyle = TXT; c.font = '800 54px ' + SERIF;
+                let y = 200; quebrarTexto(c, r.nome || 'Receita', 740, 3).forEach(l => { c.fillText(l, 252, y); y += 62; });
+                c.fillStyle = MUT; c.font = '700 30px ' + SANS;
+                c.fillText(['por @' + (r.owner_nick || 'mestre'), r.metodo].filter(Boolean).join(' · '), 252, Math.max(y + 4, 292));
+                y = Math.max(y + 44, 350);
+                const stats = [];
+                if(r.origPo > 0) stats.push(r.origPo + ' g'); if(r.origRatio > 0) stats.push('1:' + r.origRatio);
+                const tt = tempoReceita(r); if(tt > 0) stats.push(fmt(tt, true)); if(r.origTemp) stats.push(r.origTemp + ' °C');
+                let x = 72; c.font = '800 32px ' + SANS;
+                stats.forEach(s => { const w = c.measureText(s).width + 48; if(x + w > W - 72) { x = 72; y += 78; } rr(c, x, y, w, 62, 31); c.fillStyle = CARD; c.fill(); c.strokeStyle = LINE; c.lineWidth = 2; c.stroke(); c.fillStyle = TXT; c.fillText(s, x + 24, y + 42); x += w + 14; });
+                y += 62 + 36;
+                if(r.origMoedor) { c.fillStyle = MUT; c.font = '600 30px ' + SANS; c.fillText(r.origMoedor + (r.origClicks ? ' @ ' + r.origClicks + ' cliques' : ''), 72, y + 22); y += 56; }
+                y += 28; c.fillStyle = BR; c.font = '800 26px ' + SANS; c.fillText('ETAPAS', 72, y); y += 30;
+                const passos = passosDe(r); let n = 0;
+                for(const p of passos) {
+                    c.font = 'italic 600 28px ' + SANS;
+                    const obsL = p.obs ? quebrarTexto(c, '“' + p.obs + '”', 860, 2) : [];
+                    const alt = obsL.length ? 70 + obsL.length * 36 : 74;
+                    if(y + alt > 1060) break;
+                    c.beginPath(); c.arc(100, y + 28, 28, 0, Math.PI * 2); c.fillStyle = BR; c.fill();
+                    c.fillStyle = '#fff'; c.font = '800 30px ' + SANS; c.textAlign = 'center'; c.fillText(String(n + 1), 100, y + 39); c.textAlign = 'left';
+                    c.fillStyle = TXT; c.font = '800 34px ' + SANS; c.fillText(p.t + '  +' + p.ml + ' g', 144, y + 38);
+                    c.fillStyle = MUT; c.font = '700 30px ' + SANS; c.textAlign = 'right'; c.fillText(p.acum + ' g · ' + fmt(p.fim, true), W - 72, y + 38); c.textAlign = 'left';
+                    c.font = 'italic 600 28px ' + SANS; obsL.forEach((l, k) => c.fillText(l, 144, y + 78 + k * 36));
+                    y += alt; n++;
+                }
+                if(n < passos.length) { c.fillStyle = MUT; c.font = '700 28px ' + SANS; c.fillText('+ ' + (passos.length - n) + ' etapas no app', 72, y + 24); }
+                const tot = passos.reduce((s, p) => s + p.ml, 0);
+                if(tot > 0) { let bx = 72; passos.forEach((p, k) => { const w = Math.max(6, (W - 144 - 6 * (passos.length - 1)) * p.ml / tot); rr(c, bx, 1078, w, 14, 7); c.fillStyle = BR; c.globalAlpha = (k === 0 && r.bloomMl > 0) ? 0.45 : 1; c.fill(); c.globalAlpha = 1; bx += w + 6; }); }
+                c.fillStyle = LINE; c.fillRect(72, 1112, W - 144, 2);
+                c.fillStyle = TXT; c.font = '800 36px ' + SERIF; c.fillText('Importe esta receita', 72, 1184);
+                c.fillStyle = MUT; c.font = '600 28px ' + SANS; c.fillText('Escaneie o QR no Coffee Master', 72, 1232);
+                c.fillStyle = BR; c.font = '800 28px ' + SANS; c.fillText(location.host || '', 72, 1276);
+                const qrTam = 184, bx = W - 72 - (qrTam + 24), by = 1126, qr = gerarQR(link, qrTam);
+                if(qr) { rr(c, bx, by, qrTam + 24, qrTam + 24, 20); c.fillStyle = '#fff'; c.fill(); try { c.drawImage(qr, bx + 12, by + 12, qrTam, qrTam); } catch(e) {} }
+                else { c.fillStyle = MUT; c.font = '600 24px ' + SANS; c.textAlign = 'right'; c.fillText('Receita longa: use o link', W - 72, 1230); c.textAlign = 'left'; }
+                let feito = false; const fim = () => { if(feito) return; feito = true; resolve(cv); };
+                const ico = new Image();
+                ico.onload = () => { try { c.drawImage(ico, 87, 171, 120, 120); } catch(e) {} fim(); };
+                ico.onerror = fim;
+                ico.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svgIconeStandalone(chaveIcone(r.metodo, catDoMetodo(r.metodo)), BR, 120));
+                setTimeout(fim, 1500);
+            });
+        }
+        async function compartilharReceita(id) {
+            const r = localData.r.find(x => x.id === id); if(!r) return;
+            fecharDetalhes();
+            const link = linkReceita(r);
+            cartaoAtual = { link, titulo: r.nome, canvas: null };
+            $x('share-status').textContent = 'Gerando cartão...'; $x('share-img').removeAttribute('src');
+            const s = $x('share-screen'); s.classList.remove('hidden'); s.scrollTop = 0;
+            try { const cv = await desenharCartao(r, link); cartaoAtual.canvas = cv; $x('share-img').src = cv.toDataURL('image/png'); $x('share-status').textContent = ''; }
+            catch(e) { console.error(e); $x('share-status').textContent = 'Não foi possível gerar a imagem. Você ainda pode copiar o link.'; }
+        }
+        async function enviarCartao() {
+            if(!cartaoAtual) return;
+            try {
+                if(cartaoAtual.canvas) {
+                    const blob = await new Promise(res => cartaoAtual.canvas.toBlob(res, 'image/png'));
+                    const file = new File([blob], 'receita-coffee-master.png', { type: 'image/png' });
+                    if(navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], title: cartaoAtual.titulo, text: 'Receita no Coffee Master: ' + cartaoAtual.link }); return; }
+                }
+                if(navigator.share) { await navigator.share({ title: cartaoAtual.titulo, text: 'Receita no Coffee Master', url: cartaoAtual.link }); return; }
+                baixarCartao();
+            } catch(e) { if(!(e && e.name === 'AbortError')) toast('Não foi possível compartilhar. Use "Baixar imagem" ou "Copiar link".'); }
+        }
+        function baixarCartao() {
+            if(!cartaoAtual || !cartaoAtual.canvas) { toast('Sem imagem para baixar.'); return; }
+            const a = document.createElement('a'); a.download = 'receita-coffee-master.png'; a.href = cartaoAtual.canvas.toDataURL('image/png');
+            document.body.appendChild(a); a.click(); a.remove();
+        }
+        async function copiarLink() {
+            if(!cartaoAtual) return;
+            try { await navigator.clipboard.writeText(cartaoAtual.link); toast('Link copiado'); } catch(e) { window.prompt('Copie o link:', cartaoAtual.link); }
+        }
+        function fecharShare() { $x('share-screen').classList.add('hidden'); }
+
+        /* ---- importar: código, link e print (IA) ---- */
+        function abrirImportar() { $x('imp-texto').value = ''; $x('imp-status').textContent = ''; atualizarChaveIA(); const s = $x('import-screen'); s.classList.remove('hidden'); s.scrollTop = 0; }
+        function fecharImportar() { $x('import-screen').classList.add('hidden'); }
+        function importarTexto() {
+            const d = lerCodigoReceita($x('imp-texto').value);
+            if(!d) { $x('imp-status').textContent = 'Não reconheci esse código. Cole o link completo da receita.'; return; }
+            fecharImportar(); abrirFormComDados(d, d.autor ? 'Compartilhada por @' + d.autor : 'Importada por código');
+        }
+        function chaveIA() { try { return localStorage.getItem('cm_chave_ia') || ''; } catch(e) { return ''; } }
+        function atualizarChaveIA() { const tem = !!chaveIA(); $x('imp-chave-ok').classList.toggle('hidden', !tem); $x('imp-chave-box').classList.toggle('hidden', tem); }
+        function salvarChaveIA() {
+            const v = $x('imp-chave').value.trim();
+            if(!/^sk-ant-/.test(v)) { alert('A chave da Anthropic começa com "sk-ant-". Confira e cole de novo.'); return; }
+            try { localStorage.setItem('cm_chave_ia', v); } catch(e) { alert('Não foi possível guardar a chave neste navegador.'); return; }
+            $x('imp-chave').value = ''; atualizarChaveIA();
+        }
+        function removerChaveIA() { try { localStorage.removeItem('cm_chave_ia'); } catch(e) {} atualizarChaveIA(); }
+        function lerImagem(file) {
+            return new Promise((ok, err) => {
+                const fr = new FileReader();
+                fr.onload = () => {
+                    const img = new Image();
+                    img.onload = () => {
+                        const k = Math.min(1, 1568 / Math.max(img.width, img.height)), cv = document.createElement('canvas');
+                        cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+                        cv.getContext('2d').drawImage(img, 0, 0, cv.width, cv.height);
+                        ok(cv.toDataURL('image/jpeg', 0.85).split(',')[1]);
+                    };
+                    img.onerror = () => err(new Error('Imagem inválida'));
+                    img.src = fr.result;
+                };
+                fr.onerror = () => err(new Error('Falha ao ler o arquivo'));
+                fr.readAsDataURL(file);
+            });
+        }
+        const PROMPT_IA = `Você extrai receitas de café de prints de aplicativos de preparo. Leia a(s) imagem(ns) e responda SOMENTE com um JSON válido, sem texto antes ou depois, neste formato exato:
+{"nome":"","metodo":"","autor":"","dose":0,"agua":0,"temperatura":0,"moedor":"","cliques":"","hidratacao":{"agua":0,"duracao":0,"despejo":0,"obs":""},"despejos":[{"agua":0,"duracao":0,"despejo":0,"obs":""}]}
+Regras:
+- Use números (não texto) nos campos numéricos. dose = gramas de café; agua = total de ml de água; temperatura em °C; metodo curto (ex: V60, AeroPress, Prensa Francesa, Melitta, Kalita Wave, Chemex); cliques como texto (ex: "22").
+- hidratacao = etapa de hidratação/bloom (use null se não houver). despejos = as demais etapas, em ordem (se não houver hidratação, todas as etapas ficam em despejos).
+- Em cada etapa: agua = gramas de água a despejar NESSA etapa (valor incremental; se só houver o acumulado, subtraia o anterior); duracao = segundos da etapa até o próximo despejo (se só houver o horário acumulado "aos m:ss", use a diferença para a etapa anterior); despejo = segundos de despejo efetivo ("tempo de despejo"), ou 0 se não aparecer; obs = a instrução escrita da etapa, ou "".
+- Não invente nada: use 0 ou "" quando a informação não aparecer. Se o nome não aparecer, deixe "".`;
+        async function chamarIA(imagens) {
+            const chave = chaveIA(); if(!chave) throw new Error('Cadastre sua chave da API primeiro.');
+            const content = imagens.map(b64 => ({ type: 'image', source: { type: 'base64', media_type: 'image/jpeg', data: b64 } }));
+            content.push({ type: 'text', text: PROMPT_IA });
+            const ctl = new AbortController(), to = setTimeout(() => ctl.abort(), 90000);
+            let res;
+            try {
+                res = await fetch('https://api.anthropic.com/v1/messages', { method: 'POST', signal: ctl.signal, headers: { 'content-type': 'application/json', 'x-api-key': chave, 'anthropic-version': '2023-06-01', 'anthropic-dangerous-direct-browser-access': 'true' }, body: JSON.stringify({ model: MODELO_IA, max_tokens: 2000, messages: [{ role: 'user', content }] }) });
+            } finally { clearTimeout(to); }
+            const data = await res.json().catch(() => ({}));
+            if(!res.ok) { const e = new Error((data && data.error && data.error.message) || ('erro ' + res.status)); e.status = res.status; throw e; }
+            return (data.content || []).filter(b => b.type === 'text').map(b => b.text).join('\n');
+        }
+        function extrairJSON(t) { t = String(t || ''); const i = t.indexOf('{'), j = t.lastIndexOf('}'); if(i < 0 || j <= i) return null; try { return JSON.parse(t.slice(i, j + 1)); } catch(e) { return null; } }
+        function mapearIA(j) {
+            if(!j || typeof j !== 'object') return null;
+            const et = e => (e && typeof e === 'object') ? { ml: e.agua, s: e.duracao, p: e.despejo, o: e.obs } : null;
+            return normalizarReceita({ n: j.nome, m: j.metodo, po: j.dose, to: j.agua, t: j.temperatura, mo: j.moedor, cl: j.cliques, au: j.autor, b: et(j.hidratacao), a: (Array.isArray(j.despejos) ? j.despejos : []).map(et) });
+        }
+        async function lerPrints() {
+            const arq = $x('imp-arq').files, st = $x('imp-status');
+            if(!chaveIA()) { st.textContent = 'Cadastre sua chave da API (abaixo) para ler prints.'; return; }
+            if(!arq || !arq.length) { st.textContent = 'Escolha um ou mais prints da receita.'; return; }
+            const btn = $x('imp-btn-ler'); btn.disabled = true; st.textContent = 'Lendo o print...';
+            try {
+                const imgs = []; for(let k = 0; k < Math.min(arq.length, 4); k++) imgs.push(await lerImagem(arq[k]));
+                const d = mapearIA(extrairJSON(await chamarIA(imgs)));
+                if(!d) { st.textContent = 'Não consegui interpretar o print. Tente um print mais nítido, com a receita inteira.'; return; }
+                fecharImportar(); abrirFormComDados(d, 'Importada de print' + (d.autor ? ' · ' + d.autor : ''));
+                toast('Receita lida do print. Confira os números antes de salvar.');
+            } catch(e) {
+                const m = (e && e.message) || 'erro de rede';
+                st.textContent = (e && e.status === 401) ? 'Chave da API inválida. Remova e cadastre de novo.' : ((e && e.status === 429) ? 'Limite de uso atingido. Tente de novo em instantes.' : ((e && e.status === 400 && /credit/i.test(m)) ? 'Sem créditos na conta da API. Adicione créditos no Console da Anthropic.' : 'Não foi possível ler: ' + m));
+            } finally { btn.disabled = false; }
+        }
+
         /* ---- receitas: busca e filtro por método ---- */
         function renderChips() {
             const cont = {}, nomes = {};
@@ -1433,7 +1737,7 @@
         }
 
         function abrirDetalhesG(id) { const i = localData.g.find(x => x.id === id); if(!i) return; const img = (i.photo && i.photo.length > 100) ? i.photo : DEFAULT_IMG; document.getElementById('detalhes-content').innerHTML = `<div class="flex justify-center mb-4"><img src="${img}" class="w-44 h-44 rounded-2xl object-cover border-2 border-zinc-800 shadow-2xl cursor-zoom-in" onclick="ampliarImagem('${img}')"></div><div><span class="label-gold">PRODUTOR</span><p class="text-white font-bold italic text-sm">${i.prod||'--'}</p></div><div><span class="label-gold">IDENTIFICAÇÃO</span><p class="text-white font-bold italic text-sm">${i.nome||'--'}</p></div><div><span class="label-gold">TORREFAÇÃO</span><p class="text-amber-500 font-bold italic text-sm">${i.torrefacao||'--'}</p></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">VARIEDADE</span><p class="text-white font-bold italic text-sm">${i.variedade||'--'}</p></div><div><span class="label-gold">PROCESSO</span><p class="text-white font-bold italic text-sm">${i.processo||'--'}</p></div></div><div><span class="label-gold">ALTITUDE | TORRA</span><p class="text-white font-bold italic text-sm"><span class="text-white">${i.altitude||'--'}</span> | <span class="text-white">${i.torra||'--'}</span></p></div><div><span class="label-gold">NOTAS</span><p class="text-zinc-400 italic text-sm">"${i.notas||'--'}"</p></div>`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
-        function abrirDetalhesR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; let atkH = ''; const passos = []; if(i.bloomMl > 0) passos.push({ t: 'Bloom', ml: i.bloomMl, sec: i.bloomSec, pour: i.bloomPour, obs: i.bloomObs }); (i.ataques || []).forEach((a, idx) => passos.push({ t: 'Despejo ' + (idx + (i.bloomMl > 0 ? 2 : 1)), ml: a.ml, sec: a.sec, pour: a.pour, obs: a.obs })); atkH = passos.map(p => `<p class="text-zinc-500 text-xs">${p.t}: ${p.ml} g em ${p.sec}s${p.pour ? ' (despeja ' + p.pour + 's)' : ''}</p>${p.obs ? '<p class="text-xs" style="font-style:italic">“' + escH(p.obs) + '”</p>' : ''}`).join(''); document.getElementById('detalhes-content').innerHTML = `<div><span class="label-gold">RECEITA</span><p class="text-white font-bold italic text-sm">${i.nome}</p></div>${i.metodo ? '<div class="flex items-center gap-2 mt-3">' + svgMetodo(i.metodo, catDoMetodo(i.metodo), 'mi-md') + '<span class="font-black text-sm">' + escH(i.metodo) + '</span></div>' : ''}<div class="grid grid-cols-3 gap-2"><div><span class="label-gold">RATIO</span><p class="text-white text-sm">1:${i.origRatio}</p></div><div><span class="label-gold">PÓ</span><p class="text-white text-sm">${i.origPo}g</p></div><div><span class="label-gold">TOTAL</span><p class="text-amber-500 text-sm">${i.origTotal}ml</p></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">CLICKS</span><p class="text-white text-sm">${i.origClicks||'--'}</p>${i.origMoedor ? '<p class="text-zinc-500 text-[10px]">' + escH(i.origMoedor) + '</p>' : ''}</div><div><span class="label-gold">TEMP</span><p class="text-white text-sm">${i.origTemp||'--'}°</p></div></div>${atkH ? `<div><span class="label-gold">ATAQUES</span>${atkH}</div>` : ''}`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
+        function abrirDetalhesR(id) { const i = localData.r.find(x => x.id === id); if(!i) return; let atkH = ''; const passos = []; if(i.bloomMl > 0) passos.push({ t: 'Bloom', ml: i.bloomMl, sec: i.bloomSec, pour: i.bloomPour, obs: i.bloomObs }); (i.ataques || []).forEach((a, idx) => passos.push({ t: 'Despejo ' + (idx + (i.bloomMl > 0 ? 2 : 1)), ml: a.ml, sec: a.sec, pour: a.pour, obs: a.obs })); atkH = passos.map(p => `<p class="text-zinc-500 text-xs">${p.t}: ${p.ml} g em ${p.sec}s${p.pour ? ' (despeja ' + p.pour + 's)' : ''}</p>${p.obs ? '<p class="text-xs" style="font-style:italic">“' + escH(p.obs) + '”</p>' : ''}`).join(''); document.getElementById('detalhes-content').innerHTML = `<div><span class="label-gold">RECEITA</span><p class="text-white font-bold italic text-sm">${i.nome}</p></div>${i.metodo ? '<div class="flex items-center gap-2 mt-3">' + svgMetodo(i.metodo, catDoMetodo(i.metodo), 'mi-md') + '<span class="font-black text-sm">' + escH(i.metodo) + '</span></div>' : ''}<div class="grid grid-cols-3 gap-2"><div><span class="label-gold">RATIO</span><p class="text-white text-sm">1:${i.origRatio}</p></div><div><span class="label-gold">PÓ</span><p class="text-white text-sm">${i.origPo}g</p></div><div><span class="label-gold">TOTAL</span><p class="text-amber-500 text-sm">${i.origTotal}ml</p></div></div><div class="grid grid-cols-2 gap-2"><div><span class="label-gold">CLICKS</span><p class="text-white text-sm">${i.origClicks||'--'}</p>${i.origMoedor ? '<p class="text-zinc-500 text-[10px]">' + escH(i.origMoedor) + '</p>' : ''}</div><div><span class="label-gold">TEMP</span><p class="text-white text-sm">${i.origTemp||'--'}°</p></div></div>${atkH ? `<div><span class="label-gold">ETAPAS</span>${atkH}</div>` : ''}${i.fonte ? '<p class="text-zinc-500 text-xs mt-3">Fonte: ' + escH(i.fonte) + '</p>' : ''}${acoesReceita(i)}`; document.getElementById('modal-detalhes').classList.remove('hidden'); }
         function ampliarImagem(src) { document.getElementById('img-ampliada').src = src; document.getElementById('modal-zoom').classList.remove('hidden'); }
         function toggleAuth(l) { document.getElementById('login-form').classList.toggle('hidden', !l); document.getElementById('signup-form').classList.toggle('hidden', l); }
         async function handleLogin() { try { await auth.signInWithEmailAndPassword(document.getElementById('login-email').value, document.getElementById('login-pass').value); } catch(e) { alert(e.message); } }
